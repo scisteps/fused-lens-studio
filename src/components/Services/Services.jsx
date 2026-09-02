@@ -10,19 +10,19 @@ gsap.registerPlugin(ScrollTrigger)
 // Service Icons
 const ServiceIcon = ({ type }) => {
   const icons = {
-    portrait: (
+    Events: (
       <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5">
         <circle cx="32" cy="24" r="10" />
         <path d="M16 54c0-8.8 7.2-16 16-16s16 7.2 16 16" />
       </svg>
     ),
-    wedding: (
+    Meetings: (
       <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M32 12l4 8 8 1-6 5 2 8-8-4-8 4 2-8-6-5 8-1z" />
         <path d="M20 36c0 8 5 16 12 16s12-8 12-16" />
       </svg>
     ),
-    commercial: (
+    Parties: (
       <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5">
         <rect x="12" y="16" width="40" height="32" rx="2" />
         <circle cx="32" cy="32" r="8" />
@@ -30,7 +30,7 @@ const ServiceIcon = ({ type }) => {
         <path d="M48 20h4M12 20h4" />
       </svg>
     ),
-    art: (
+    Vibes: (
       <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5">
         <rect x="8" y="12" width="48" height="40" rx="2" />
         <rect x="14" y="18" width="36" height="28" rx="1" />
@@ -112,7 +112,7 @@ export function Services() {
           <span className="section-label">Services</span>
           <h2 className="section-title">What We Offer</h2>
           <p className="section-subtitle">
-            Comprehensive photography services tailored to capture your unique vision with excellence.
+           A collective of animators from the pearl of Africa.
           </p>
         </motion.div>
 

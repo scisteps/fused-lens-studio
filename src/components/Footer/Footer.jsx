@@ -65,10 +65,10 @@ export function Footer() {
           <div className="footer__services">
             <h4 className="footer__heading">Services</h4>
             <nav className="footer__links">
-              <a href="#services" className="footer__link clickable" onClick={(e) => { e.preventDefault(); scrollToSection('services') }}>Wedding Photography</a>
-              <a href="#services" className="footer__link clickable" onClick={(e) => { e.preventDefault(); scrollToSection('services') }}>Portrait Sessions</a>
-              <a href="#services" className="footer__link clickable" onClick={(e) => { e.preventDefault(); scrollToSection('services') }}>Commercial Work</a>
-              <a href="#services" className="footer__link clickable" onClick={(e) => { e.preventDefault(); scrollToSection('services') }}>Event Coverage</a>
+              <a href="#services" className="footer__link clickable" onClick={(e) => { e.preventDefault(); scrollToSection('services') }}>Meetings</a>
+              <a href="#services" className="footer__link clickable" onClick={(e) => { e.preventDefault(); scrollToSection('services') }}>Events</a>
+              <a href="#services" className="footer__link clickable" onClick={(e) => { e.preventDefault(); scrollToSection('services') }}>Parties</a>
+              <a href="#services" className="footer__link clickable" onClick={(e) => { e.preventDefault(); scrollToSection('services') }}> Coverage</a>
             </nav>
           </div>
 

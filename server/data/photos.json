@@ -1,18 +1,34 @@
+import uff from '../Images/uff.jpg';
+import agu2 from '../Images/agu2.jpg';
+import agu3 from '../Images/agu3.jpg';
+import agu4 from '../Images/agu4.jpg';
+import native from '../Images/native.jpg';
+import richard from '../Images/richard.jpg';
+import denis1 from '../Images/denis1.jpg';
+import denis2 from '../Images/denis2.jpg';
+import denis3 from '../Images/denis3.jpg';
+import retro from '../Images/retro.jpg';
+import native2 from '../Images/native2.jpg';
+import native3 from '../Images/native3.jpg';
+import native4 from '../Images/native4.jpg';
+
+import jagwe from '../Images/jagwe.jpg';
+import jagwe2 from '../Images/jagwe2.jpg';
 {
   "categories": [
-    { "id": "all", "label": "All Work" },
-    { "id": "wedding", "label": "Weddings" },
-    { "id": "portrait", "label": "Portraits" },
-    { "id": "commercial", "label": "Commercial" },
-    { "id": "event", "label": "Events" }
+    { "id": "Events", "label": "Events" },
+    { "id": "Meetings", "label": "Meetings" },
+    { "id": "Parties", "label": "Parties" },
+    { "id": "Vibes", "label": "Vibes" },
+    { "id": "Motion", "label": "Motion" }
   ],
   "photos": [
     {
       "id": "1",
-      "src": "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=85",
+      "src": native4,
       "srcLarge": "https://images.unsplash.com/photo-1519741497674-611481863552?w=1600&q=90",
-      "title": "Eternal Vows",
-      "category": "wedding",
+      "title": "AGU meetings",
+      "category": "Meetings",
       "aspect": "landscape",
       "order": 1
     },
@@ -20,8 +36,8 @@
       "id": "2",
       "src": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=85",
       "srcLarge": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1600&q=90",
-      "title": "Editorial Portrait",
-      "category": "portrait",
+      "title": "Motion Uganda",
+      "category": "Parties",
       "aspect": "portrait",
       "order": 2
     },
@@ -29,8 +45,8 @@
       "id": "3",
       "src": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=85",
       "srcLarge": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1600&q=90",
-      "title": "Product Showcase",
-      "category": "commercial",
+      "title": " Showcase",
+      "category": "Vibes",
       "aspect": "square",
       "order": 3
     },
@@ -47,8 +63,8 @@
       "id": "5",
       "src": "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=800&q=85",
       "srcLarge": "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=1600&q=90",
-      "title": "First Dance",
-      "category": "wedding",
+      "title": "Events",
+      "category": "Vibes",
       "aspect": "portrait",
       "order": 5
     },
@@ -56,7 +72,7 @@
       "id": "6",
       "src": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=85",
       "srcLarge": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&q=90",
-      "title": "Character Study",
+      "title": "Character Rigging",
       "category": "portrait",
       "aspect": "portrait",
       "order": 6
@@ -66,7 +82,7 @@
       "src": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=85",
       "srcLarge": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1600&q=90",
       "title": "Audio Excellence",
-      "category": "commercial",
+      "category": "Parties",
       "aspect": "square",
       "order": 7
     },
@@ -74,8 +90,8 @@
       "id": "8",
       "src": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=85",
       "srcLarge": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1600&q=90",
-      "title": "Night Celebration",
-      "category": "event",
+      "title": "Rendering",
+      "category": "events",
       "aspect": "landscape",
       "order": 8
     },
@@ -83,8 +99,8 @@
       "id": "9",
       "src": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=85",
       "srcLarge": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1600&q=90",
-      "title": "Wedding Kiss",
-      "category": "wedding",
+      "title": "Motion Capture",
+      "category": "events",
       "aspect": "landscape",
       "order": 9
     },
@@ -92,7 +108,7 @@
       "id": "10",
       "src": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&q=85",
       "srcLarge": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1600&q=90",
-      "title": "Beauty & Fashion",
+      "title": "Art & Design",
       "category": "portrait",
       "aspect": "portrait",
       "order": 10
@@ -101,8 +117,8 @@
       "id": "11",
       "src": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=85",
       "srcLarge": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&q=90",
-      "title": "Retail Space",
-      "category": "commercial",
+      "title": "Illustrations",
+      "category": "parties",
       "aspect": "landscape",
       "order": 11
     },

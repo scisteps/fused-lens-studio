@@ -142,7 +142,7 @@ export function About() {
             </motion.h2>
             
             <motion.p className="about__lead" variants={itemVariants}>
-              {about?.content || `At ${studioInfo.name}, we believe every photograph should tell a story that resonates deeply with those who view it.`}
+              {about?.content || `At ${studioInfo.name}, we believe every animator should tell a story that resonates deeply with those who view it.`}
             </motion.p>
             
             <motion.p className="about__text" variants={itemVariants}>
@@ -172,7 +172,7 @@ export function About() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            Our Journey
+            Our Roadmap
           </motion.h3>
           
           <div className="timeline">

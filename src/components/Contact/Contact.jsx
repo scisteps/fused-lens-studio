@@ -22,11 +22,6 @@ const SocialIcon = ({ platform }) => {
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
       </svg>
     ),
-    behance: (
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M6.938 4.503c.702 0 1.34.06 1.92.188.577.13 1.07.33 1.485.61.41.28.733.65.96 1.12.225.47.34 1.05.34 1.73 0 .74-.17 1.36-.507 1.86-.338.5-.837.9-1.502 1.22.906.26 1.576.72 2.022 1.37.448.66.665 1.45.665 2.36 0 .75-.13 1.39-.41 1.93-.28.55-.67 1-1.16 1.35-.48.348-1.05.6-1.67.767-.61.165-1.252.254-1.91.254H0V4.51h6.938v-.007zM6.545 9.85c.558 0 1.02-.155 1.38-.455.36-.3.54-.748.54-1.33 0-.325-.06-.605-.183-.832-.122-.226-.29-.41-.505-.543-.214-.132-.47-.228-.758-.285-.29-.058-.598-.086-.936-.086H3.01v3.53h3.536zm.196 5.97c.382 0 .733-.04 1.056-.124.32-.083.6-.21.827-.375.227-.166.407-.386.536-.654.13-.27.193-.6.193-1 0-.786-.23-1.36-.69-1.72-.462-.36-1.08-.54-1.852-.54H3.01v4.413h3.73zM15.954 4.503h6.062v1.712h-6.062zM22.86 14.46c-.252.806-.653 1.49-1.196 2.038-.544.55-1.197.97-1.96 1.26-.764.292-1.623.44-2.574.44-.93 0-1.78-.14-2.54-.405-.764-.27-1.42-.667-1.97-1.19-.554-.524-.983-1.17-1.29-1.93-.304-.762-.456-1.636-.456-2.62 0-.96.155-1.822.467-2.58.31-.76.738-1.405 1.286-1.936.546-.53 1.196-.935 1.953-1.22.758-.283 1.588-.424 2.492-.424.984 0 1.856.18 2.614.54.76.358 1.395.858 1.91 1.5.52.64.91 1.4 1.178 2.278.268.88.382 1.84.35 2.885H15.11c.038.68.26 1.254.667 1.72.407.467.97.7 1.696.7.514 0 .94-.12 1.282-.373.34-.254.594-.61.76-1.074h3.345v-.01zm-3.32-3.68c-.063-.587-.29-1.056-.69-1.41-.4-.35-.89-.528-1.48-.528-.403 0-.747.07-1.03.216-.284.143-.52.327-.71.55-.19.22-.33.47-.426.75-.096.28-.15.55-.17.82h4.505z" />
-      </svg>
-    ),
     linkedin: (
       <svg viewBox="0 0 24 24" fill="currentColor">
         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
@@ -162,26 +157,6 @@ export function Contact() {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            {/* Map */}
-            <motion.div className="contact__map" variants={itemVariants}>
-              <div className="contact__map-visual">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.819!2d36.783!3d-1.283!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1172b28c0c5%3A0x3e2a010c9d118e0!2sKirigiti%2C%20Kenya!5e0!3m2!1sen!2sus!4v1690000000000!5m2!1sen!2sus"
-                  width="100%"
-                  height="300"
-                  style={{ border: 0, borderRadius: '8px' }}
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Fused Lens Studio Location"
-                ></iframe>
-              </div>
-              <div className="contact__location">
-                <h3>{studioInfo.location}</h3>
-                <p>{studioInfo.address}</p>
-              </div>
-            </motion.div>
-
             {/* Contact Details */}
             <motion.div className="contact__details" variants={itemVariants}>
               <a href={`mailto:${studioInfo.email}`} className="contact__detail clickable">
@@ -342,23 +317,18 @@ export function Contact() {
               </div>
 
               <div className={`form-group ${focusedField === 'service' ? 'form-group--focused' : ''}`}>
-                <select
+                <input
+                  type="text"
                   id="service"
                   name="service"
                   value={formData.service}
                   onChange={handleChange}
                   onFocus={() => setFocusedField('service')}
                   onBlur={() => setFocusedField(null)}
-                  className="form-input form-select"
-                >
-                  <option value="">Select a service</option>
-                  <option value="wedding">Wedding Photography</option>
-                  <option value="portrait">Portrait Session</option>
-                  <option value="commercial">Commercial Project</option>
-                  <option value="event">Event Coverage</option>
-                  <option value="other">Other</option>
-                </select>
-                <label htmlFor="service" className="form-label form-label--select">Service Interest</label>
+                  className="form-input"
+                  placeholder=" "
+                />
+                <label htmlFor="service" className="form-label">Service Needed</label>
                 <span className="form-line" />
               </div>
             </div>

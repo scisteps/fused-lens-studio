@@ -88,7 +88,7 @@ function Login({ onLogin }) {
       >
         <div className="admin-login__header">
           <img src="/camlogo.png" alt="Fused Lens Studio" className="admin-login__icon" />
-          <h1>Fused Lens Studio</h1>
+          <h1>Animation Guild Uganda</h1>
           <p>Admin Panel</p>
         </div>
 
@@ -727,7 +727,6 @@ function CollaboratorsEditor({ data, onSave, saving }) {
       social: {
         instagram: '',
         linkedin: '',
-        behance: ''
       }
     }])
   }
@@ -931,25 +930,35 @@ function PhotosEditor({ data, onSave, saving }) {
         </div>
       ) : (
         <div className="admin-photos-list">
-          {photos.map((photo, index) => (
-            <div key={photo.id} className="admin-photo-item">
-              <div className="admin-photo-item__preview">
-                {photo.src ? (
-                  <img src={photo.src} alt={photo.title || 'Photo'} onError={(e) => {
-                    e.target.style.display = 'none'
-                    e.target.nextSibling.style.display = 'flex'
-                  }} />
-                  <div className="admin-photo-item__error" style={{ display: 'none' }}>
-                    <span>⚠️</span>
-                    <p>Image failed to load</p>
-                  </div>
-                ) : (
-                  <div className="admin-photo-item__placeholder">
-                    <span>📷</span>
-                    <p>No image</p>
-                  </div>
-                )}
-              </div>
+     {photos.map((photo, index) => (
+  <div key={photo.id} className="admin-photo-item">
+    <div className="admin-photo-item__preview">
+      {photo.src ? (
+        <>
+          <img
+            src={photo.src}
+            alt={photo.title || 'Photo'}
+            onError={(e) => {
+              e.target.style.display = 'none'
+              e.target.nextSibling.style.display = 'flex'
+            }}
+          />
+
+          <div
+            className="admin-photo-item__error"
+            style={{ display: 'none' }}
+          >
+            <span>⚠️</span>
+            <p>Image failed to load</p>
+          </div>
+        </>
+      ) : (
+        <div className="admin-photo-item__placeholder">
+          <span>📷</span>
+          <p>No image</p>
+        </div>
+      )}
+    </div>
 
               <div className="admin-photo-item__form">
                 <div className="admin-grid">
@@ -969,7 +978,7 @@ function PhotosEditor({ data, onSave, saving }) {
                       type="text"
                       value={photo.category}
                       onChange={(e) => updatePhoto(index, 'category', e.target.value)}
-                      placeholder="e.g., Wedding, Portrait"
+                      placeholder="e.g., meetings, Portrait"
                     />
                   </div>
 

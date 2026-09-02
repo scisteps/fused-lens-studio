@@ -88,9 +88,9 @@ export function Portfolio() {
           transition={{ duration: 0.8 }}
         >
           <span className="section-label">Portfolio</span>
-          <h2 className="section-title">Selected Works</h2>
+          <h2 className="section-title">What do we do</h2>
           <p className="section-subtitle">
-            A curated collection of our finest photography, showcasing our passion for visual storytelling.
+           Bringing motion to Uganda with story telling and professionalism.
           </p>
         </motion.div>
 

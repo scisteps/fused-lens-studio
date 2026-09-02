@@ -1,6 +1,7 @@
+
 {
   "studio": {
-    "name": "Fused Lens Studios",
+    "name": "Animation Guild Uganda",
     "tagline": "Timeless Memories",
     "description": "Crafting visual stories that transcend time. Every frame, a masterpiece.",
     "founded": 2018,
@@ -13,7 +14,6 @@
   "social": {
     "instagram": "https://instagram.com/fusedlens",
     "twitter": "https://twitter.com/fusedlens",
-    "behance": "https://behance.net/fusedlens",
     "linkedin": "https://linkedin.com/company/fusedlens"
   },
   "mission": "At Fused Lens Studio, we believe photography is more than capturing images—it's about freezing emotions, preserving stories, and creating art that resonates across generations. Our passion lies in the details: the subtle glance, the fleeting smile, the perfect light. We blend technical mastery with artistic vision to deliver photographs that aren't just seen, but felt.",
@@ -21,58 +21,51 @@
     {
       "value": 750,
       "suffix": "+",
-      "label": "Projects Completed"
+      "label": "Animators involved"
     },
     {
       "value": 500,
       "suffix": "+",
-      "label": "Happy Clients"
+      "label": "Partners"
     },
     {
       "value": 15,
       "suffix": "",
       "label": "Awards Won"
-    },
-    {
-      "value": 25,
-      "suffix": "+",
-      "label": "Countries Served"
     }
+   
   ],
   "services": [
     {
       "id": 1,
-      "title": "Wedding Photograph",
+      "title": "Animation vibes",
       "description": "Capturing your love story with cinematic elegance. Every moment, every emotion, preserved forever.",
       "icon": "wedding",
       "features": [
         "Full Day Coverage",
         "Engagement Session",
-        "Premium Album",
         "Highlight Film"
       ]
     },
     {
       "id": 2,
-      "title": "Portrait Sessions",
+      "title": "AGU parties",
       "description": "Revealing your authentic beauty through artistic vision and masterful lighting.",
-      "icon": "portrait",
+      "icon": "Parties",
       "features": [
         "Professional Studio",
-        "Multiple Looks",
-        "Retouching Included",
+        "Classes & Seminars",
         "Digital Gallery"
       ]
     },
     {
       "id": 3,
-      "title": "Commercial Projects",
+      "title": "AGU meetings",
       "description": "Elevating brands with stunning imagery that speaks volumes and drives results.",
-      "icon": "commercial",
+      "icon": "Meetings",
       "features": [
-        "Product Photography",
+        "Animated Ads",
         "Brand Campaigns",
-        "Lifestyle Shoots",
         "Social Content"
       ]
     },
@@ -85,22 +78,22 @@
         "Corporate Events",
         "Private Parties",
         "Same-Day Edits",
-        "Photo Booth"
+        "Trivia nights"
       ]
     }
   ],
   "testimonials": [
     {
       "id": 1,
-      "name": "Sarah Johnson",
-      "role": "Bride",
+      "name": "Sarah ",
+      "role": "Animator",
       "content": "Fused Lens Studio captured our wedding day perfectly. Every photo tells a story, and we couldn't be happier with the results.",
       "rating": 5,
       "image": "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&q=90"
     },
     {
       "id": 2,
-      "name": "Michael Chen",
+      "name": "Michael ",
       "role": "Corporate Client",
       "content": "Professional, creative, and reliable. Their commercial photography exceeded our expectations for our brand campaign.",
       "rating": 5,
@@ -108,7 +101,7 @@
     },
     {
       "id": 3,
-      "name": "Emma Rodriguez",
+      "name": "Emma ",
       "role": "Portrait Client",
       "content": "The attention to detail and artistic vision is incredible. My portraits are absolutely stunning.",
       "rating": 5,
@@ -119,34 +112,34 @@
     {
       "id": 1,
       "image": "https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=1920&q=90",
-      "title": "Timeless",
+      "title": "Ug_motion",
       "subtitle": "Memories"
     },
     {
       "id": 2,
       "image": "https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=90",
-      "title": "Your Story",
-      "subtitle": "Beautifully Told"
+      "title": "Ugandan Stories",
+      "subtitle": "The Ugandan Artistic Touch"
     },
     {
       "id": 3,
       "image": "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=1920&q=90",
-      "title": "Every Frame",
+      "title": "Frame by frame",
       "subtitle": "A Masterpiece"
     },
     {
       "id": 4,
       "image": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1920&q=90",
-      "title": "Love",
+      "title": "Art",
       "subtitle": "Captured Forever"
     }
   ],
   "collaborators": [
     {
       "id": 1,
-      "name": "Jane Doe",
-      "role": "Lead Photographer",
-      "bio": "With over 10 years of experience, Jane specializes in wedding and portrait photography.",
+      "name": "Raymond Malinga",
+      "role": "President",
+      "bio": "Founder, Creatures Animation.",
       "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=90",
       "social": {
         "instagram": "https://instagram.com/janedoe",
@@ -155,9 +148,9 @@
     },
     {
       "id": 2,
-      "name": "John Smith",
-      "role": "Video Specialist",
-      "bio": "John brings stories to life through cinematic videography and editing.",
+      "name": "Vijay Jay ",
+      "role": "Vice President",
+      "bio": "Katoto Studios.",
       "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&q=90",
       "social": {
         "instagram": "https://instagram.com/johnsmith",
