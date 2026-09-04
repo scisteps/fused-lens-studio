@@ -27,7 +27,7 @@ export function Membership() {
     {
       icon: '🤝',
       title: 'Vice President',
-      description: 'Vijay jay.'
+      description: 'Vijay Joseph jay.'
     },
     {
       icon: '📚',
@@ -42,7 +42,7 @@ export function Membership() {
     {
       icon: '🏆' ,
       title: 'Treasurer',
-      description: 'Juliet Nsiima.'
+      description: 'Juliet K Nsiima.'
     },
     {
       icon: '📢',
