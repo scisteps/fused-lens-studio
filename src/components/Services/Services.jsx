@@ -148,7 +148,7 @@ export function Services() {
                       </li>
                     ))}
                   </ul>
-                  <motion.button
+                  {/* <motion.button
                     className="service-card__cta"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -158,7 +158,7 @@ export function Services() {
                     }}
                   >
                     Book Now
-                  </motion.button>
+                  </motion.button> */}
                 </div>
               </div>
             </div>
@@ -166,7 +166,7 @@ export function Services() {
         </div>
 
         {/* Testimonials */}
-        <motion.div
+        {/* <motion.div
           className="testimonials"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -228,7 +228,7 @@ export function Services() {
               </p>
             </div>
           )}
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   )

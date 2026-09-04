@@ -1,0 +1,218 @@
+/* Members Page */
+.members {
+  min-height: 100vh;
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+
+/* Hero Section */
+.members__hero {
+  padding: 10rem 0 4rem;
+  background: linear-gradient(135deg, var(--bg-dark), rgba(201, 169, 98, 0.05));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.members__hero-content {
+  text-align: center;
+}
+
+.members__hero-content h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #fff 30%, var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.members__hero-content p {
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto 0.5rem;
+}
+
+.members__count {
+  color: var(--gold);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Members List */
+.members__list {
+  padding: 4rem 0;
+}
+
+/* Search */
+.members__search {
+  margin-bottom: 3rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.members__search input {
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.members__search input:focus {
+  border-color: var(--gold);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 20px rgba(201, 169, 98, 0.05);
+}
+
+.members__search input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Grid */
+.members__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+/* Card */
+.members__card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  text-align: center;
+}
+
+.members__card:hover {
+  transform: translateY(-8px);
+  border-color: var(--gold);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.members__card-image {
+  padding: 2rem 2rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.members__card-image img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(201, 169, 98, 0.2);
+  transition: border-color 0.3s ease;
+}
+
+.members__card:hover .members__card-image img {
+  border-color: var(--gold);
+}
+
+.members__card-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), #a8873e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--bg-dark);
+  border: 3px solid rgba(201, 169, 98, 0.2);
+}
+
+.members__card-content {
+  padding: 1.5rem 2rem 2rem;
+}
+
+.members__card-name {
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.members__card-role {
+  color: var(--gold);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+}
+
+.members__card-expertise {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.members__card-expertise strong {
+  color: #fff;
+}
+
+.members__card-bio {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.members__card-joined {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+/* Empty State */
+.members__empty {
+  text-align: center;
+  padding: 4rem;
+  color: var(--text-muted);
+}
+
+/* Loading */
+.members__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .members__hero {
+    padding: 8rem 0 3rem;
+  }
+
+  .members__hero-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .members__hero-content p {
+    font-size: 1rem;
+  }
+
+  .members__grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .members__card-image img,
+  .members__card-avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .members__card-content {
+    padding: 1.25rem;
+  }
+}

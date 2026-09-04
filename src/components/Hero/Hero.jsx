@@ -71,10 +71,10 @@ export function Hero() {
     loadImages()
   }, [])
 
-  const scrollToPortfolio = () => {
-    const portfolio = document.getElementById('portfolio')
-    if (portfolio) {
-      portfolio.scrollIntoView({ behavior: 'smooth' })
+  const scrollToAbout = () => {
+    const about = document.getElementById('about')
+    if (about) {
+      about.scrollIntoView({ behavior: 'smooth' })
     }
   }
 
@@ -173,11 +173,11 @@ export function Hero() {
           >
             <motion.button
               className="hero__btn hero__btn--primary"
-              onClick={scrollToPortfolio}
+              onClick={scrollToAbout}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <span>View Portfolio</span>
+              <span>About</span>
             </motion.button>
             <motion.a
               href="#contact"
@@ -219,7 +219,7 @@ export function Hero() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 2, duration: 0.8 }}
-          onClick={scrollToPortfolio}
+          onClick={scrollToAbout}
         >
           <span className="hero__scroll-text">Scroll</span>
           <motion.div

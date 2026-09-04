@@ -21,28 +21,28 @@ export const services = [
     title: 'Promoting professional development',
     description: 'Building and promoting a sound, sustainable animation industry in Uganda.',
     icon: 'Events',
-    features: ['Full Day Coverage', 'Engagement Session', 'Premium Album', 'Highlight Film']
+    features: [' peer-to-peer sharing', 'Engagement Session', 'seminars', 'Highlight Films']
   },
   {
     id: 2,
-    title: ' peer-to-peer sharing and seminars',
+    title: ' Supporting animation education ',
     description: 'Supporting animation education .',
     icon: 'portrait',
-    features: ['Professional Studio', 'Multiple Looks', 'Retouching Included', 'Digital Gallery']
+    features: [' aligning private training methodologies', 'Reviewing the basics', ]
   },
   {
     id: 3,
-    title: 'Providing showcase platforms through festivals, screenings, and competitions.',
+    title: 'Providing showcase platforms.',
     description: 'Recognizing industry excellence and outstanding achievements.',
     icon: 'parties',
-    features: ['Product Photography', 'Brand Campaigns', 'Lifestyle Shoots', 'Social Content']
+    features: ['festivals', 'screenings', 'competitions']
   },
   {
     id: 4,
-    title: 'Conducting public awareness campaign',
+    title: 'Establishing collective representation',
     description: ' legitimize animation as a viable career path .',
     icon: 'event',
-    features: ['Corporate Events', 'Private Parties', 'Same-Day Edits', 'Photo Booth']
+    features: ['Corporate Events', 'advocacy', ' lawful collective bargaining ', ' legal support for members']
   }
 ]
 

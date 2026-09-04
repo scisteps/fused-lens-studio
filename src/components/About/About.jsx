@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { aboutImage } from '../../data/images'
-import { studioInfo, timeline, stats } from '../../data/content'
+import { studioInfo, stats } from '../../data/content'
 import { AnimatedCounter } from '../Effects'
 import './About.css'
 
@@ -13,7 +13,6 @@ export function About() {
   const [about, setAbout] = useState(null)
   const sectionRef = useRef(null)
   const imageRef = useRef(null)
-  const milestoneRefs = useRef([])
 
   useEffect(() => {
     // Fetch about content
@@ -37,32 +36,6 @@ export function About() {
         end: 'bottom top',
         scrub: 1
       }
-    })
-
-    return () => {
-      ScrollTrigger.getAll().forEach(st => st.kill())
-    }
-  }, [])
-
-  // Timeline animations
-  useEffect(() => {
-    const milestones = milestoneRefs.current.filter(Boolean)
-    
-    milestones.forEach((milestone, index) => {
-      gsap.fromTo(milestone,
-        { opacity: 0, x: index % 2 === 0 ? -50 : 50 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: milestone,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse'
-          }
-        }
-      )
     })
 
     return () => {
@@ -138,7 +111,7 @@ export function About() {
             </motion.span>
             
             <motion.h2 className="about__title" variants={itemVariants}>
-              {about?.title || 'Crafting Visual Masterpieces'}
+              {about?.title || 'We are the Animation Guild Uganda'}
             </motion.h2>
             
             <motion.p className="about__lead" variants={itemVariants}>
@@ -161,46 +134,6 @@ export function About() {
               ))}
             </motion.div>
           </motion.div>
-        </div>
-
-        {/* Timeline */}
-        <div className="about__timeline">
-          <motion.h3
-            className="about__timeline-title"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            Our Roadmap
-          </motion.h3>
-          
-          <div className="timeline">
-            <div className="timeline__line" />
-            
-            {timeline.map((milestone, index) => (
-              <div
-                key={milestone.year}
-                ref={(el) => (milestoneRefs.current[index] = el)}
-                className={`timeline__item ${index % 2 === 0 ? 'timeline__item--left' : 'timeline__item--right'}`}
-              >
-                <div className="timeline__content">
-                  <span className="timeline__year">{milestone.year}</span>
-                  <h4 className="timeline__heading">{milestone.title}</h4>
-                  <p className="timeline__description">{milestone.description}</p>
-                </div>
-                <div className="timeline__dot">
-                  <motion.div
-                    className="timeline__dot-inner"
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3, type: 'spring', stiffness: 300 }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>

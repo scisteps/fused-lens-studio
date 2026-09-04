@@ -1,0 +1,171 @@
+/* Membership Section */
+.membership {
+  padding: 6rem 0;
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+
+.membership .section-heading {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.membership .section-label {
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.membership .section-title {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin: 0.5rem 0 1rem;
+  background: linear-gradient(135deg, #fff 30%, var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.membership .section-subtitle {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Members CTA Button */
+.membership__cta {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.membership__cta .btn {
+  display: inline-block;
+  padding: 0.9rem 2.5rem;
+  background: var(--gold);
+  color: var(--bg-dark);
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 2px solid var(--gold);
+}
+
+.membership__cta .btn:hover {
+  background: transparent;
+  color: var(--gold);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(201, 169, 98, 0.2);
+}
+
+/* Benefits Grid */
+.membership__benefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.membership__benefit {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.4s ease;
+  backdrop-filter: blur(10px);
+}
+
+.membership__benefit:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--gold);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.membership__benefit-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.membership__benefit-title {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.membership__benefit-description {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Join CTA */
+.membership__join {
+  text-align: center;
+  padding: 3rem;
+  background: linear-gradient(135deg, rgba(201, 169, 98, 0.1), rgba(201, 169, 98, 0.05));
+  border-radius: 20px;
+  border: 1px solid rgba(201, 169, 98, 0.2);
+}
+
+.membership__join h3 {
+  font-size: 2rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.membership__join p {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.membership__join .btn {
+  display: inline-block;
+  padding: 0.9rem 2.5rem;
+  background: transparent;
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.membership__join .btn:hover {
+  background: var(--gold);
+  color: var(--bg-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(201, 169, 98, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .membership {
+    padding: 4rem 0;
+  }
+
+  .membership .section-title {
+    font-size: 2rem;
+  }
+
+  .membership__benefits {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .membership__benefit {
+    padding: 1.5rem;
+  }
+
+  .membership__join {
+    padding: 2rem;
+  }
+
+  .membership__join h3 {
+    font-size: 1.5rem;
+  }
+}
