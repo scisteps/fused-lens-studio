@@ -22,14 +22,14 @@ export const heroSlides = [
   {
     id: 1,
     image: uff,
-    title: 'Timeless',
-    subtitle: 'Memories'
+    title: 'Unity in',
+    subtitle: 'Animation'
   },
   {
     id: 2,
     image: agu4,
-    title: 'Your Story',
-    subtitle: 'Beautifully Told'
+    title: 'The Uganda animators',
+    subtitle: 'Coming together'
   },
   {
     id: 3,
@@ -40,7 +40,7 @@ export const heroSlides = [
   {
     id: 4,
     image: agu4,
-    title: 'Love',
+    title: 'Motion',
     subtitle: 'Captured Forever'
   }
 ]
