@@ -30,7 +30,7 @@ export function Membership() {
       description: 'Vijay jay.'
     },
     {
-      icon: '📢',
+      icon: '📚',
       title: 'Secretary',
       description: 'Mushe Alex.'
     },
@@ -40,12 +40,12 @@ export function Membership() {
       description: 'Sam Nungi.'
     },
     {
-      icon: '📚',
+      icon: '🏆' ,
       title: 'Treasurer',
       description: 'Juliet Nsiima.'
     },
     {
-      icon: '🏆',
+      icon: '📢',
       title: 'Vice Treasurer',
       description: 'Kizito Mbuga'
     }

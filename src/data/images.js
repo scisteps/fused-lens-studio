@@ -13,6 +13,7 @@ import retro from '../Images/retro.jpg';
 import native2 from '../Images/native2.jpg';
 import native3 from '../Images/native3.jpg';
 import native4 from '../Images/native4.jpg';
+import logotxt from '../Images/logot.png';
 
 import jagwe from '../Images/jagwe.jpg';
 import jagwe2 from '../Images/jagwe2.jpg';

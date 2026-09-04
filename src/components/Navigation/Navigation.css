@@ -254,3 +254,28 @@
   margin-bottom: var(--space-sm);
 }
 
+.nav__logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  height: 100%;
+}
+
+.nav__logo-image {
+  height: 50px; /* Adjust based on your header height */
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Optional: Remove the text if you're only using the image */
+.nav__logo-text {
+  display: none; /* Hide the text since we're using the image */
+}
+
+/* For responsive */
+@media (max-width: 768px) {
+  .nav__logo-image {
+    height: 40px;
+  }
+}

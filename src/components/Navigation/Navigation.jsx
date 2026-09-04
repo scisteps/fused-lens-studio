@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useScrollProgress } from '../../hooks'
 import { studioInfo } from '../../data/content'
+import logoImage from '../../Images/logot.png';
+
+
 import { Link, useLocation } from 'react-router-dom'
 import './Navigation.css'
 
@@ -92,11 +95,10 @@ export function Navigation() {
         <div className="nav__container">
           <Link to="/" className="nav__logo clickable">
             <img 
-              src="/camlogo.png" 
+              src={logoImage} // Use the imported logo image
               alt={studioInfo.name}
               className="nav__logo-image"
             />
-            <span className="nav__logo-text">{studioInfo.name}</span>
           </Link>
 
           <nav className="nav__links">
