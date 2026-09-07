@@ -270,7 +270,7 @@
 
 /* Optional: Remove the text if you're only using the image */
 .nav__logo-text {
-  display: none; /* Hide the text since we're using the image */
+  display: nfne; /* Hide the text since we're using the image */
 }
 
 /* For responsive */

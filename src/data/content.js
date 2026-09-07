@@ -9,9 +9,9 @@ export const studioInfo = {
   phone: '+256 702624936',
   whatsapp: '+256702624936',
   social: {
-    instagram: 'https://instagram.com/animationguildug',
-    twitter: 'https://twitter.com/animationguildug',
-    linkedin: 'https://linkedin.com/company/animationguildug'
+    instagram: 'https://www.instagram.com/animationguilduganda',
+    facebook: 'https://www.facebook.com/share/1FQfwwTgLd/',
+    linkedin: 'https://www.linkedin.com/company/animation-guild-uganda/'
   }
 }
 
