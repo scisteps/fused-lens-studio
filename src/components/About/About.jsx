@@ -66,7 +66,9 @@ export function About() {
   return (
     <section id="about" className="about section" ref={sectionRef}>
       <div className="container">
+          <h1>About Us</h1>
         <div className="about__layout">
+          
           {/* Image Side */}
           <div className="about__image-container">
             <motion.div
@@ -83,7 +85,7 @@ export function About() {
                   className="about__image"
                 />
               </div>
-              
+            
               {/* Floating badge */}
               <motion.div
                 className="about__badge"
