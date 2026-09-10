@@ -14,6 +14,7 @@ import native2 from '../Images/native2.jpg';
 import native3 from '../Images/native3.jpg';
 import native4 from '../Images/native4.jpg';
 import logotxt from '../Images/logot.png';
+import sam from '../Images/sam nungi.png';
 
 import jagwe from '../Images/jagwe.jpg';
 import jagwe2 from '../Images/jagwe2.jpg';
@@ -145,6 +146,14 @@ export const portfolioImages = [
     title: 'Birthday Bash',
     category: 'event',
     aspect: 'landscape'
+  },
+    {
+    id: 13,
+    src: sam,
+    srcLarge: sam,
+    title: 'Vice Secretary',
+    category: 'event',
+    aspect: 'landscape'
   }
 ]
 
@@ -175,6 +184,8 @@ export const imageOptions = [
   { id: 'native3', label: 'Animation artwork close-up', src: native3 },
   { id: 'native4', label: 'Animation artwork scene', src: native4 },
   { id: 'jagwe', label: 'Jagwe', src: jagwe },
+    { id: 'sam', label: 'sam', src: sam },
+
   { id: 'jagwe2', label: 'Jagwe group', src: jagwe2 }
 ]
 
