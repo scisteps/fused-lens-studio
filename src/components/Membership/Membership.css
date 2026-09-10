@@ -1,8 +1,42 @@
 /* Membership Section */
 .membership {
+  position: relative;
+  overflow: hidden;
   padding: 6rem 0;
   background: var(--bg-dark);
   color: var(--text-light);
+}
+
+.membership__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.membership__bg-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(18px) brightness(0.55);
+  transform: scale(1.15);
+  opacity: 0;
+  transition: opacity 1.6s ease;
+}
+
+.membership__bg-slide.is-active {
+  opacity: 1;
+}
+
+.membership__bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(12, 12, 14, 0.78), rgba(12, 12, 14, 0.94));
+}
+
+.membership .container {
+  position: relative;
+  z-index: 1;
 }
 
 .membership .section-heading {
@@ -34,7 +68,21 @@
   margin: 0 auto;
 }
 
-/* Members CTA Button */
+.membership__registered-badge {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.35rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid rgba(201, 169, 98, 0.4);
+  border-radius: 50px;
+  background: rgba(201, 169, 98, 0.08);
+}
+
+/* CTA button */
 .membership__cta {
   text-align: center;
   margin-bottom: 4rem;
@@ -59,12 +107,124 @@
   box-shadow: 0 10px 30px rgba(201, 169, 98, 0.2);
 }
 
-/* Benefits Grid */
+/* Membership Categories — no icons, click to expand */
+.membership__categories {
+  margin-bottom: 4rem;
+}
+
+.membership__categories-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2rem;
+}
+
+.membership__categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.membership__category {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 1.5rem;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.membership__category:hover,
+.membership__category:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--gold);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.28);
+  outline: none;
+}
+
+.membership__category.is-open {
+  border-color: var(--gold);
+  background: rgba(201, 169, 98, 0.08);
+}
+
+.membership__category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.membership__category-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.membership__category-toggle {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--gold);
+  font-size: 1rem;
+  line-height: 1;
+  transition: all 0.3s ease;
+}
+
+.membership__category.is-open .membership__category-toggle {
+  background: var(--gold);
+  color: var(--bg-dark);
+  border-color: var(--gold);
+}
+
+.membership__category-details {
+  overflow: hidden;
+}
+
+.membership__category-fee {
+  margin-top: 0.9rem;
+  color: var(--gold);
+  font-size: 0.95rem;
+}
+
+.membership__category-description {
+  margin-top: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.membership__category-description strong,
+.membership__category-fee strong {
+  color: #f2f0ec;
+}
+
+/* Benefits list (checkmarks retained here) */
 .membership__benefits {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin-bottom: 4rem;
+}
+
+.membership__benefits-title {
+  grid-column: 1 / -1;
+  font-family: 'Georgia', serif;
+  font-size: 20px;
+  margin: 8px 0 4px;
+  color: #f2f0ec;
 }
 
 .membership__benefit {
@@ -102,6 +262,10 @@
   line-height: 1.6;
 }
 
+.membership__benefit-description strong {
+  color: #f2f0ec;
+}
+
 /* Join CTA */
 .membership__join {
   text-align: center;
@@ -120,6 +284,10 @@
 .membership__join p {
   color: var(--text-muted);
   margin-bottom: 1.5rem;
+}
+
+.membership__join p strong {
+  color: #fff;
 }
 
 .membership__join .btn {
@@ -152,6 +320,7 @@
     font-size: 2rem;
   }
 
+  .membership__categories-grid,
   .membership__benefits {
     grid-template-columns: 1fr;
     gap: 1.5rem;

@@ -50,26 +50,26 @@ export function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null)
   const [focusedField, setFocusedField] = useState(null)
-  
+
   const sectionRef = useRef(null)
 
   const validateForm = () => {
     const newErrors = {}
-    
+
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required'
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required'
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email'
     }
-    
+
     if (!formData.message.trim()) {
       newErrors.message = 'Message is required'
     }
-    
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -77,7 +77,7 @@ export function Contact() {
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
-    
+
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: null }))
     }
@@ -85,13 +85,13 @@ export function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (!validateForm()) return
-    
+
     setIsSubmitting(true)
     setSubmitStatus(null)
     setErrors({})
-    
+
     try {
       const response = await fetch('http://localhost:3002/api/contact', {
         method: 'POST',
@@ -100,9 +100,9 @@ export function Contact() {
         },
         body: JSON.stringify(formData),
       })
-      
+
       const data = await response.json()
-      
+
       if (response.ok) {
         setSubmitStatus('success')
         setFormData({ name: '', email: '', phone: '', service: '', message: '' })
@@ -174,7 +174,7 @@ export function Contact() {
                   <span className="contact__detail-value">{studioInfo.email}</span>
                 </div>
               </a>
-              
+
               <a href={`tel:${studioInfo.phone.replace(/\s/g, '')}`} className="contact__detail clickable">
                 <span className="contact__detail-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -186,6 +186,26 @@ export function Contact() {
                   <span className="contact__detail-value">{studioInfo.phone}</span>
                 </div>
               </a>
+
+              {studioInfo.address && (
+                <a
+                  href={`https://maps.google.com/?q=${encodeURIComponent(studioInfo.address)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact__detail clickable"
+                >
+                  <span className="contact__detail-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M12 22s8-7.5 8-13a8 8 0 10-16 0c0 5.5 8 13 8 13z" />
+                      <circle cx="12" cy="9" r="2.5" />
+                    </svg>
+                  </span>
+                  <div>
+                    <span className="contact__detail-label">Address</span>
+                    <span className="contact__detail-value">{studioInfo.address}</span>
+                  </div>
+                </a>
+              )}
             </motion.div>
 
             {/* Quick Action Buttons */}
@@ -201,7 +221,7 @@ export function Contact() {
                 <SocialIcon platform="whatsapp" />
                 <span>Chat on WhatsApp</span>
               </motion.a>
-              
+
               <motion.a
                 href={`tel:${studioInfo.phone.replace(/\s/g, '')}`}
                 className="contact__quick-btn contact__quick-btn--call clickable"

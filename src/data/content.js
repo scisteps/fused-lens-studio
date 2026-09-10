@@ -18,30 +18,30 @@ export const studioInfo = {
 export const services = [
   {
     id: 1,
-    title: 'Promoting professional development',
+    title: 'this tat',
     description: 'Building and promoting a sound, sustainable animation industry in Uganda.',
-    icon: 'Events',
+    // icon: 'Events',
     features: [' peer-to-peer sharing', 'Engagement Session', 'seminars', 'Highlight Films']
   },
   {
     id: 2,
     title: ' Supporting animation education ',
     description: 'Supporting animation education .',
-    icon: 'portrait',
+    // icon: 'portrait',
     features: [' aligning private training methodologies', 'Reviewing the basics', ]
   },
   {
     id: 3,
     title: 'Providing showcase platforms.',
     description: 'Recognizing industry excellence and outstanding achievements.',
-    icon: 'parties',
+    // icon: 'parties',
     features: ['festivals', 'screenings', 'competitions']
   },
   {
     id: 4,
     title: 'Establishing collective representation',
     description: ' legitimize animation as a viable career path .',
-    icon: 'event',
+    // icon: 'event',
     features: ['Corporate Events', 'advocacy', ' lawful collective bargaining ', ' legal support for members']
   }
 ]
@@ -78,32 +78,36 @@ export const stats = [
 
 export const timeline = [
   {
-    year: 13-8-2026,
+    id: 'milestone-1',
+    date: '2026-08-13',
     title: 'Milestone 1',
-    description: ' Unveiling the draft constitution and conducting interim leadership nominations. '
+    description: 'Unveiling the draft constitution and conducting interim leadership nominations.'
   },
   {
-    year: 21-8-2026,
+    id: 'milestone-2',
+    date: '2026-08-21',
     title: 'Milestone 2',
     description: 'Collaborated with leading brands in Kenya.'
   },
   {
-    year: 5-9-2026,
+    id: 'milestone-3',
+    date: '2026-09-05',
     title: 'Milestone 3',
-    description: ' Brand review and logo design competition spearheaded by Mushe Alex. '
+    description: 'Brand review and logo design competition spearheaded by Mushe Alex.'
   },
   {
-    year: 5-9-2026,
+    id: 'milestone-4',
+    date: '2026-09-05',
     title: 'Milestone 4',
-    description: ': Official representation at the Uganda Film Festival (UFF), featuring guild participation on stage to present industry awards and cement national visibility. '
+    description: 'Official representation at the Uganda Film Festival (UFF), featuring guild participation on stage to present industry awards and cement national visibility.'
   },
   {
-    year: 15-9-2026,
+    id: 'milestone-5',
+    date: '2026-09-15',
     title: 'Milestone 5',
-    description: ' The official Grand Launch event, envisioned as a major public gathering involving sponsors, international guests, academic institutions, and the wider East African creative community. '
+    description: 'The official Grand Launch event, envisioned as a major public gathering involving sponsors, international guests, academic institutions, and the wider East African creative community.'
   }
 ]
-
 export const navLinks = [
   { id: 'home', label: 'Home' },
   { id: 'portfolio', label: 'Portfolio' },

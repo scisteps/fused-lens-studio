@@ -141,6 +141,7 @@
 .contact__detail-value {
   font-size: 1rem;
   color: var(--color-charcoal);
+  word-break: break-word;
 }
 
 /* Quick Action Buttons */

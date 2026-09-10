@@ -3,7 +3,7 @@
 // Powers NewsEventsDashboard and LeadershipDashboard. Same idea as
 // useDocumentDraft but for a list of entries, each with its own id.
 // Publish does a full diff/sync (adds, edits, and deletes) against Firestore.
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { loadDraft, saveDraft, draftSavedAt } from '../lib/localDraft'
 import { publishCollection, restoreCollection } from '../lib/publishService'
@@ -15,25 +15,12 @@ export function useCollectionDraft(collectionPath, storageKey, defaultItems) {
   const [lastLocalSave, setLastLocalSave] = useState(draftSavedAt(storageKey))
   const debounceRef = useRef(null)
 
-useEffect(() => {
-  const auth = getAuth()
-
-  const unsubscribe = onAuthStateChanged(auth, user => {
-    if (!user) return
-
+  useEffect(() => {
     restoreCollection(collectionPath)
-      .then(remote => {
-        if (remote && remote.length) {
-          setPublishedSnapshot(remote)
-        }
-      })
-      .catch(e => {
-        console.error('Could not load published snapshot', e)
-      })
-  })
+      .then(remote => { if (remote && remote.length) setPublishedSnapshot(remote) })
+      .catch(e => console.error('Could not load published snapshot', e))
+  }, [collectionPath])
 
-  return unsubscribe
-}, [collectionPath])
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {

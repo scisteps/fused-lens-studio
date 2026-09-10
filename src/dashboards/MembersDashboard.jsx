@@ -1,14 +1,21 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { imageOptions, resolveImage } from '../data/images'
 import { useCollectionDraft } from '../lib/useCollectionDraft'
 import { DashboardHeader, Field, PublishBar, TextArea, TextInput, inputStyle } from '../lib/ui'
 
+// Bump this whenever DEFAULT_MEMBERS changes.
+const MEMBERS_VERSION = 2
+
 const DEFAULT_MEMBERS = [
-  { id: 'john-k', name: 'John K.', role: 'Lead Animator', expertise: '2D Animation, Character Design', joined: '2024-01-15', imageId: 'denis1', bio: 'Passionate about bringing stories to life through animation.' },
-  { id: 'sarah-n', name: 'Sarah N.', role: 'Motion Designer', expertise: '3D Animation, Motion Graphics', joined: '2024-02-20', imageId: 'agu3', bio: 'Creating visual experiences that captivate audiences.' },
-  { id: 'michael-o', name: 'Michael O.', role: 'Storyboard Artist', expertise: 'Storyboarding, Visual Development', joined: '2024-03-10', imageId: 'jagwe', bio: 'Building worlds one frame at a time.' }
+  { id: 'chairperson',           name: 'Raymond Malinga',     role: 'Chairperson',         expertise: 'Leadership, Strategy',   joined: '2026-08-13', imageId: 'denis1', bio: 'Presides over meetings and provides strategic direction (Article 7.1).',           __v: MEMBERS_VERSION },
+  { id: 'vice-chairperson',      name: 'Vijay Joseph',        role: 'Vice-Chairperson',    expertise: 'Leadership, Operations', joined: '2026-08-13', imageId: 'agu3',   bio: 'Assists the Chairperson and acts in their absence (Article 7.2).',                       __v: MEMBERS_VERSION },
+  { id: 'secretary',             name: 'Secretary',           role: 'Secretary',           expertise: 'Records, Correspondence', joined: '2026-08-13', imageId: 'jagwe',  bio: 'Manages minutes, membership register and official documents (Article 7.3).',             __v: MEMBERS_VERSION },
+  { id: 'assistant-secretary',   name: 'Assistant Secretary', role: 'Assistant Secretary', expertise: 'Records, Administration', joined: '2026-08-13', imageId: 'denis1', bio: 'Assists the Secretary and acts in their absence (Article 7.4).',                          __v: MEMBERS_VERSION },
+  { id: 'treasurer',             name: 'Treasurer',           role: 'Treasurer',           expertise: 'Finance, Accounting',     joined: '2026-08-13', imageId: 'agu3',   bio: 'Accounts for Guild funds and presents financial statements (Article 7.5).',               __v: MEMBERS_VERSION },
+  { id: 'assistant-treasurer',   name: 'Assistant Treasurer', role: 'Assistant Treasurer', expertise: 'Finance, Bookkeeping',    joined: '2026-08-13', imageId: 'jagwe',  bio: 'Assists the Treasurer and acts in their absence (Article 7.6).',                          __v: MEMBERS_VERSION }
 ]
-const emptyMember = { name: '', role: '', expertise: '', joined: '', imageId: 'denis1', bio: '' }
+
+const emptyMember = { name: '', role: '', expertise: '', joined: '', imageId: 'denis1', bio: '', __v: MEMBERS_VERSION }
 
 export default function MembersDashboard() {
   const { items, setItems, isDirty, status, lastLocalSave, publish, restoreLastPublished } = useCollectionDraft('members', 'members', DEFAULT_MEMBERS)
@@ -21,10 +28,10 @@ export default function MembersDashboard() {
   const cancel = () => { setEditingId(null); setDraft(emptyMember) }
   const save = () => {
     if (!draft.name.trim()) return
-    if (editingId) setItems(current => current.map(member => member.id === editingId ? { ...member, ...draft } : member))
+    if (editingId) setItems(current => current.map(member => member.id === editingId ? { ...member, ...draft, __v: MEMBERS_VERSION } : member))
     else {
       const id = draft.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `member-${Date.now()}`
-      setItems(current => [{ id, ...draft }, ...current])
+      setItems(current => [{ id, ...draft, __v: MEMBERS_VERSION }, ...current])
     }
     cancel()
   }
@@ -33,6 +40,16 @@ export default function MembersDashboard() {
     setItems(current => current.filter(member => member.id !== id))
     if (editingId === id) cancel()
   }
+
+  // Re-seed from DEFAULT_MEMBERS when stored version is behind.
+  useEffect(() => {
+    setItems(current => {
+      const storedVersion = current?.[0]?.__v ?? 1
+      if (storedVersion === MEMBERS_VERSION) return current
+      return DEFAULT_MEMBERS
+    })
+  }, [setItems])
+
   const filtered = items.filter(member => `${member.name} ${member.role} ${member.expertise}`.toLowerCase().includes(search.toLowerCase()))
 
   return <div style={pageStyle}>

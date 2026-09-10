@@ -1,11 +1,4 @@
-// src/dashboards/NewsEventsDashboard.jsx
-//
-// Feeds the `newsEvents` collection. Each entry has an `images` array
-// (always an array, even for a single photo) — NewsEvents.jsx renders a
-// single <img> when there's one, and the existing Lightbox/carousel
-// treatment when there's more than one, same pattern as Hero's heroSlides.
-
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useCollectionDraft } from '../lib/useCollectionDraft'
 import { uploadImage } from '../lib/imageUpload'
 import { imageOptions, resolveImage } from '../data/images'
@@ -15,6 +8,9 @@ const FONT_LINK = 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9
 const COLLECTION_PATH = 'newsEvents'
 const STORAGE_KEY = 'news-events'
 
+// Bump this whenever DEFAULT_ITEMS changes.
+const COLLECTION_VERSION = 2
+
 const CATEGORIES = [
   { id: 'event', label: 'Event' },
   { id: 'workshop', label: 'Workshop' },
@@ -23,24 +19,10 @@ const CATEGORIES = [
 ]
 
 const DEFAULT_ITEMS = [
-  {
-    id: 'inaugural-meeting',
-    title: 'Animation Guild Uganda Inaugural Meeting',
-    date: '2026-01-15',
-    category: 'event',
-    description: 'The first official meeting of the Animation Guild Uganda was held in Kampala.',
-    images: [{ imageId: 'uff', alt: 'Inaugural meeting' }],
-    location: 'Kampala, Uganda'
-  },
-  {
-    id: 'mobile-animation-workshop-2026',
-    title: 'Mobile Animation Workshop 2026',
-    date: '2026-02-10',
-    category: 'workshop',
-    description: 'Learn how to create animations using mobile devices.',
-    images: [{ imageId: 'agu4', alt: 'Mobile animation workshop' }],
-    location: 'Online'
-  }
+  { id: 'inaugural-meeting', title: 'Animation Guild Uganda Inaugural Meeting', date: '2026-08-13', category: 'event', description: 'Unveiling of the draft constitution and interim leadership nominations.', images: [{ imageId: 'uff', alt: 'Inaugural meeting' }], location: 'Kampala, Uganda' },
+  { id: 'mobile-animation-workshop-2026', title: 'Mobile Animation Workshop 2026', date: '2026-02-10', category: 'workshop', description: 'Learn how to create animations using mobile devices.', images: [{ imageId: 'agu4', alt: 'Mobile animation workshop' }], location: 'Online' },
+  { id: 'uff-2026', title: 'Uganda Film Festival 2026', date: '2026-09-05', category: 'event', description: 'Guild representation on stage to present industry awards and cement national visibility.', images: [{ imageId: 'uff', alt: 'Uganda Film Festival' }], location: 'Kampala, Uganda' },
+  { id: 'grand-launch', title: 'Animation Guild Uganda Grand Launch', date: '2026-09-15', category: 'event', description: 'Official launch with sponsors, international guests, academic institutions and the wider East African creative community.', images: [{ imageId: 'agu4', alt: 'Grand launch' }], location: 'Kampala, Uganda' }
 ]
 
 const emptyDraft = { title: '', date: '', category: 'event', description: '', location: '', images: [] }
@@ -56,6 +38,17 @@ export default function NewsEventsDashboard() {
   const [libraryImageId, setLibraryImageId] = useState(imageOptions[0].id)
   const formRef = useRef(null)
 
+  // Re-seed from DEFAULT_ITEMS when the stored collection predates the current
+  // version. Stored items get a sentinel `__v` on their way in, so this effect
+  // only fires once per version bump.
+  useEffect(() => {
+    setItems(current => {
+      const storedVersion = current?.[0]?.__v ?? 1
+      if (storedVersion === COLLECTION_VERSION) return current
+      return DEFAULT_ITEMS.map(item => ({ ...item, __v: COLLECTION_VERSION }))
+    })
+  }, [setItems])
+
   const startEdit = (item) => {
     setEditingId(item.id)
     setDraft({ title: item.title, date: item.date, category: item.category, description: item.description, location: item.location, images: item.images || [] })
@@ -66,10 +59,10 @@ export default function NewsEventsDashboard() {
   const saveDraft = () => {
     if (!draft.title.trim()) return
     if (editingId) {
-      setItems(prev => prev.map(it => it.id === editingId ? { ...it, ...draft } : it))
+      setItems(prev => prev.map(it => it.id === editingId ? { ...it, ...draft, __v: COLLECTION_VERSION } : it))
     } else {
       const id = draft.title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `entry-${Date.now()}`
-      setItems(prev => [{ id, ...draft }, ...prev])
+      setItems(prev => [{ id, ...draft, __v: COLLECTION_VERSION }, ...prev])
     }
     cancelEdit()
   }
@@ -167,16 +160,41 @@ export default function NewsEventsDashboard() {
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={saveDraft} style={{ flex: 1, background: '#c9a962', border: 'none', color: '#0c0c0e', fontWeight: 600, borderRadius: 8, padding: '10px 16px', fontSize: 13.5, cursor: 'pointer' }}>
-              {editingId ? 'Save changes' : 'Add entry'}
-            </button>
-            {editingId && (
-              <button onClick={cancelEdit} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.12)', color: '#9a978f', borderRadius: 8, padding: '10px 14px', fontSize: 13.5, cursor: 'pointer' }}>
-                Cancel
-              </button>
-            )}
-          </div>
+         <div style={{ display: 'flex', gap: 10 }}>
+  <button
+    onClick={saveDraft}
+    style={{
+      flex: 1,
+      background: '#c9a962',
+      border: 'none',
+      color: '#0c0c0e',
+      fontWeight: 600,
+      borderRadius: 8,
+      padding: '10px 16px',
+      fontSize: 13.5,
+      cursor: 'pointer'
+    }}
+  >
+    {editingId ? 'Save changes' : 'Add entry'}
+  </button>
+
+  {editingId && (
+    <button
+      onClick={cancelEdit}
+      style={{
+        background: 'transparent',
+        border: '1px solid rgba(255,255,255,0.12)',
+        color: '#9a978f',
+        borderRadius: 8,
+        padding: '10px 14px',
+        fontSize: 13.5,
+        cursor: 'pointer'
+      }}
+    >
+      Cancel
+    </button>
+  )}
+</div>
         </div>
 
         <div>
