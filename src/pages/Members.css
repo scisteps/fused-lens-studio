@@ -16,13 +16,15 @@
   text-align: center;
 }
 
-.members__hero-content h1 {
+.members__hero-content h1 {a
   font-size: 3.5rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
   background: linear-gradient(135deg, #fff 30%, var(--gold));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+      color: var(--bg-dark);
+
 }
 
 .members__hero-content p {
@@ -30,6 +32,8 @@
   font-size: 1.2rem;
   max-width: 600px;
   margin: 0 auto 0.5rem;
+    color: var(--bg-dark);
+
 }
 
 .members__count {
@@ -134,7 +138,7 @@
 }
 
 .members__card-name {
-  color: #fff;
+  color: #000000;
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 0.25rem;
