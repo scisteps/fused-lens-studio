@@ -10,8 +10,19 @@ export function Footer() {
     <footer className="footer">
       <div className="container footer__inner">
         <div className="footer__brand">
-          <strong className="footer__name">{studio.name || 'Animation Guild Uganda'}</strong>
-          {studio.tagline && <span className="footer__tagline">{studio.tagline}</span>}
+          <img
+            src="/camlogo.png"
+            alt="Animation Guild Uganda"
+            className="footer__logo"
+          />
+
+          <strong className="footer__name">
+            {studio.name || 'Animation Guild Uganda'}
+          </strong>
+
+          {studio.tagline && (
+            <span className="footer__tagline">{studio.tagline}</span>
+          )}
         </div>
 
         <nav className="footer__links" aria-label="Footer">
@@ -25,7 +36,12 @@ export function Footer() {
           <div className="footer__social">
             {Object.entries(studio.social).map(([platform, url]) =>
               url ? (
-                <a key={platform} href={url} target="_blank" rel="noopener noreferrer">
+                <a
+                  key={platform}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   {platform.charAt(0).toUpperCase() + platform.slice(1)}
                 </a>
               ) : null

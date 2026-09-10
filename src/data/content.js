@@ -1,6 +1,6 @@
 export const studioInfo = {
   name: 'Animation Guild Uganda',
-  tagline: 'Uganda in motion',
+  tagline: 'Mobilize- Mentor - Monetize',
   description: 'Building and promoting a sound, sustainable animation industry in Uganda.',
   founded: 2026,
   location: 'Kampala, Uganda',
@@ -18,7 +18,7 @@ export const studioInfo = {
 export const services = [
   {
     id: 1,
-    title: 'this tat',
+    title: 'Promoting professional development',
     description: 'Building and promoting a sound, sustainable animation industry in Uganda.',
     // icon: 'Events',
     features: [' peer-to-peer sharing', 'Engagement Session', 'seminars', 'Highlight Films']
