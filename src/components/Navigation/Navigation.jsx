@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useScrollProgress } from '../../hooks'
 import { studioInfo } from '../../data/content'
-import logoImage from '../../Images/logot.png';
+import logoImage from '../../Images/guildlogo1.png';
 
 
 import { Link, useLocation } from 'react-router-dom'
