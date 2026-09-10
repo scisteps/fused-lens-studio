@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-// import { Player } from '@lottiefiles/react-lottie-player';
+import { Player } from '@lottiefiles/react-lottie-player';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSiteContent } from '../../lib/useSiteContent';
@@ -17,13 +17,13 @@ const ServiceIcon = ({ id, animRef }) => {
 
   return (
     <div className="service-card__icon">
-      {/* <Player
+      <Player
         ref={(el) => (animRef.current[id] = el)}
         autoplay
         loop
         src={animationData}
         style={{ width: '100%', height: '100%' }}
-      /> */}
+      />
     </div>
   )
 }
