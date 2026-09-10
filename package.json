@@ -13,6 +13,7 @@
     "setup": "npm install && npm run server:install"
   },
   "dependencies": {
+    "firebase": "^12.19.0",
     "framer-motion": "^11.0.3",
     "gsap": "^3.12.4",
     "react": "^18.2.0",

@@ -21,24 +21,28 @@ import jagwe2 from '../Images/jagwe2.jpg';
 export const heroSlides = [
   {
     id: 1,
+    imageId: 'uff',
     image: uff,
     title: 'Unity in',
     subtitle: 'Animation'
   },
   {
     id: 2,
+    imageId: 'agu4',
     image: agu4,
     title: 'The Uganda animators',
     subtitle: 'Coming together'
   },
   {
     id: 3,
+    imageId: 'native',
     image: native,
     title: 'Every Frame',
     subtitle: 'A Masterpiece'
   },
   {
     id: 4,
+    imageId: 'agu4',
     image: agu4,
     title: 'Motion',
     subtitle: 'Captured Forever'
@@ -153,5 +157,29 @@ export const categories = [
 ]
 
 export const aboutImage = agu1
+
+// Stable IDs are stored in Firestore; the source URLs are resolved locally so
+// a production asset hash changing after a deployment cannot break content.
+export const imageOptions = [
+  { id: 'uff', label: 'Uganda Film Festival', src: uff },
+  { id: 'agu1', label: 'Guild gathering', src: agu1 },
+  { id: 'agu3', label: 'Animation Guild group', src: agu3 },
+  { id: 'agu4', label: 'Guild event', src: agu4 },
+  { id: 'native', label: 'Animation artwork', src: native },
+  { id: 'richard', label: 'Richard', src: richard },
+  { id: 'denis1', label: 'Denis portrait', src: denis1 },
+  { id: 'denis2', label: 'Denis at work', src: denis2 },
+  { id: 'denis3', label: 'Denis group', src: denis3 },
+  { id: 'retro', label: 'Retro artwork', src: retro },
+  { id: 'native2', label: 'Animation artwork detail', src: native2 },
+  { id: 'native3', label: 'Animation artwork close-up', src: native3 },
+  { id: 'native4', label: 'Animation artwork scene', src: native4 },
+  { id: 'jagwe', label: 'Jagwe', src: jagwe },
+  { id: 'jagwe2', label: 'Jagwe group', src: jagwe2 }
+]
+
+export function resolveImage(imageId) {
+  return imageOptions.find(image => image.id === imageId)?.src
+}
 
 export const heroVideo = null // Can be set to a video URL if needed

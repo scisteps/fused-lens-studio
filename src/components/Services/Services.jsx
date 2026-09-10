@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { services } from '../../data/content'
+import { useSiteContent } from '../../lib/useSiteContent'
 import './Services.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -44,19 +44,11 @@ const ServiceIcon = ({ type }) => {
 }
 
 export function Services() {
+  const { content } = useSiteContent()
+  const { services } = content
   const [flippedCard, setFlippedCard] = useState(null)
-  const [activeTestimonial, setActiveTestimonial] = useState(0)
-  const [testimonials, setTestimonials] = useState([])
   const sectionRef = useRef(null)
   const cardRefs = useRef([])
-
-  useEffect(() => {
-    // Fetch testimonials
-    fetch('/api/content/testimonials')
-      .then(res => res.json())
-      .then(data => setTestimonials(data))
-      .catch(err => console.error('Failed to load testimonials:', err))
-  }, [])
 
   // Staggered card animation
   useEffect(() => {
@@ -84,20 +76,11 @@ export function Services() {
     }
   }, [])
 
-  // Auto-rotate testimonials
-  useEffect(() => {
-    if (testimonials.length === 0) return
-    
-    const interval = setInterval(() => {
-      setActiveTestimonial((prev) => (prev + 1) % testimonials.length)
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [testimonials.length])
-
   const handleCardClick = (id) => {
     setFlippedCard(flippedCard === id ? null : id)
   }
+
+  if (content.visibility?.services === false) return null
 
   return (
     <section id="services" className="services section section--dark" ref={sectionRef}>

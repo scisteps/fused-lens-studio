@@ -1,15 +1,59 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Lightbox } from '../components/Lightbox'
-import { useCollection } from '../lib/useCollection'
-import { resolveImage } from '../data/images'
+import { useCollection } from '../../hooks/useCollection'
 import './NewsEvents.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const imageSource = image => resolveImage(image?.imageId) || image?.url
+// A small self-contained carousel for entries with more than one image.
+// Single-image entries just render a plain <img> — no controls needed.
+function CardImage({ item }) {
+  const [index, setIndex] = useState(0)
+  const images = item.images || []
+
+  if (images.length === 0) {
+    return (
+      <div className="news-events__card-placeholder">
+        <span>🎬</span>
+      </div>
+    )
+  }
+
+  if (images.length === 1) {
+    return <img src={images[0].url} alt={images[0].alt || item.title} />
+  }
+
+  const go = (e, dir) => {
+    e.stopPropagation()
+    setIndex(prev => (prev + dir + images.length) % images.length)
+  }
+
+  return (
+    <div className="news-events__carousel">
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={index}
+          src={images[index].url}
+          alt={images[index].alt || item.title}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.35 }}
+        />
+      </AnimatePresence>
+      <button className="news-events__carousel-nav news-events__carousel-nav--prev" onClick={(e) => go(e, -1)} aria-label="Previous photo">‹</button>
+      <button className="news-events__carousel-nav news-events__carousel-nav--next" onClick={(e) => go(e, 1)} aria-label="Next photo">›</button>
+      <div className="news-events__carousel-dots">
+        {images.map((_, i) => (
+          <span key={i} className={`news-events__carousel-dot ${i === index ? 'news-events__carousel-dot--active' : ''}`} />
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export function NewsEvents() {
   const { items: newsItems, loading } = useCollection('newsEvents')
@@ -26,30 +70,17 @@ export function NewsEvents() {
     { id: 'showcase', label: 'Showcases' }
   ]
 
-  const filteredItems = filter === 'all' 
-    ? newsItems 
+  const filteredItems = filter === 'all'
+    ? newsItems
     : newsItems.filter(item => item.category === filter)
 
-  // Scroll animations
   useEffect(() => {
     const items = itemRefs.current.filter(Boolean)
-    
     gsap.set(items, { opacity: 0, y: 60, scale: 0.95 })
-    
     const animation = gsap.to(items, {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      duration: 0.8,
-      stagger: 0.1,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: gridRef.current,
-        start: 'top 80%',
-        toggleActions: 'play none none reverse'
-      }
+      opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.1, ease: 'power3.out',
+      scrollTrigger: { trigger: gridRef.current, start: 'top 80%', toggleActions: 'play none none reverse' }
     })
-
     return () => {
       animation.kill()
       ScrollTrigger.getAll().forEach(st => st.kill())
@@ -83,7 +114,6 @@ export function NewsEvents() {
 
       <section className="news-events__gallery">
         <div className="container">
-          {/* Filters */}
           <motion.div
             className="news-events__filters"
             initial={{ opacity: 0, y: 20 }}
@@ -101,7 +131,6 @@ export function NewsEvents() {
             ))}
           </motion.div>
 
-          {/* Grid */}
           <div className="news-events__grid" ref={gridRef}>
             <AnimatePresence mode="popLayout">
               {filteredItems.map((item, index) => (
@@ -114,28 +143,15 @@ export function NewsEvents() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  onClick={() => item.images?.length && setSelectedImage({
-                    ...item,
-                    srcLarge: imageSource(item.images[0])
-                  })}
+                  onClick={() => item.images?.length && setSelectedImage(item)}
                 >
                   <div className="news-events__card-image">
-                    {imageSource(item.images?.[0]) ? (
-                      <img src={imageSource(item.images[0])} alt={item.images[0].alt || item.title} />
-                    ) : (
-                      <div className="news-events__card-placeholder">
-                        <span>🎬</span>
-                      </div>
-                    )}
+                    <CardImage item={item} />
                     <span className="news-events__card-category">{item.category}</span>
                   </div>
                   <div className="news-events__card-content">
                     <time className="news-events__card-date">
-                      {new Date(item.date).toLocaleDateString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
+                      {item.date && new Date(item.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                     </time>
                     <h3 className="news-events__card-title">{item.title}</h3>
                     <p className="news-events__card-description">{item.description}</p>
@@ -156,13 +172,9 @@ export function NewsEvents() {
         </div>
       </section>
 
-      {/* Lightbox */}
       <Lightbox
         image={selectedImage}
-        images={filteredItems.filter(item => item.images?.length).map(item => ({
-          ...item,
-          srcLarge: imageSource(item.images[0])
-        }))}
+        images={filteredItems.filter(item => item.images?.length)}
         onClose={() => setSelectedImage(null)}
         onNavigate={setSelectedImage}
       />

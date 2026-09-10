@@ -2,12 +2,14 @@ import { useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { timeline } from '../../data/content'
+import { useSiteContent } from '../../lib/useSiteContent'
 import './RoadMap.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export function RoadMap() {
+  const { content } = useSiteContent()
+  const { timeline } = content
   const sectionRef = useRef(null)
   const milestoneRefs = useRef([])
 
@@ -35,6 +37,8 @@ export function RoadMap() {
       ScrollTrigger.getAll().forEach(st => st.kill())
     }
   }, [])
+
+  if (content.visibility?.roadmap === false) return null
 
   return (
     <section id="RoadMap" className="RoadMap section" ref={sectionRef}>

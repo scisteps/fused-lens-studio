@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { studioInfo } from '../../data/content'
+import { useSiteContent } from '../../lib/useSiteContent'
 import './Contact.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -37,6 +37,8 @@ const SocialIcon = ({ platform }) => {
 }
 
 export function Contact() {
+  const { content } = useSiteContent()
+  const { studioInfo } = content
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -130,6 +132,8 @@ export function Contact() {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
   }
+
+  if (content.visibility?.contact === false) return null
 
   return (
     <section id="contact" className="contact section" ref={sectionRef}>

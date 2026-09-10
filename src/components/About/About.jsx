@@ -1,26 +1,20 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { aboutImage } from '../../data/images'
-import { studioInfo, stats } from '../../data/content'
+import { aboutImage, resolveImage } from '../../data/images'
+import { useSiteContent } from '../../lib/useSiteContent'
 import { AnimatedCounter } from '../Effects'
 import './About.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export function About() {
-  const [about, setAbout] = useState(null)
+  const { content } = useSiteContent()
+  const { studioInfo, stats, about } = content
+  const selectedImage = resolveImage(content.aboutImageId) || aboutImage
   const sectionRef = useRef(null)
   const imageRef = useRef(null)
-
-  useEffect(() => {
-    // Fetch about content
-    fetch('/api/content/about')
-      .then(res => res.json())
-      .then(data => setAbout(data))
-      .catch(err => console.error('Failed to load about:', err))
-  }, [])
 
   // Parallax effect on image
   useEffect(() => {
@@ -63,6 +57,8 @@ export function About() {
     }
   }
 
+  if (content.visibility?.about === false) return null
+
   return (
     <section id="about" className="about section" ref={sectionRef}>
       <div className="container">
@@ -80,7 +76,7 @@ export function About() {
             >
               <div className="about__image-inner" ref={imageRef}>
                 <img
-                  src={aboutImage}
+                  src={selectedImage}
                   alt="Photography studio"
                   className="about__image"
                 />
@@ -94,8 +90,8 @@ export function About() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.5, duration: 0.6 }}
               >
-                <span className="about__badge-number">{new Date().getFullYear() - studioInfo.founded}+</span>
-                <span className="about__badge-text">Years of Excellence</span>
+                <span className="about__badge-number">100+</span>
+                <span className="about__badge-text">Animators</span>
               </motion.div>
             </motion.div>
           </div>

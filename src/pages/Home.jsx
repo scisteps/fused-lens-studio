@@ -13,7 +13,7 @@ export function Home() {
       <About />
       <Services />
       <Membership />
-      {/* <RoadMap /> */}
+      <RoadMap />
       <Contact />
     </main>
   )

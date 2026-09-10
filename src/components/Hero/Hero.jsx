@@ -1,11 +1,19 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
-import { heroSlides } from '../../data/images'
-import { studioInfo } from '../../data/content'
+import { heroSlides, resolveImage } from '../../data/images'
+import { useSiteContent } from '../../lib/useSiteContent'
 import './Hero.css'
 
 export function Hero() {
+  const { content } = useSiteContent()
+  const studioInfo = content.studioInfo
+  const slides = useMemo(() => (
+    (content.heroSlides?.length ? content.heroSlides : heroSlides).map(slide => ({
+      ...slide,
+      image: resolveImage(slide.imageId) || slide.image
+    }))
+  ), [content.heroSlides])
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const heroRef = useRef(null)
@@ -32,11 +40,11 @@ export function Hero() {
   // Auto-advance slides
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
+      setCurrentSlide((prev) => (prev + 1) % slides.length)
     }, 6000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [slides.length])
 
   // Parallax scroll effect
   useEffect(() => {
@@ -55,7 +63,7 @@ export function Hero() {
   // Preload images
   useEffect(() => {
     const loadImages = async () => {
-      const promises = heroSlides.map((slide) => {
+      const promises = slides.map((slide) => {
         return new Promise((resolve) => {
           const img = new Image()
           img.src = slide.image
@@ -69,7 +77,9 @@ export function Hero() {
     }
     
     loadImages()
-  }, [])
+  }, [slides])
+
+  if (content.visibility?.hero === false) return null
 
   const scrollToAbout = () => {
     const about = document.getElementById('about')
@@ -83,7 +93,7 @@ export function Hero() {
       {/* Background Slides */}
       <div className="hero__slides">
         <AnimatePresence mode="wait">
-          {heroSlides.map((slide, index) => (
+          {slides.map((slide, index) => (
             index === currentSlide && (
               <motion.div
                 key={slide.id}
@@ -148,9 +158,9 @@ export function Hero() {
                 exit={{ opacity: 0, y: -40 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               >
-                <span className="hero__title-line">{heroSlides[currentSlide].title}</span>
+                <span className="hero__title-line">{slides[currentSlide].title}</span>
                 <span className="hero__title-line hero__title-line--accent">
-                  {heroSlides[currentSlide].subtitle}
+                  {slides[currentSlide].subtitle}
                 </span>
               </motion.h2>
             </AnimatePresence>
@@ -201,7 +211,7 @@ export function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
         >
-          {heroSlides.map((_, index) => (
+          {slides.map((_, index) => (
             <button
               key={index}
               className={`hero__indicator ${index === currentSlide ? 'hero__indicator--active' : ''}`}

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -9,12 +9,25 @@ import { Home } from './pages/Home'
 import { NewsEvents } from './pages/NewsEvents'
 import { Members } from './pages/Members'
 import { FloatingParticles, CursorGlow } from './components'
-
+import ContentDashboard from './dashboards/ContentDashboard'
+import NewsEventsDashboard from './dashboards/NewsEventsDashboard'
+import MembersDashboard from './dashboards/MembersDashboard'
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 
 function App() {
+  return (
+    <Router>
+      <AppShell />
+    </Router>
+  )
+}
+
+function AppShell() {
+  const { pathname } = useLocation()
+  const isDashboard = pathname.startsWith('/admin/')
+
   useEffect(() => {
     // Initialize smooth scroll behavior
     ScrollTrigger.defaults({
@@ -41,23 +54,23 @@ function App() {
   }, [])
 
   return (
-    <Router>
-      <div className="app">
-        {/* Global Effects */}
-        <FloatingParticles count={25} />
-        <CursorGlow />
-        
-        <Navigation />
+    <div className="app">
+        {!isDashboard && <FloatingParticles count={25} />}
+        {!isDashboard && <CursorGlow />}
+        {!isDashboard && <Navigation />}
         
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/news-events" element={<NewsEvents />} />
           <Route path="/members" element={<Members />} />
+          <Route path="/admin/content" element={<ContentDashboard />} />
+          <Route path="/admin/news-events" element={<NewsEventsDashboard />} />
+          <Route path="/admin/members" element={<MembersDashboard />} />
+
         </Routes>
         
-        <Footer />
+        {!isDashboard && <Footer />}
       </div>
-    </Router>
   )
 }
 
