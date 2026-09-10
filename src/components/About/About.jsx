@@ -62,7 +62,7 @@ export function About() {
   return (
     <section id="about" className="about section" ref={sectionRef}>
       <div className="container">
-          <h1>About Us</h1>
+          <h2>The Guild</h2>
         <div className="about__layout">
           
           {/* Image Side */}
