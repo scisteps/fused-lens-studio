@@ -1,10 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { Navigation } from './components/Navigation'
 import { Footer } from './components/Footer'
+import { Preloader } from './components/Preloader'
 import { Home } from './pages/Home'
 import { NewsEvents } from './pages/NewsEvents'
 import { Members } from './pages/Members'
@@ -17,6 +18,12 @@ import MembersDashboard from './dashboards/MembersDashboard'
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 
 function App() {
+  const [loading, setLoading] = useState(true)
+
+  if (loading) {
+    return <Preloader onComplete={() => setLoading(false)} />
+  }
+
   return (
     <Router>
       <AppShell />
