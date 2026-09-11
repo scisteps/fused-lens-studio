@@ -13,6 +13,7 @@
     "setup": "npm install && npm run server:install"
   },
   "dependencies": {
+    "@lottiefiles/react-lottie-player": "^3.6.0",
     "firebase": "^12.19.0",
     "framer-motion": "^11.0.3",
     "gsap": "^3.12.4",
