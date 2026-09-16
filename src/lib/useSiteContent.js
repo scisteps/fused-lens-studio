@@ -84,11 +84,13 @@ const DEFAULT_CONTENT = {
     ],
 
     benefits: [
-      'Participate in Guild programmes, workshops, seminars and industry activities.',
+                  'Guild Membership Card, Access to exclusive events.',
+
+            'Participate in Guild programmes, workshops, seminars and industry activities.',
+
       'Access professional development, mentorship and peer-to-peer learning.',
       'Participate in networking, exhibitions, screenings, competitions and festivals.',
       'Access professional opportunities and referral networks.',
-      'Participate in Guild representation and advocacy for members’ professional interests.',
       'Receive information concerning Guild activities and finances as provided by the Constitution.',
       'Stand for eligible Guild positions and vote where the membership has voting rights.'
     ]

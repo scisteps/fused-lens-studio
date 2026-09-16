@@ -224,9 +224,7 @@ export function Hero() {
             </AnimatePresence>
           </div>
 
-          {/* <p className="hero__description" ref={descriptionRef} style={{ opacity: 0 }}>
-            {studioInfo.description}
-          </p> */}
+      
 
           <div className="hero__actions" ref={actionsRef} style={{ opacity: 0 }}>
             <motion.button
@@ -268,12 +266,12 @@ export function Hero() {
 
         {/* Scroll Indicator */}
         <div className="hero__scroll" ref={scrollRef} style={{ opacity: 0 }} onClick={scrollToAbout}>
-          <span className="hero__scroll-text">Scroll</span>
+          {/* <span className="hero__scroll-text">Scroll</span>
           <motion.div
             className="hero__scroll-line"
             animate={{ scaleY: [1, 0.5, 1] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-          />
+          /> */}
         </div>
       </div>
 
