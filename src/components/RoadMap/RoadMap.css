@@ -1,35 +1,11 @@
-/* Roadmap Section */
-.roadmap {
-  padding: 6rem 0;
-  background: var(--bg-dark);
-  color: var(--text-light);
-}
+/* ============================================================
+   ROADMAP
+   Connector: faint orange→green rail + scroll-scrubbed fill.
+   Dots interpolate orange → green across the milestone list.
+   ============================================================ */
 
 .roadmap .section-heading {
-  text-align: center;
   margin-bottom: 4rem;
-}
-
-.roadmap .section-label {
-  color: #2c2c2c; /* Dark color */
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.roadmap .section-title {
-  font-size: 2.8rem;
-  font-weight: 700;
-  margin: 0.5rem 0 1rem;
-  color: #1a1a1a; /* Dark color */
-}
-
-.roadmap .section-subtitle {
-  color: #2c2c2c; /* Dark color */
-  font-size: 1.1rem;
-  max-width: 600px;
-  margin: 0 auto;
 }
 
 /* Timeline */
@@ -40,14 +16,32 @@
   padding: 2rem 0;
 }
 
+/* Rail — always visible, low-opacity gradient */
 .timeline__line {
   position: absolute;
   left: 50%;
   top: 0;
   bottom: 0;
-  width: 2px;
-  background: linear-gradient(to bottom, var(--gold), rgba(201, 169, 98, 0.2));
+  width: 3px;
+  background: linear-gradient(to bottom, var(--color-accent) 0%, var(--color-secondary) 100%);
+  opacity: 0.18;
   transform: translateX(-50%);
+  border-radius: 4px;
+}
+
+/* Fill — same gradient, revealed top-down as you scroll */
+.timeline__progress {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--color-accent) 0%, var(--color-secondary) 100%);
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: top;
+  border-radius: 4px;
+  box-shadow: 0 0 14px rgba(253, 101, 0, 0.35);
+  z-index: 1;
 }
 
 /* Timeline Items */
@@ -70,30 +64,35 @@
 
 /* Timeline Content */
 .timeline__content {
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid #000;
+  background: var(--color-graphite);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   padding: 1.5rem 2rem;
   width: 100%;
-  transition: all 0.3s ease;
+  border-left: 3px solid var(--stage-color);
+  transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.timeline__item--right .timeline__content {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 3px solid var(--stage-color);
 }
 
 .timeline__content:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: #000;
+  box-shadow: 0 0 24px color-mix(in srgb, var(--stage-color) 35%, transparent);
 }
 
 .timeline__heading {
-  color: #1a1a1a; /* Dark color */
   font-size: 1.3rem;
-  font-weight: 700;
+  font-weight: 600;
+  color: var(--color-white);
   margin-bottom: 0.5rem;
 }
 
 .timeline__description {
-  color: #2c2c2c; /* Dark color */
   font-size: 0.95rem;
   line-height: 1.6;
+  color: var(--color-silver);
   margin: 0;
 }
 
@@ -105,33 +104,27 @@
   transform: translateX(-50%);
   width: 20px;
   height: 20px;
-  background: var(--bg-dark);
-  border: 2px solid var(--gold);
+  background: var(--color-black);
+  border: 2px solid var(--stage-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1;
+  box-shadow: 0 0 16px color-mix(in srgb, var(--stage-color) 55%, transparent);
+  z-index: 2;
 }
 
 .timeline__dot-inner {
   width: 10px;
   height: 10px;
-  background: var(--gold);
+  background: var(--stage-color);
   border-radius: 50%;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .roadmap {
-    padding: 4rem 0;
-  }
-
-  .roadmap .section-title {
-    font-size: 2rem;
-  }
-
-  .timeline__line {
+  .timeline__line,
+  .timeline__progress {
     left: 20px;
   }
 
@@ -141,8 +134,9 @@
     flex-direction: column;
   }
 
-  .timeline__item--right {
-    flex-direction: column;
+  .timeline__item--right .timeline__content {
+    border-left: 3px solid var(--stage-color);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .timeline__dot {

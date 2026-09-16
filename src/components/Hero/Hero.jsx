@@ -17,6 +17,13 @@ const TIMING = {
   elementFade: 0.8,   // fade-in duration for description/actions/indicators/etc.
 }
 
+// Accent color cycle — one class per slide, loops if more slides than colors
+const ACCENT_COLORS = [
+  'hero__title-line--orange',
+  'hero__title-line--green',
+  'hero__title-line--white',
+]
+
 export function Hero() {
   const { content } = useSiteContent()
   const studioInfo = content.studioInfo
@@ -41,6 +48,9 @@ export function Hero() {
   const scrollRef = useRef(null)
   const cornerTlRef = useRef(null)
   const cornerBrRef = useRef(null)
+
+  // Accent color for the current slide (cycles through ACCENT_COLORS)
+  const accentColorClass = ACCENT_COLORS[currentSlide % ACCENT_COLORS.length]
 
   // Ken Burns effect on images
   useEffect(() => {
@@ -217,14 +227,12 @@ export function Hero() {
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               >
                 <span className="hero__title-line">{slides[currentSlide].title}</span>
-                <span className="hero__title-line hero__title-line--accent">
+                <span className={`hero__title-line hero__title-line--accent ${accentColorClass}`}>
                   {slides[currentSlide].subtitle}
                 </span>
               </motion.h2>
             </AnimatePresence>
           </div>
-
-      
 
           <div className="hero__actions" ref={actionsRef} style={{ opacity: 0 }}>
             <motion.button
