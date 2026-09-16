@@ -85,7 +85,7 @@
   font-size: 3rem;
   font-weight: 300;
   line-height: 1;
-  color: var(--color-accent);
+  color: white;
 }
 
 .about__badge-text {
@@ -119,7 +119,7 @@
   display: block;
   font-family: var(--font-body);
   font-size: 1.05rem;
-  font-style: italic;
+  /* font-style: italic; */
   letter-spacing: 0.04em;
   color: var(--color-accent);
   margin: -0.5rem 0 var(--space-lg);
@@ -351,7 +351,7 @@
 }
 
 .timeline__heading {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 1.25rem;
   font-weight: 500;
   color: var(--color-charcoal);

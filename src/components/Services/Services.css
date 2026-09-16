@@ -433,7 +433,7 @@
   font-family: var(--font-body);
   font-size: clamp(1.25rem, 3vw, 1.75rem);
   font-weight: 300;
-  font-style: italic;
+  /* font-style: italic; */
   color: var(--color-pearl);
   line-height: 1.8;
   margin-bottom: var(--space-2xl);

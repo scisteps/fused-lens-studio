@@ -733,7 +733,7 @@ html, body {
   color: var(--admin-text);
   line-height: 1.6;
   margin-bottom: 1rem;
-  font-style: italic;
+  /* font-style: italic; */
 }
 
 .admin-testimonial__actions {

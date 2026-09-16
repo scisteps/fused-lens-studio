@@ -11,7 +11,7 @@ export function Footer() {
       <div className="container footer__inner">
         <div className="footer__brand">
           <img
-            src="/camlogo.png"
+            src="/crane.png"
             alt="Animation Guild Uganda"
             className="footer__logo"
           />
