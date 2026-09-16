@@ -4,6 +4,18 @@ import gsap from 'gsap'
 import { heroSlides, resolveImage } from '../../data/images'
 import { useSiteContent } from '../../lib/useSiteContent'
 import './Hero.css'
+import final from '../../jsons/final4.json'
+import { Player } from '@lottiefiles/react-lottie-player'
+
+// ─── Intro timing (seconds) ────────────────────────────────────────────
+const TIMING = {
+  introHold: 2,       // how long the lottie plays alone on white bg
+  slidesFade: 1.2,    // background slideshow fade-in duration
+  titleGap: 0.3,      // pause after slides before the title starts fading in
+  titleFade: 0.8,     // title fade-in duration
+  staggerGap: 0.5,    // pause between each element after the title
+  elementFade: 0.8,   // fade-in duration for description/actions/indicators/etc.
+}
 
 export function Hero() {
   const { content } = useSiteContent()
@@ -14,18 +26,27 @@ export function Hero() {
       image: resolveImage(slide.imageId) || slide.image
     }))
   ), [content.heroSlides])
+
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const heroRef = useRef(null)
   const imageRefs = useRef([])
 
+  // GSAP-controlled intro reveal refs
+  const slidesWrapRef = useRef(null)
+  const titleWrapRef = useRef(null)
+  const descriptionRef = useRef(null)
+  const actionsRef = useRef(null)
+  const indicatorsRef = useRef(null)
+  const scrollRef = useRef(null)
+  const cornerTlRef = useRef(null)
+  const cornerBrRef = useRef(null)
+
   // Ken Burns effect on images
   useEffect(() => {
     if (!isLoaded) return
-
     const currentImage = imageRefs.current[currentSlide]
     if (currentImage) {
-      // Reset and animate Ken Burns
       gsap.set(currentImage, { scale: 1, x: 0, y: 0 })
       gsap.to(currentImage, {
         scale: 1.15,
@@ -42,7 +63,6 @@ export function Hero() {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
     }, 6000)
-
     return () => clearInterval(interval)
   }, [slides.length])
 
@@ -51,11 +71,9 @@ export function Hero() {
     const handleScroll = () => {
       if (heroRef.current) {
         const scrollY = window.scrollY
-        const parallaxValue = scrollY * 0.4
-        heroRef.current.style.transform = `translateY(${parallaxValue}px)`
+        heroRef.current.style.transform = `translateY(${scrollY * 0.4}px)`
       }
     }
-
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -71,27 +89,83 @@ export function Hero() {
           img.onerror = resolve
         })
       })
-      
       await Promise.all(promises)
       setIsLoaded(true)
     }
-    
     loadImages()
   }, [slides])
+
+  // GSAP intro reveal — white bg + lottie hold, then everything fades in
+  useEffect(() => {
+    if (!isLoaded) return
+
+    // Grab refs defensively — a null ref never kills the whole timeline.
+    const slides = slidesWrapRef.current
+    const title = titleWrapRef.current
+    const desc = descriptionRef.current
+    const actions = actionsRef.current
+    const indicators = indicatorsRef.current
+    const scroll = scrollRef.current
+    const cornerTl = cornerTlRef.current
+    const cornerBr = cornerBrRef.current
+
+    const all = [slides, title, desc, actions, indicators, scroll, cornerTl, cornerBr]
+      .filter(Boolean)
+
+    if (!all.length) return
+
+    gsap.set(all, { opacity: 0 })
+    if (desc) gsap.set(desc, { y: 20 })
+    if (actions) gsap.set(actions, { y: 20 })
+
+    const tl = gsap.timeline({ delay: TIMING.introHold })
+
+    if (slides) {
+      tl.to(slides, { opacity: 1, duration: TIMING.slidesFade, ease: 'power2.out' })
+    }
+    if (title) {
+      tl.to(title, { opacity: 1, duration: TIMING.titleFade, ease: 'power3.out' },
+        `+=${TIMING.titleGap}`)
+    }
+    if (desc) {
+      tl.to(desc, { opacity: 1, y: 0, duration: TIMING.elementFade, ease: 'power3.out' },
+        `+=${TIMING.staggerGap}`)
+    }
+    if (actions) {
+      tl.to(actions, { opacity: 1, y: 0, duration: TIMING.elementFade, ease: 'power3.out' },
+        `+=${TIMING.staggerGap}`)
+    }
+    if (indicators) {
+      tl.to(indicators, { opacity: 1, duration: TIMING.elementFade, ease: 'power2.out' },
+        `+=${TIMING.staggerGap}`)
+    }
+    if (scroll) {
+      tl.to(scroll, { opacity: 1, duration: TIMING.elementFade, ease: 'power2.out' }, '<')
+    }
+    if (cornerTl || cornerBr) {
+      tl.to([cornerTl, cornerBr].filter(Boolean), {
+        opacity: 1,
+        scale: 1,
+        duration: 1,
+        ease: 'power2.out',
+        stagger: 0.2,
+      }, `+=${TIMING.staggerGap}`)
+    }
+
+    return () => tl.kill()
+  }, [isLoaded])
 
   if (content.visibility?.hero === false) return null
 
   const scrollToAbout = () => {
     const about = document.getElementById('about')
-    if (about) {
-      about.scrollIntoView({ behavior: 'smooth' })
-    }
+    if (about) about.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
     <section id="home" className="hero" ref={heroRef}>
       {/* Background Slides */}
-      <div className="hero__slides">
+      <div className="hero__slides" ref={slidesWrapRef} style={{ opacity: 0 }}>
         <AnimatePresence mode="wait">
           {slides.map((slide, index) => (
             index === currentSlide && (
@@ -113,42 +187,26 @@ export function Hero() {
             )
           ))}
         </AnimatePresence>
-        
-        {/* Gradient Overlays */}
+
         <div className="hero__overlay hero__overlay--gradient" />
         <div className="hero__overlay hero__overlay--vignette" />
       </div>
 
       {/* Content */}
       <div className="hero__content">
-        <motion.div
-          className="hero__text"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isLoaded ? 1 : 0 }}
-          transition={{ duration: 1, delay: 0.5 }}
-        >
-          {/* Studio Name */}
-          {/* <motion.div
-            className="hero__studio-name"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-            <span className="hero__studio-icon">◈</span>
-            {studioInfo.name}
-          </motion.div> */}
+        <div className="hero__text">
+          {/* Lottie — sits directly above the tagline/description block */}
+          <div className="hero__lottie">
+            <Player
+              autoplay
+              keepLastFrame
+              loop={false}
+              src={final}
+              style={{ width: '100%', height: '100%' }}
+            />
+          </div>
 
-          {/* Animated Tagline - Simple version */}
-          <motion.h1 
-            className="hero__tagline"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {studioInfo.tagline}
-          </motion.h1>
-
-          <div className="hero__title-wrapper">
+          <div className="hero__title-wrapper" ref={titleWrapRef} style={{ opacity: 0 }}>
             <AnimatePresence mode="wait">
               <motion.h2
                 key={currentSlide}
@@ -166,21 +224,11 @@ export function Hero() {
             </AnimatePresence>
           </div>
 
-          <motion.p
-            className="hero__description"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-          >
+          <p className="hero__description" ref={descriptionRef} style={{ opacity: 0 }}>
             {studioInfo.description}
-          </motion.p>
+          </p>
 
-          <motion.div
-            className="hero__actions"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
-          >
+          <div className="hero__actions" ref={actionsRef} style={{ opacity: 0 }}>
             <motion.button
               className="hero__btn hero__btn--primary"
               onClick={scrollToAbout}
@@ -201,16 +249,11 @@ export function Hero() {
             >
               Get in Touch
             </motion.a>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         {/* Slide Indicators */}
-        <motion.div
-          className="hero__indicators"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2 }}
-        >
+        <div className="hero__indicators" ref={indicatorsRef} style={{ opacity: 0 }}>
           {slides.map((_, index) => (
             <button
               key={index}
@@ -221,39 +264,23 @@ export function Hero() {
               <span className="hero__indicator-fill" />
             </button>
           ))}
-        </motion.div>
+        </div>
 
         {/* Scroll Indicator */}
-        <motion.div
-          className="hero__scroll"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2, duration: 0.8 }}
-          onClick={scrollToAbout}
-        >
+        <div className="hero__scroll" ref={scrollRef} style={{ opacity: 0 }} onClick={scrollToAbout}>
           <span className="hero__scroll-text">Scroll</span>
           <motion.div
             className="hero__scroll-line"
             animate={{ scaleY: [1, 0.5, 1] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
           />
-        </motion.div>
+        </div>
       </div>
 
       {/* Decorative Elements */}
       <div className="hero__decorative">
-        <motion.div
-          className="hero__corner hero__corner--tl"
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 2, duration: 1 }}
-        />
-        <motion.div
-          className="hero__corner hero__corner--br"
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 2.2, duration: 1 }}
-        />
+        <div className="hero__corner hero__corner--tl" ref={cornerTlRef} style={{ opacity: 0, transform: 'scale(0)' }} />
+        <div className="hero__corner hero__corner--br" ref={cornerBrRef} style={{ opacity: 0, transform: 'scale(0)' }} />
       </div>
     </section>
   )

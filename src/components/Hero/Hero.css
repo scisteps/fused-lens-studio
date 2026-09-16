@@ -3,8 +3,9 @@
   height: 100vh;
   min-height: 700px;
   width: 100%;
+  /* margin-left: 10px; */
   overflow: hidden;
-  background: var(--color-black);
+  background: #ffffff;   /* white stage behind the intro */
 }
 
 /* Slides Container */
@@ -60,54 +61,71 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding-bottom: 12vh;
+  padding-bottom: 15vh;
 }
 
 .hero__text {
   max-width: 800px;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Studio Name */
-.hero__studio-name {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-family: var(--font-body);
-  font-size: 0.875rem;
-  font-weight: 400;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--color-pearl);
-  margin-bottom: var(--space-lg);
+/* ─────────────────────────────────────────────────────────────
+   Lottie — sits directly above the tagline/description.
+   `margin-bottom` controls the gap below it.
+   Smaller value = closer to the tagline.
+   ───────────────────────────────────────────────────────────── */
+.hero__lottie {
+  width: 650px;
+  height: 650px;
+  /* margin-bottom: 10px;   ← gap between Lottie and tagline */
+    margin-left: -90px;   /* ← gap between Lottie and tagline */
+
+  display: flex;
+  align-items: flex-end; /* anchor art to the bottom, no phantom top space */
+  justify-content: flex-start;
+  line-height: 0;
+  pointer-events: none;
 }
 
-.hero__studio-icon {
-  color: var(--color-accent);
-  font-size: 1.25rem;
-}
-
-/* Tagline - Main "Timeless Memories" */
-.hero__tagline {
+/* Tagline */
+.hero__tagline1 {
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-size: clamp(2.1rem, 5vw, 4rem);
   font-weight: 300;
-  font-style: italic;
-  color: var(--color-accent);
+  color: #ff8c00;
   line-height: 1.2;
   margin-bottom: var(--space-lg);
+  letter-spacing: 0.02em;
+}
+.hero__tagline2 {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 5vw, 4rem);
+  font-weight: 300;
+  color: #ffffff;
+  line-height: 1.2;
+  margin-bottom: var(--space-lg);
+  letter-spacing: 0.02em;
+}
+.hero__tagline3 {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 5vw, 4rem);
+  font-weight: 300;
+  color: #ff8c00;
   letter-spacing: 0.02em;
 }
 
 .hero__title-wrapper {
   position: relative;
-  min-height: 100px;
-  margin-bottom: var(--space-lg);
+  margin-bottom: 10px;
 }
 
 .hero__title {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 4rem);
+  font-size: clamp(2rem, 5vw, 2rem);
   font-weight: 400;
   color: var(--color-white);
   line-height: 1.1;
@@ -128,8 +146,7 @@
   font-size: 1.125rem;
   color: var(--color-pearl);
   max-width: 500px;
-  margin-bottom: var(--space-xl);
-  line-height: 1.7;
+  margin-bottom: 145px;
 }
 
 /* Actions */
@@ -236,12 +253,8 @@
 }
 
 @keyframes indicatorFill {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
 }
 
 /* Scroll Indicator */
@@ -259,9 +272,7 @@
   transition: opacity var(--transition-fast);
 }
 
-.hero__scroll:hover {
-  opacity: 1;
-}
+.hero__scroll:hover { opacity: 1; }
 
 .hero__scroll-text {
   font-size: 0.625rem;
@@ -308,39 +319,30 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .hero__content {
-    padding-bottom: 15vh;
+  .hero__content { padding-bottom: 15vh; }
+
+  .hero__lottie {
+    width: 320px;
+    height: 320px;
+    margin-bottom: 10px;
+    align-items: flex-end;
   }
 
-  .hero__tagline {
-    font-size: clamp(2rem, 10vw, 3rem);
-  }
-
-  .hero__title-wrapper {
-    min-height: 80px;
-  }
-
-  .hero__indicators {
-    right: var(--space-md);
-  }
-
-  .hero__indicator {
-    height: 30px;
-  }
-
-  .hero__corner {
-    width: 50px;
-    height: 50px;
-  }
+  .hero__indicators { right: var(--space-md); }
+  .hero__indicator { height: 30px; }
+  .hero__corner { width: 50px; height: 50px; }
 }
 
 @media (max-width: 480px) {
-  .hero__actions {
-    flex-direction: column;
-  }
+  .hero__actions { flex-direction: column; }
+  .hero__btn { width: 100%; text-align: center; }
 
-  .hero__btn {
-    width: 100%;
-    text-align: center;
+  .hero__lottie {
+    width: 450px;
+    height: 450px;
+    margin-left: -60px;
+        margin-bottom: -100px;
+
+    align-items: center;
   }
 }

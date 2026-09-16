@@ -336,9 +336,20 @@ export default function ContentDashboard() {
 
               <Field label="Tagline">
                 <TextInput
-                  value={studio.tagline || ''}
+                  value={studio.tagline1 || ''}
                   onChange={event =>
-                    updateStudio('tagline', event.target.value)
+                    updateStudio('tagline1', event.target.value)
+                  }
+                />  <TextInput
+                  value={studio.tagline2 || ''}
+                  onChange={event =>
+                    updateStudio('tagline2', event.target.value)
+                  }
+                />
+                <TextInput
+                  value={studio.tagline3 || ''}
+                  onChange={event =>
+                    updateStudio('tagline3', event.target.value)
                   }
                 />
               </Field>

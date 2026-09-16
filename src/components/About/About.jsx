@@ -90,7 +90,7 @@ export function About() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.5, duration: 0.6 }}
               >
-                <span className="about__badge-number">100+</span>
+                <span className="about__badge-number">200+</span>
                 <span className="about__badge-text">Animators</span>
               </motion.div>
             </motion.div>

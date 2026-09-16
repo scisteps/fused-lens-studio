@@ -1,6 +1,6 @@
 export const studioInfo = {
-  name: 'Animation Guild Uganda',
-  tagline: 'Mobilize- Mentor - Monetize',
+  name: 'ANIMATION GUILD UGANDA',
+  tagline: 'Mobilize - Mentor - Monetize',
   description: 'Building and promoting a sound, sustainable animation industry in Uganda.',
   founded: 2026,
   location: 'Kampala, Uganda',

@@ -16,7 +16,7 @@ const DEFAULT_CONTENT = {
   about: {
     title: 'We are the Animation Guild Uganda',
     content: `At ${staticContent.studioInfo.name}, we believe every animator should tell a story that resonates deeply with those who view it.`,
-    story: ''
+    story: 'The Animation Guild Uganda (AGU) is a professional association bringing together animators, artists, studios, educators, students, and other professionals contributing to Uganda’s animation and wider digital creative arts sector. The Guild was established to promote the professional development, representation, collaboration, ethical practice, and sustainable growth of the animation industry in Uganda. Through mentorship, training, knowledge sharing, exhibitions, screenings, festivals, networking, advocacy, and industry partnerships, AGU works to create opportunities for its members while promoting professional standards, fair work practices, intellectual property awareness, and the formalisation of the animation industry. The Guild also seeks to connect Uganda’s animation community with government, educational institutions, development partners, funders, private-sector organisations, cultural institutions, and international partners to build a stronger, more organised, and sustainable creative industry. Mobilize. Mentor. Monetize.'
   },
 
   heroSlides,

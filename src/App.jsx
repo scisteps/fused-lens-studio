@@ -20,9 +20,9 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 function App() {
   const [loading, setLoading] = useState(true)
 
-  if (loading) {
-    return <Preloader onComplete={() => setLoading(false)} />
-  }
+  // if (loading) {
+  //   return <Preloader onComplete={() => setLoading(false)} />
+  // }
 
   return (
     <Router>
