@@ -21,11 +21,15 @@ function highlightLead(text = '') {
 // Group benefits into rows with matching glows.
 // Indices refer to positions in membership.benefits — the numbers shown
 // on each card come from that index + 1, so they stay sequential across
-// all groups (01, 02, 03, 04, 05…).
+// all groups (01, 02, 03, 04, 05, 06, 07).
+//
+// If you add more benefits in the CMS, the extra indices are automatically
+// collected into a fallback "More" group at the bottom.
 const BENEFIT_GROUPS = [
   { indices: [0, 1], variant: 'green',  label: 'Core Membership' },
-  { indices: [2],    variant: 'white',  label: 'Participation' },
-  { indices: [3, 4], variant: 'orange', label: 'Advocacy & Voice' },
+  { indices: [2, 3], variant: 'white',  label: 'Participation' },
+  { indices: [4, 5],    variant: 'orange', label: 'Professional Access' },
+  { indices: [ 6], variant: 'green',  label: 'Voting & rights' }
 ]
 
 const APPLY_EMAIL = 'animationguilduganda@gmail.com'
@@ -58,14 +62,13 @@ export function Membership() {
     .filter(i => !mappedIndices.includes(i))
     .map(i => ({ benefit: benefits[i], index: i }))
 
-  const benefitGroups = [
-    ...BENEFIT_GROUPS.map(group => ({
-      ...group,
-      items: group.indices
-        .map(i => ({ benefit: benefits[i], index: i }))
-        .filter(item => item.benefit),
-    })),
-  ]
+  const benefitGroups = BENEFIT_GROUPS.map(group => ({
+    ...group,
+    items: group.indices
+      .map(i => ({ benefit: benefits[i], index: i }))
+      .filter(item => item.benefit)
+  }))
+
   if (extras.length) {
     benefitGroups.push({ variant: 'white', label: 'More', items: extras })
   }
@@ -140,20 +143,36 @@ export function Membership() {
                     className={[
                       'membership__category',
                       `membership__category--${variant}`,
-                      isOpen ? 'is-open' : '',
-                    ].filter(Boolean).join(' ')}
+                      isOpen ? 'is-open' : ''
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
                     onClick={() => setOpenCategory(isOpen ? null : index)}
                     aria-expanded={isOpen}
                   >
                     <span className="membership__category-shine" aria-hidden="true" />
 
                     <div className="membership__category-header">
-                      <span className="membership__category-name">{category.name}</span>
-                    <span className="membership__category-toggle" aria-hidden="true">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="6 9 12 15 18 9" />
-  </svg>
-</span>
+                      <span className="membership__category-name">
+                        {category.name}
+                      </span>
+                      <span
+                        className="membership__category-toggle"
+                        aria-hidden="true"
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="14"
+                          height="14"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                      </span>
                     </div>
 
                     <AnimatePresence initial={false}>
@@ -212,7 +231,10 @@ export function Membership() {
                         key={index}
                         className={`membership__benefit membership__benefit--${group.variant}`}
                       >
-                        <span className="membership__benefit-shine" aria-hidden="true" />
+                        <span
+                          className="membership__benefit-shine"
+                          aria-hidden="true"
+                        />
                         <span className="membership__benefit-number">
                           {displayNumber}
                         </span>

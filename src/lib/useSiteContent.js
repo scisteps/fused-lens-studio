@@ -3,6 +3,10 @@
 // Used by Hero, About, Services, Membership on the public site.
 // Reads the published content doc from Firestore and falls back
 // to the default static content if Firestore is unavailable.
+//
+// NOTE: `membership` is intentionally NOT read from Firestore — it is
+// hardcoded here in DEFAULT_CONTENT so the site always shows the
+// benefits/categories defined in this file, regardless of CMS state.
 
 import { useEffect, useState } from 'react'
 import { doc, onSnapshot } from 'firebase/firestore'
@@ -16,7 +20,8 @@ const DEFAULT_CONTENT = {
   about: {
     title: 'We are the Animation Guild Uganda',
     content: `At ${staticContent.studioInfo.name}, we believe every animator should tell a story that resonates deeply with those who view it.`,
-    story: 'The Animation Guild Uganda (AGU) is a professional association bringing together animators, artists, studios, educators, students, and other professionals contributing to Uganda’s animation and wider digital creative arts sector. The Guild was established to promote the professional development, representation, collaboration, ethical practice, and sustainable growth of the animation industry in Uganda. Through mentorship, training, knowledge sharing, exhibitions, screenings, festivals, networking, advocacy, and industry partnerships, AGU works to create opportunities for its members while promoting professional standards, fair work practices, intellectual property awareness, and the formalisation of the animation industry. The Guild also seeks to connect Uganda’s animation community with government, educational institutions, development partners, funders, private-sector organisations, cultural institutions, and international partners to build a stronger, more organised, and sustainable creative industry. Mobilize. Mentor. Monetize.'
+    story:
+      'The Animation Guild Uganda (AGU) is a professional association bringing together animators, artists, studios, educators, students, and other professionals contributing to Uganda’s animation and wider digital creative arts sector. The Guild was established to promote the professional development, representation, collaboration, ethical practice, and sustainable growth of the animation industry in Uganda. Through mentorship, training, knowledge sharing, exhibitions, screenings, festivals, networking, advocacy, and industry partnerships, AGU works to create opportunities for its members while promoting professional standards, fair work practices, intellectual property awareness, and the formalisation of the animation industry. The Guild also seeks to connect Uganda’s animation community with government, educational institutions, development partners, funders, private-sector organisations, cultural institutions, and international partners to build a stronger, more organised, and sustainable creative industry. Mobilize. Mentor. Monetize.'
   },
 
   heroSlides,
@@ -84,13 +89,12 @@ const DEFAULT_CONTENT = {
     ],
 
     benefits: [
-                  'Guild Membership Card, Access to exclusive events.',
-
+      'Guild Membership Card, Access to exclusive events.',
+      'Access professional development, mentorship and peer-to-peer learning.',
             'Participate in Guild programmes, workshops, seminars and industry activities.',
 
-      'Access professional development, mentorship and peer-to-peer learning.',
       'Participate in networking, exhibitions, screenings, competitions and festivals.',
-      'Access professional opportunities and referral networks.',
+      'Access funding for animation projects.',
       'Receive information concerning Guild activities and finances as provided by the Constitution.',
       'Stand for eligible Guild positions and vote where the membership has voting rights.'
     ]
@@ -99,7 +103,6 @@ const DEFAULT_CONTENT = {
 
 export function useSiteContent() {
   const [content, setContent] = useState(DEFAULT_CONTENT)
-
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -110,16 +113,19 @@ export function useSiteContent() {
 
       snap => {
         if (snap.exists()) {
+          const data = snap.data() || {}
+
+          // Destructure `membership` out so we can deliberately ignore it.
+          // Everything else still comes from the CMS.
+          const { membership: _ignoredMembership, ...cmsRest } = data
+
           setContent(prev => ({
             ...DEFAULT_CONTENT,
             ...prev,
-            ...snap.data(),
+            ...cmsRest,
 
-            // Make sure nested membership defaults are preserved
-            membership: {
-              ...DEFAULT_CONTENT.membership,
-              ...(snap.data().membership || {})
-            }
+            // Always use the local membership block — never the CMS one.
+            membership: DEFAULT_CONTENT.membership
           }))
         }
 
