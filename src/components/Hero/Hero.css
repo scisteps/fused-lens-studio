@@ -293,7 +293,7 @@
     width: 600px;
     height: 600px;
     left: -20px;
-    bottom:320px;   /* ← adjust per breakpoint */
+    bottom:220px;   /* ← adjust per breakpoint */
   }
 .hero__title-wrapper {
   position: relative;
