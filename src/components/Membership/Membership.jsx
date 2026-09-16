@@ -19,14 +19,16 @@ function highlightLead(text = '') {
 }
 
 // Group benefits into rows with matching glows.
-// Indices refer to positions in membership.benefits — the numbers
-// shown on each card come from that index + 1, so they stay sequential
-// across all groups (01, 02, 03, 04, 05…).
+// Indices refer to positions in membership.benefits — the numbers shown
+// on each card come from that index + 1, so they stay sequential across
+// all groups (01, 02, 03, 04, 05…).
 const BENEFIT_GROUPS = [
   { indices: [0, 1], variant: 'green',  label: 'Core Membership' },
   { indices: [2],    variant: 'white',  label: 'Participation' },
   { indices: [3, 4], variant: 'orange', label: 'Advocacy & Voice' },
 ]
+
+const APPLY_EMAIL = 'animationguilduganda@gmail.com'
 
 export function Membership() {
   const { content } = useSiteContent()
@@ -68,6 +70,13 @@ export function Membership() {
     benefitGroups.push({ variant: 'white', label: 'More', items: extras })
   }
 
+  // Build a mailto link that pre-fills subject + body
+  const applyMailto = `mailto:${APPLY_EMAIL}?subject=${encodeURIComponent(
+    'Membership Application — Animation Guild Uganda'
+  )}&body=${encodeURIComponent(
+    'Hello Animation Guild Uganda,\n\nI would like to apply for membership.\n\nName:\nContact:\nPreferred category:\n\nThank you.'
+  )}`
+
   return (
     <section id="membership" className="membership section section--dark">
       <div className="membership__bg">
@@ -95,20 +104,20 @@ export function Membership() {
           <h2 className="section-title">Join Our Community</h2>
         </motion.div>
 
-   {membership.eligibility && (
-  <motion.div
-    className="membership__join membership__join--light"
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6, delay: 0.2 }}
-  >
-    <h3 className="membership__join-title">Who Can Join?</h3>
-    <p className="membership__join-text">
-      {highlightLead(membership.eligibility)}
-    </p>
-  </motion.div>
-)}
+        {membership.eligibility && (
+          <motion.div
+            className="membership__join membership__join--light"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <h3 className="membership__join-title">Who Can Join?</h3>
+            <p className="membership__join-text">
+              {highlightLead(membership.eligibility)}
+            </p>
+          </motion.div>
+        )}
 
         {membership.categories?.length > 0 && (
           <motion.div
@@ -136,11 +145,15 @@ export function Membership() {
                     onClick={() => setOpenCategory(isOpen ? null : index)}
                     aria-expanded={isOpen}
                   >
+                    <span className="membership__category-shine" aria-hidden="true" />
+
                     <div className="membership__category-header">
                       <span className="membership__category-name">{category.name}</span>
-                      <span className="membership__category-toggle">
-                        {isOpen ? '−' : '>'}
-                      </span>
+                    <span className="membership__category-toggle" aria-hidden="true">
+  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="6 9 12 15 18 9" />
+  </svg>
+</span>
                     </div>
 
                     <AnimatePresence initial={false}>
@@ -199,6 +212,7 @@ export function Membership() {
                         key={index}
                         className={`membership__benefit membership__benefit--${group.variant}`}
                       >
+                        <span className="membership__benefit-shine" aria-hidden="true" />
                         <span className="membership__benefit-number">
                           {displayNumber}
                         </span>
@@ -239,7 +253,9 @@ export function Membership() {
             {membership.description ||
               'Apply now to become a member of the Animation Guild Uganda.'}
           </p>
-          <button className="btn btn--secondary">Apply for Membership</button>
+          <a href={applyMailto} className="btn btn--secondary">
+            Apply for Membership
+          </a>
         </motion.div>
       </div>
     </section>

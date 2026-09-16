@@ -120,7 +120,7 @@
 }
 
 .page-transition__logo {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 2rem;
   color: var(--color-white);
   letter-spacing: 0.1em;

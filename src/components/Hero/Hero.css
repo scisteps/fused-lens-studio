@@ -290,11 +290,16 @@
   .hero__content { padding-bottom: 15vh; }
 
   .hero__lottie {
-    width: 320px;
-    height: 320px;
-    left: -40px;
-    bottom: 360px;   /* ← adjust per breakpoint */
+    width: 750px;
+    height: 750px;
+    left: -10px;
+    bottom:320px;   /* ← adjust per breakpoint */
   }
+.hero__title-wrapper {
+  position: relative;
+  margin-bottom: 40px;
+  margin-top: 80px;   /* ← reserve visual space the lottie now overlaps; tune alongside bottom above */
+}
 
   .hero__indicators { right: var(--space-md); }
   .hero__indicator { height: 30px; }

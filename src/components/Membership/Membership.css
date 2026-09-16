@@ -156,9 +156,8 @@
   transform: translateY(-3px);
 }
 
-/* ---------- Swipe reflection (loops every 3s) ---------- */
-.membership__category-shine,
-.membership__benefit-shine {
+/* ---------- Swipe reflection (loops every 3s) — CATEGORY only ---------- */
+.membership__category-shine {
   position: absolute;
   top: 0;
   left: -75%;
@@ -178,16 +177,9 @@
   animation: cardShine 3s ease-in-out infinite;
 }
 
+/* ---------- BENEFIT shine removed ---------- */
 .membership__benefit-shine {
-  animation-delay: 0.5s;
-  background: linear-gradient(
-    100deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.06) 30%,
-    rgba(255, 255, 255, 0.32) 50%,
-    rgba(255, 255, 255, 0.06) 70%,
-    transparent 100%
-  );
+  display: none;
 }
 
 @keyframes cardShine {
@@ -215,18 +207,33 @@
   transition: color 0.3s ease;
 }
 
+/* ---------- Down-arrow toggle ---------- */
 .membership__category-toggle {
-  font-size: 1.2rem;
-  line-height: 1;
   flex-shrink: 0;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   border: 1px solid currentColor;
-  transition: all var(--transition-smooth);
+  transition: transform var(--transition-smooth),
+              color var(--transition-smooth),
+              background var(--transition-smooth),
+              border-color var(--transition-smooth);
+  transform: rotate(0deg);   /* resting: points down */
+}
+
+.membership__category-toggle svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+  transition: transform var(--transition-smooth);
+}
+
+/* Open: arrow flips to point up */
+.membership__category.is-open .membership__category-toggle {
+  transform: rotate(180deg);
 }
 
 .membership__category-details {
@@ -256,7 +263,6 @@
 
 /* ============================================================
    HOVER — darken the card for readability, brighten the title
-   (does NOT change the resting variant fill)
    ============================================================ */
 .membership__category:hover,
 .membership__category:focus-visible {
@@ -297,29 +303,16 @@
    OPEN — card KEEPS its resting background.
    Only the category TITLE turns orange.
    ============================================================ */
-
-/* Title turns orange regardless of variant */
 .membership__category.is-open .membership__category-name {
   color: var(--color-accent, #FD6500) !important;
 }
 
-/* Toggle matches the title color */
 .membership__category.is-open .membership__category-toggle {
   color: var(--color-accent, #FD6500) !important;
   background: rgba(253, 101, 0, 0.12);
   border-color: rgba(253, 101, 0, 0.6);
 }
 
-/* Expanded content stays readable against the card's own background */
-.membership__category.is-open .membership__category-description {
-  /* inherits the variant's resting description color — no override needed */
-}
-
-.membership__category.is-open .membership__category-description strong {
-  /* inherits the variant's strong color — no override needed */
-}
-
-/* Fee stays green on open (kept readable on every variant) */
 .membership__category.is-open .membership__category-fee,
 .membership__category.is-open .membership__category-fee strong {
   color: var(--color-secondary, #0C7923) !important;
