@@ -6,28 +6,46 @@ export function Footer() {
   const studio = content.studioInfo || {}
   const year = new Date().getFullYear()
 
+  // 8 particles, cycled through the 3 brand colors
+  const PARTICLE_COLORS = ['white', 'orange', 'green']
+
   return (
     <footer className="footer">
       <div className="container footer__inner">
         <div className="footer__brand">
-          <img
-            src="/crane.png"
-            alt="Animation Guild Uganda"
-            className="footer__logo"
-          />
+          {/* Logo + floating particles wrapper */}
+          <div className="footer__logo-wrap">
+            <img
+              src="/crane.png"
+              alt="Animation Guild Uganda"
+              className="footer__logo"
+            />
+
+            <span className="footer__particles" aria-hidden="true">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <span
+                  key={i}
+                  className={`footer__particle footer__particle--${
+                    PARTICLE_COLORS[i % PARTICLE_COLORS.length]
+                  }`}
+                />
+              ))}
+            </span>
+          </div>
 
           <strong className="footer__name">
             {studio.name || 'Animation Guild Uganda'}
           </strong>
 
           {studio.tagline && (
-<span className="footer__tagline">
-  <span className="footer__tagline-word footer__tagline-word--white">Mobilize</span>
-  <span className="footer__tagline-sep"> — </span>
-  <span className="footer__tagline-word footer__tagline-word--orange">Mentor</span>
-  <span className="footer__tagline-sep"> — </span>
-  <span className="footer__tagline-word footer__tagline-word--green">Monetize</span>
-</span>          )}
+            <span className="footer__tagline">
+              <span className="footer__tagline-word footer__tagline-word--white">Mobilize</span>
+              <span className="footer__tagline-sep"> — </span>
+              <span className="footer__tagline-word footer__tagline-word--orange">Mentor</span>
+              <span className="footer__tagline-sep"> — </span>
+              <span className="footer__tagline-word footer__tagline-word--green">Monetize</span>
+            </span>
+          )}
         </div>
 
         <nav className="footer__links" aria-label="Footer">

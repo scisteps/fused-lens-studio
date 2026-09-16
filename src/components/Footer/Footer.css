@@ -104,3 +104,160 @@
     height: 120px;
   }
 }
+/* ============================================================
+   Logo + particle layer
+   ============================================================ */
+.footer__logo-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;                     /* room for particles to orbit */
+}
+
+/* Existing logo styles stay, but drop the auto margin now that
+   the wrapper handles positioning */
+.footer__logo {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  display: block;
+  margin: 0;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .footer__logo {
+    width: 120px;
+    height: 120px;
+  }
+  .footer__logo-wrap {
+    padding: 32px;
+  }
+}
+
+/* ============================================================
+   Floating particles around the logo
+   ============================================================ */
+.footer__particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.footer__particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  opacity: 0.85;
+  animation: footerParticleFloat 4.5s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* Colors — pick up from global palette */
+.footer__particle--white {
+  background: #ffffff;
+  box-shadow: 0 0 10px #ffffff, 0 0 20px rgba(255, 255, 255, 0.5);
+}
+.footer__particle--orange {
+  background: var(--color-accent, #FD6500);
+  box-shadow: 0 0 10px var(--color-accent, #FD6500),
+              0 0 20px rgba(253, 101, 0, 0.55);
+}
+.footer__particle--green {
+  background: var(--color-secondary, #0C7923);
+  box-shadow: 0 0 10px var(--color-secondary, #0C7923),
+              0 0 20px rgba(12, 121, 35, 0.55);
+}
+
+/* ---------- Each particle gets its own orbit position + timing ---------- */
+.footer__particle:nth-child(1) {
+  animation-delay: 0s;
+  animation-duration: 4.2s;
+  /* drift up-left */
+  --tx: -70px; --ty: -50px;
+}
+.footer__particle:nth-child(2) {
+  animation-delay: 0.4s;
+  animation-duration: 5s;
+  --tx: 80px;  --ty: -55px;
+}
+.footer__particle:nth-child(3) {
+  animation-delay: 1.1s;
+  animation-duration: 4.6s;
+  --tx: -85px; --ty: 30px;
+}
+.footer__particle:nth-child(4) {
+  animation-delay: 0.6s;
+  animation-duration: 5.4s;
+  --tx: 70px;  --ty: 60px;
+}
+.footer__particle:nth-child(5) {
+  animation-delay: 1.5s;
+  animation-duration: 4s;
+  --tx: -50px; --ty: 80px;
+}
+.footer__particle:nth-child(6) {
+  animation-delay: 0.9s;
+  animation-duration: 5.2s;
+  --tx: 55px;  --ty: -80px;
+}
+.footer__particle:nth-child(7) {
+  animation-delay: 1.8s;
+  animation-duration: 4.8s;
+  --tx: -95px; --ty: -20px;
+}
+.footer__particle:nth-child(8) {
+  animation-delay: 0.2s;
+  animation-duration: 4.4s;
+  --tx: 95px;  --ty: 20px;
+}
+
+/* ---------- Orbit keyframes ---------- */
+@keyframes footerParticleFloat {
+  0% {
+    transform: translate(-50%, -50%) scale(0.4);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  50% {
+    transform: translate(
+      calc(-50% + var(--tx) * 0.6),
+      calc(-50% + var(--ty) * 0.6)
+    ) scale(1.15);
+    opacity: 0.95;
+  }
+  85% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(
+      calc(-50% + var(--tx)),
+      calc(-50% + var(--ty))
+    ) scale(0.4);
+    opacity: 0;
+  }
+}
+
+/* Small-screen tune: smaller orbits so particles stay inside the footer */
+@media (max-width: 768px) {
+  .footer__particle {
+    width: 5px;
+    height: 5px;
+  }
+  .footer__particle:nth-child(1) { --tx: -55px; --ty: -35px; }
+  .footer__particle:nth-child(2) { --tx: 60px;  --ty: -40px; }
+  .footer__particle:nth-child(3) { --tx: -65px; --ty: 25px; }
+  .footer__particle:nth-child(4) { --tx: 55px;  --ty: 45px; }
+  .footer__particle:nth-child(5) { --tx: -40px; --ty: 60px; }
+  .footer__particle:nth-child(6) { --tx: 45px;  --ty: -60px; }
+  .footer__particle:nth-child(7) { --tx: -70px; --ty: -15px; }
+  .footer__particle:nth-child(8) { --tx: 70px;  --ty: 15px; }
+}
