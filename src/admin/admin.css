@@ -149,7 +149,7 @@ html, body {
 }
 
 .admin-btn--primary:hover:not(:disabled) {
-  background: #d4a86f;
+  background: var(--admin-accent-hover, #c9451f);
 }
 
 .admin-btn--primary:disabled {
@@ -172,7 +172,7 @@ html, body {
 }
 
 .admin-btn--danger:hover {
-  background: #ef4444;
+  background: var(--admin-accent-hover, #c9451f);
 }
 
 .admin-btn--small {
@@ -279,7 +279,7 @@ html, body {
 
 .admin-nav__item--active {
   color: var(--admin-accent);
-  background: rgba(201, 169, 98, 0.1);
+  background: rgba(241, 90, 57, 0.1);       /* orange tint */
   border-right: 2px solid var(--admin-accent);
 }
 
@@ -856,12 +856,13 @@ html, body {
 }
 
 .admin-status--pending {
-  background: rgba(201, 169, 98, 0.2);
+  background: rgba(241, 90, 57, 0.2);
   color: var(--admin-accent);
 }
 
+
 .admin-status--new {
-  background: rgba(201, 169, 98, 0.2);
+  background: rgba(241, 90, 57, 0.2);
   color: var(--admin-accent);
 }
 
@@ -915,7 +916,7 @@ html, body {
 .admin-message__service {
   margin-bottom: 1rem;
   padding: 0.75rem;
-  background: rgba(201, 169, 98, 0.1);
+  background: rgba(241, 90, 57, 0.1);
   border-radius: 6px;
   font-size: 0.875rem;
 }

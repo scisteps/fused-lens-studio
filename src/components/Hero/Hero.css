@@ -91,7 +91,7 @@
 /* Tagline */
 .hero__tagline1 {
   display: block;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: clamp(2.1rem, 5vw, 4rem);
   font-weight: 300;
   color: #ff8c00;
@@ -101,7 +101,7 @@
 }
 .hero__tagline2 {
   display: block;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: clamp(2.1rem, 5vw, 4rem);
   font-weight: 300;
   color: #ffffff;
@@ -111,7 +111,7 @@
 }
 .hero__tagline3 {
   display: block;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: clamp(2.1rem, 5vw, 4rem);
   font-weight: 300;
   color: #ff8c00;
@@ -124,7 +124,7 @@
 }
 
 .hero__title {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: clamp(2rem, 5vw, 2rem);
   font-weight: 400;
   color: var(--color-white);

@@ -62,12 +62,12 @@ export function Membership() {
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8 }}
         >
-          <span className="section-label">{membership.title || 'Membership'}</span>
+          <span className="membership__registered-badge">{membership.title || 'Membership'}</span>
           <h2 className="section-title">Join Our Community</h2>
-          <p className="section-subtitle">
+          {/* <p className="section-subtitle">
             {membership.overview || "Become part of Uganda's leading animation guild and grow with us."}
-          </p>
-          <span className="membership__registered-badge">Officially Registered in Uganda</span>
+          </p> */}
+          {/* <span className="membership__registered-badge">Incorpo Uganda</span> */}
         </motion.div>
 
         {membership.eligibility && (

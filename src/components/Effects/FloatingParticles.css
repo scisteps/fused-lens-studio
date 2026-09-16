@@ -1,0 +1,36 @@
+.floating-particles {
+  position: absolute;         /* NOT fixed — scoped to parent */
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.floating-particles__particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.6);
+  will-change: transform, opacity;
+  animation-name: particleSprout;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;   /* sprout once, then stay */
+}
+
+@keyframes particleSprout {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: var(--end-opacity, 0.3);
+    transform: translate(
+      calc(-50% + var(--dx, 0px)),
+      calc(-50% + var(--dy, 0px))
+    ) scale(1);
+  }
+}

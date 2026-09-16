@@ -90,7 +90,7 @@ export function Navigation() {
         className={`nav ${isScrolled ? 'nav--scrolled' : ''} ${isDark ? 'nav--dark' : 'nav--light'}`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.8,delay:2.7, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="nav__container">
           <Link to="/" className="nav__logo clickable">

@@ -1,42 +1,66 @@
 /* ========================================
-   LUMIÈRE STUDIO - Global Styles
-   Premium Photography Studio Website
+   ANIMATION GUILD UGANDA - Global Styles
    ======================================== */
 html, body {
-  overflow-x: clip;    /* clip is cleaner than hidden — no scrollbar, no layout overflow */
+  overflow-x: clip;
   max-width: 100vw;
 }
+
 :root {
-  /* Colors - Refined neutral palette with warm undertones */
+  /* ============================================================
+     COLOR SYSTEM — black, white, orange, green
+     ============================================================ */
+
+  /* Core neutrals */
   --color-black: #0a0a0a;
-  --color-charcoal: #1a1a1a;
-  --color-graphite: #2d2d2d;
-  --color-slate: #404040;
+  --color-charcoal: #141414;
+  --color-graphite: #1f1f1f;
+  --color-slate: #2e2e2e;
   --color-ash: #6b6b6b;
   --color-silver: #9a9a9a;
-  --color-pearl: #c4c4c4;
-  --color-cream: #f5f3f0;
-  --color-white: #fafafa;
-  
-  /* Accent - Warm champagne gold */
-  --color-accent: #c9a962;
-  --color-accent-light: #dfc88a;
-  --color-accent-dark: #a68b4b;
-  
+  --color-pearl: #d4d4d4;
+  --color-cream: #f5f5f5;
+  --color-white: #ffffff;
+
+  /* Primary accent — orange #FD6500 */
+  --color-accent: #FD6500;
+  --color-accent-light: #ff8133;
+  --color-accent-dark: #c94f00;
+
+  /* Secondary accent — green */
+  --color-secondary: #0C7923;
+  --color-secondary-light: #2a9d43;
+  --color-secondary-dark: #075418;
+
   /* Functional colors */
-  --color-success: #4a9d6e;
-  --color-error: #c75a5a;
-  
-  /* Typography */
-/* ============================================================
-   FONT SYSTEM — change site-wide typography here
-   ============================================================ */
-:root {
-  --font-main: 'YourBodyFont', sans-serif;        /* paragraphs, buttons, UI, nav */
-  --font-subsidiary: 'YourLabelFont', sans-serif;  /* small labels, captions, uppercase tags */
-  --font-special: 'YourDisplayFont', serif;        /* hero titles, section headings, accents */
-}
-  
+  --color-success: #0C7923;
+  --color-error: #FD6500;
+
+  /* Semantic aliases */
+  --color-orange: #FD6500;
+  --color-green: #0C7923;
+
+  /* Signature gradient — orange → green */
+  --gradient-accent: linear-gradient(90deg, #FD6500 0%, #0C7923 100%);
+  --gradient-accent-soft: linear-gradient(
+    90deg,
+    rgba(253, 101, 0, 0.15) 0%,
+    rgba(12, 121, 35, 0.15) 100%
+  );
+
+  /* ============================================================
+     FONT SYSTEM — only 2 fonts used app-wide
+       Display / headings  → Cormorant Garamond (serif)
+       Body / UI / buttons → Outfit (sans-serif)
+     ============================================================ */
+  --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-special: var(--font-body);
+
+  --font-body: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-main: var(--font-body);
+
+  --font-subsidiary: var(--font-body);
+
   /* Spacing scale */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
@@ -45,7 +69,7 @@ html, body {
   --space-xl: 4rem;
   --space-2xl: 8rem;
   --space-3xl: 12rem;
-  
+
   /* Transitions */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
@@ -53,17 +77,18 @@ html, body {
   --transition-fast: 0.2s var(--ease-out-quart);
   --transition-smooth: 0.4s var(--ease-out-expo);
   --transition-slow: 0.8s var(--ease-out-expo);
-  
+
   /* Layout */
   --container-max: 1440px;
   --container-padding: clamp(1.5rem, 5vw, 4rem);
   --header-height: 80px;
-  
+
   /* Shadows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.12);
-  --shadow-glow: 0 0 40px rgba(201, 169, 98, 0.15);
+  --shadow-glow: 0 0 40px rgba(253, 101, 0, 0.2);
+  --shadow-glow-green: 0 0 40px rgba(12, 121, 35, 0.18);
 }
 
 /* Reset & Base */
@@ -82,7 +107,7 @@ html {
 
 body {
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;               /* Outfit — 400 reads well */
   line-height: 1.6;
   color: var(--color-charcoal);
   background: var(--color-white);
@@ -110,25 +135,25 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-silver);
+  background: var(--color-accent);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-ash);
+  background: var(--color-accent-dark);
 }
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-family: var(--font-body);   /* was var(--font-display) */
+  font-weight: 500;               /* Cormorant reads best at 500 */
+  line-height: 1.15;
+  letter-spacing: -0.01em;
 }
 
 h1 {
   font-size: clamp(3rem, 8vw, 7rem);
-  font-weight: 300;
+  font-weight: 500;
 }
 
 h2 {
@@ -182,10 +207,20 @@ button {
   margin-bottom: var(--space-2xl);
 }
 
+.section-heading::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 2px;
+  margin: var(--space-md) auto 0;
+  background: var(--gradient-accent);
+}
+
 .section-label {
   display: inline-block;
+  font-family: var(--font-body);
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-accent);
@@ -210,8 +245,9 @@ button {
   justify-content: center;
   gap: var(--space-sm);
   padding: 1rem 2.5rem;
+  font-family: var(--font-body);
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   border-radius: 0;
@@ -220,6 +256,7 @@ button {
   overflow: hidden;
 }
 
+/* Primary — black base, orange wipe-up on hover */
 .btn-primary {
   background: var(--color-charcoal);
   color: var(--color-white);
@@ -243,6 +280,7 @@ button {
   z-index: 1;
 }
 
+/* Outline — black outline, orange fill on hover */
 .btn-outline {
   background: transparent;
   color: var(--color-charcoal);
@@ -250,7 +288,20 @@ button {
 }
 
 .btn-outline:hover {
-  background: var(--color-charcoal);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-white);
+}
+
+/* Secondary — green outline, green fill on hover */
+.btn-secondary {
+  background: transparent;
+  color: var(--color-secondary);
+  border: 1px solid var(--color-secondary);
+}
+
+.btn-secondary:hover {
+  background: var(--color-secondary);
   color: var(--color-white);
 }
 
@@ -271,9 +322,39 @@ button {
   color: var(--color-accent);
 }
 
+.text-secondary {
+  color: var(--color-secondary);
+}
+
+/* Badges (e.g. "Now booking", "Available") */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.4em 0.9em;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-radius: 999px;
+}
+
+.badge--available {
+  background: rgba(12, 121, 35, 0.08);
+  color: var(--color-secondary);
+  border: 1px solid var(--color-secondary);
+}
+
+.badge--accent {
+  background: rgba(253, 101, 0, 0.08);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+}
+
 /* Dark section variant */
 .section--dark {
-  background: var(--color-charcoal);
+  background: var(--color-black);
   color: var(--color-white);
 }
 
@@ -287,6 +368,10 @@ button {
 
 .section--dark p {
   color: var(--color-silver);
+}
+
+.section--dark .section-label {
+  color: var(--color-accent);
 }
 
 /* Gradient overlays */
@@ -319,7 +404,7 @@ button {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  
+
   html {
     scroll-behavior: auto;
   }
@@ -330,9 +415,8 @@ button {
   :root {
     --header-height: 70px;
   }
-  
+
   .section {
     padding: var(--space-2xl) 0;
   }
 }
-

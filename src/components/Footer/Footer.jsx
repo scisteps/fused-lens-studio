@@ -21,8 +21,13 @@ export function Footer() {
           </strong>
 
           {studio.tagline && (
-            <span className="footer__tagline">{studio.tagline}</span>
-          )}
+<span className="footer__tagline">
+  <span className="footer__tagline-word footer__tagline-word--white">Mobilize</span>
+  <span className="footer__tagline-sep"> — </span>
+  <span className="footer__tagline-word footer__tagline-word--orange">Mentor</span>
+  <span className="footer__tagline-sep"> — </span>
+  <span className="footer__tagline-word footer__tagline-word--green">Monetize</span>
+</span>          )}
         </div>
 
         <nav className="footer__links" aria-label="Footer">

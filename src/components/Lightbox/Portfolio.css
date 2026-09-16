@@ -136,7 +136,7 @@
 }
 
 .portfolio__title {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 1.5rem;
   font-weight: 400;
   margin-bottom: var(--space-sm);

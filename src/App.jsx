@@ -62,7 +62,7 @@ function AppShell() {
 
   return (
     <div className="app">
-        {!isDashboard && <FloatingParticles count={25} />}
+        {/* {!isDashboard && <FloatingParticles count={25} />} */}
         {!isDashboard && <CursorGlow />}
         {!isDashboard && <Navigation />}
         

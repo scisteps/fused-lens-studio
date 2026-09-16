@@ -9,10 +9,10 @@ import './Services.css';
 
 gsap.registerPlugin(ScrollTrigger)
 
-// Icon resolver — Lottie via @lottiefiles/react-lottie-player, keyed by service id
+const CARD_VARIANTS = ['white', 'orange', 'green']
+
 const ServiceIcon = ({ id, animRef }) => {
   const animationData = serviceAnimations[id]
-
   if (!animationData) return null
 
   return (
@@ -34,9 +34,8 @@ export function Services() {
   const [flippedCard, setFlippedCard] = useState(null)
   const sectionRef = useRef(null)
   const cardRefs = useRef([])
-  const animRef = useRef({})   // one player ref per service id
+  const animRef = useRef({})
 
-  // Staggered card animation
   useEffect(() => {
     const cards = cardRefs.current.filter(Boolean)
 
@@ -86,40 +85,67 @@ export function Services() {
           </p>
         </motion.div>
 
-        {/* Service Cards */}
         <div className="services__grid">
-          {services.map((service, index) => (
-            <div
-              key={service.id}
-              ref={(el) => (cardRefs.current[index] = el)}
-              className={`service-card ${flippedCard === service.id ? 'service-card--flipped' : ''}`}
-              onClick={() => handleCardClick(service.id)}
-              style={{ perspective: '1000px' }}
-            >
-              <div className="service-card__inner">
-                {/* Front */}
-                <div className="service-card__front">
-                  <ServiceIcon id={service.id} animRef={animRef} />
-                  <h3 className="service-card__title">{service.title}</h3>
-                  <p className="service-card__description">{service.description}</p>
-                  <span className="service-card__hint">Click to learn more</span>
-                </div>
+          {services.map((service, index) => {
+            const variant = CARD_VARIANTS[index % CARD_VARIANTS.length]
 
-                {/* Back */}
-                <div className="service-card__back">
-                  <h3 className="service-card__title">{service.title}</h3>
-                  <ul className="service-card__features">
-                    {service.features.map((feature, i) => (
-                      <li key={i} className="service-card__feature">
-                        <span className="service-card__feature-icon">✓</span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
+            return (
+              <div
+                key={service.id}
+                ref={(el) => (cardRefs.current[index] = el)}
+                className={[
+                  'service-card',
+                  `service-card--${variant}`,
+                  flippedCard === service.id ? 'service-card--flipped' : '',
+                ].filter(Boolean).join(' ')}
+                onClick={() => handleCardClick(service.id)}
+                style={{ perspective: '1000px' }}
+              >
+                <div className="service-card__inner">
+
+                  {/* ---------- FRONT ---------- */}
+                  <div className="service-card__front">
+                    <div className="service-card__front-top">
+                      <ServiceIcon id={service.id} animRef={animRef} />
+                      <h3 className="service-card__title">{service.title}</h3>
+                      <p className="service-card__description">{service.description}</p>
+                    </div>
+
+                    <div className="service-card__cta-wrap">
+                      <span className="service-card__cta-particles" aria-hidden="true">
+                        <span /><span /><span /><span /><span /><span />
+                      </span>
+
+                      <button
+                        type="button"
+                        className="service-card__cta"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleCardClick(service.id)
+                        }}
+                      >
+                        <span className="service-card__cta-label">More Details</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* ---------- BACK ---------- */}
+                  <div className="service-card__back">
+                    <h3 className="service-card__title">{service.title}</h3>
+                    <ul className="service-card__features">
+                      {service.features.map((feature, i) => (
+                        <li key={i} className="service-card__feature">
+                          <span className="service-card__feature-icon">✓</span>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

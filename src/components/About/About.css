@@ -81,7 +81,7 @@
 
 .about__badge-number {
   display: block;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 3rem;
   font-weight: 300;
   line-height: 1;
@@ -117,7 +117,7 @@
 
 .about__tagline {
   display: block;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 1.05rem;
   font-style: italic;
   letter-spacing: 0.04em;
@@ -160,7 +160,7 @@
 
 .about__stat-number {
   display: block;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 2.5rem;
   font-weight: 300;
   color: var(--color-accent);
@@ -236,7 +236,7 @@
 }
 
 .about__pointer-index {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 0.9rem;
   color: var(--color-accent);
   flex-shrink: 0;
@@ -343,7 +343,7 @@
 
 .timeline__year {
   display: inline-block;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 2rem;
   font-weight: 300;
   color: var(--color-accent);

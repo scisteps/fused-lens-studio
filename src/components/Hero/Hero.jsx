@@ -4,7 +4,7 @@ import gsap from 'gsap'
 import { heroSlides, resolveImage } from '../../data/images'
 import { useSiteContent } from '../../lib/useSiteContent'
 import './Hero.css'
-import final from '../../jsons/final4.json'
+import final from '../../jsons/final5.json'
 import { Player } from '@lottiefiles/react-lottie-player'
 
 // ─── Intro timing (seconds) ────────────────────────────────────────────
@@ -224,9 +224,9 @@ export function Hero() {
             </AnimatePresence>
           </div>
 
-          <p className="hero__description" ref={descriptionRef} style={{ opacity: 0 }}>
+          {/* <p className="hero__description" ref={descriptionRef} style={{ opacity: 0 }}>
             {studioInfo.description}
-          </p>
+          </p> */}
 
           <div className="hero__actions" ref={actionsRef} style={{ opacity: 0 }}>
             <motion.button
