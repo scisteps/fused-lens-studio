@@ -290,9 +290,9 @@
   .hero__content { padding-bottom: 15vh; }
 
   .hero__lottie {
-    width: 700px;
-    height: 700px;
-    left: 5px;
+    width: 600px;
+    height: 600px;
+    left: -20px;
     bottom:320px;   /* ← adjust per breakpoint */
   }
 .hero__title-wrapper {
