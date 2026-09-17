@@ -75,7 +75,7 @@ export function Services() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <span className="section-label">Services</span>
+          {/* <span className="section-label">Services</span> */}
           <h2 className="section-title">What We Offer</h2>
           <p className="section-subtitle">
             A collective of animators from the pearl of Africa.

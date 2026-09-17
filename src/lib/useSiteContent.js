@@ -4,9 +4,10 @@
 // Reads the published content doc from Firestore and falls back
 // to the default static content if Firestore is unavailable.
 //
-// NOTE: `membership` is intentionally NOT read from Firestore — it is
-// hardcoded here in DEFAULT_CONTENT so the site always shows the
-// benefits/categories defined in this file, regardless of CMS state.
+// NOTE: `membership` IS read from Firestore, so fees, categories, benefits
+// and copy edited in the Content Dashboard go live on publish. CMS values
+// are merged over DEFAULT_CONTENT.membership, so any field the CMS does not
+// provide still falls back to the definitions in this file.
 
 import { useEffect, useState } from 'react'
 import { doc, onSnapshot } from 'firebase/firestore'
@@ -123,17 +124,35 @@ export function useSiteContent() {
         if (snap.exists()) {
           const data = snap.data() || {}
 
-          // Destructure `membership` out so we can deliberately ignore it.
-          // Everything else still comes from the CMS.
-          const { membership: _ignoredMembership, ...cmsRest } = data
+          // `membership` is pulled out only so it can be deep-merged below;
+          // everything else passes straight through from the CMS.
+          const { membership: cmsMembership, ...cmsRest } = data
+
+          // CMS membership wins where present. Empty category/benefit arrays
+          // fall back to the defaults so a half-filled draft can never blank
+          // out the section.
+          const membership = cmsMembership
+            ? {
+                ...DEFAULT_CONTENT.membership,
+                ...cmsMembership,
+                categories:
+                  cmsMembership.categories?.length > 0
+                    ? cmsMembership.categories
+                    : DEFAULT_CONTENT.membership.categories,
+                benefits:
+                  cmsMembership.benefits?.length > 0
+                    ? cmsMembership.benefits
+                    : DEFAULT_CONTENT.membership.benefits
+              }
+            : DEFAULT_CONTENT.membership
 
           setContent(prev => ({
             ...DEFAULT_CONTENT,
             ...prev,
             ...cmsRest,
 
-            // Always use the local membership block — never the CMS one.
-            membership: DEFAULT_CONTENT.membership
+            // Fees, categories and benefits edited in the dashboard go live.
+            membership
           }))
         }
 

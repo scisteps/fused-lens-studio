@@ -239,7 +239,7 @@
    ============================================================ */
 .membership__category:hover,
 .membership__category:focus-visible {
-  background: #111111 !important;
+  background: var(--color-charcoal, #141414) !important;
   border-color: rgba(255, 255, 255, 0.28) !important;
   box-shadow: 0 14px 44px rgba(0, 0, 0, 0.5);
   outline: none;

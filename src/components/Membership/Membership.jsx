@@ -32,6 +32,10 @@ const BENEFIT_GROUPS = [
   { indices: [ 6], variant: 'green',  label: 'Voting & rights' }
 ]
 
+// Category card fills cycle white → orange → green. The final card is
+// always white so the list closes on a neutral card.
+const CATEGORY_VARIANTS = ['white', 'orange', 'green']
+
 const APPLY_EMAIL = 'animationguilduganda@gmail.com'
 
 export function Membership() {
@@ -77,7 +81,7 @@ export function Membership() {
   const applyMailto = `mailto:${APPLY_EMAIL}?subject=${encodeURIComponent(
     'Membership Application — Animation Guild Uganda'
   )}&body=${encodeURIComponent(
-    'Hello Animation Guild Uganda,\n\nI would like to apply for membership.\n\nName:\nContact:\nPreferred category:\n\nThank you.'
+    'Hello Animation Guild Uganda,\n\nI would like to apply for membership.\n\nName:\nContact:\nType of artist:\nCountry of residence:\n\nThank you.'
   )}`
 
   return (
@@ -134,7 +138,12 @@ export function Membership() {
             <div className="membership__categories-grid">
               {membership.categories.map((category, index) => {
                 const isOpen = openCategory === index
-                const variant = ['white', 'orange', 'green'][index % 3]
+                // Last category is white, not orange, so the list ends on a
+                // neutral card instead of repeating the orange fill.
+                const variant =
+                  index === membership.categories.length - 1
+                    ? 'white'
+                    : CATEGORY_VARIANTS[index % CATEGORY_VARIANTS.length]
 
                 return (
                   <button
