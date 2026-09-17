@@ -6,23 +6,22 @@ gsap.registerPlugin(ScrollTrigger)
 
 export function useSmoothScroll() {
   const scrollRef = useRef(null)
-  
+
   useEffect(() => {
     // Refresh ScrollTrigger on load and resize
     ScrollTrigger.refresh()
-    
+
     const handleResize = () => {
       ScrollTrigger.refresh()
     }
-    
+
     window.addEventListener('resize', handleResize)
-    
+
     return () => {
       window.removeEventListener('resize', handleResize)
-      ScrollTrigger.getAll().forEach(st => st.kill())
     }
   }, [])
-  
+
   return scrollRef
 }
 

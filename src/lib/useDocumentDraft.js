@@ -34,7 +34,7 @@ export function useDocumentDraft(docPath, storageKey, defaultValue) {
   }, [data, storageKey])
 
   const isDirty = publishedSnapshot
-    ? JSON.stringify(data) !== JSON.stringify({ ...data, ...stripMeta(publishedSnapshot) })
+    ? JSON.stringify(stripMeta(data)) !== JSON.stringify(stripMeta(publishedSnapshot))
     : true
 
   const publish = useCallback(async () => {

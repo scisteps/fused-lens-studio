@@ -156,38 +156,11 @@
   transform: translateY(-3px);
 }
 
-/* ---------- Swipe reflection (loops every 3s) — CATEGORY only ---------- */
-.membership__category-shine {
-  position: absolute;
-  top: 0;
-  left: -75%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(
-    100deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.08) 30%,
-    rgba(255, 255, 255, 0.45) 50%,
-    rgba(255, 255, 255, 0.08) 70%,
-    transparent 100%
-  );
-  transform: skewX(-20deg);
-  pointer-events: none;
-  z-index: 3;
-  animation: cardShine 3s ease-in-out infinite;
-}
-
-/* ---------- BENEFIT shine removed ---------- */
-.membership__benefit-shine {
+/* ---------- Swipe shine removed (categories are flat solids now) ---------- */
+.membership__category-shine,
+.membership__benefit-shine,
+.btn--committee::after {
   display: none;
-}
-
-@keyframes cardShine {
-  0%   { left: -75%; opacity: 0; }
-  10%  { opacity: 1; }
-  50%  { opacity: 1; }
-  60%  { left: 130%; opacity: 0; }
-  100% { left: 130%; opacity: 0; }
 }
 
 .membership__category-header {
@@ -369,7 +342,7 @@
 }
 
 /* ============================================================
-   BENEFITS — grouped rows with matching glows + numbering
+   BENEFITS — flat solids, sharp edges, black text, no glow
    ============================================================ */
 .membership__benefits {
   display: flex;
@@ -411,33 +384,31 @@
 .membership__benefit {
   position: relative;
   padding: 1.5rem 1.75rem 1.5rem 4.25rem;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  border-radius: 0;
+  background: #ffffff;
+  border: none;
+  box-shadow: none;
   overflow: hidden;
-  isolation: isolate;
-  transition: transform var(--transition-smooth),
-              box-shadow var(--transition-smooth),
-              border-color var(--transition-smooth);
+  transition: transform var(--transition-smooth);
 }
 
 .membership__benefit:hover {
-  transform: translateY(-4px);
+  transform: none;
+  box-shadow: none;
 }
 
 .membership__benefit-description {
   margin: 0;
   font-size: 1rem;
   line-height: 1.65;
-  color: rgba(255, 255, 255, 0.85);
+  color: #0a0a0a;
   position: relative;
   z-index: 2;
 }
 
 .membership__benefit-description strong {
   font-weight: 700;
-  color: #ffffff;
+  color: #0a0a0a;
 }
 
 /* ---------- Global numbering ---------- */
@@ -454,26 +425,27 @@
   z-index: 2;
 }
 
-.membership__benefit--green  .membership__benefit-number { color: var(--color-secondary-light, #2a9d43); }
-.membership__benefit--white  .membership__benefit-number { color: #ffffff; }
-.membership__benefit--orange .membership__benefit-number { color: var(--color-accent, #FD6500); }
+.membership__benefit--green  .membership__benefit-number,
+.membership__benefit--white  .membership__benefit-number,
+.membership__benefit--orange .membership__benefit-number { color: #0a0a0a; }
 
 /* ---------- GREEN group ---------- */
 .membership__benefit-group--green .membership__benefit-group-label {
   color: var(--color-secondary-light, #2a9d43);
 }
 .membership__benefit--green {
-  border-color: rgba(12, 121, 35, 0.45);
-  box-shadow: 0 0 26px rgba(12, 121, 35, 0.35),
-              inset 0 0 14px rgba(12, 121, 35, 0.06);
+  background: var(--color-secondary, #0C7923);
+  border: none;
+  box-shadow: none;
+  color: #0a0a0a;
 }
 .membership__benefit--green:hover {
-  border-color: rgba(42, 157, 67, 0.9);
-  box-shadow: 0 0 42px rgba(12, 121, 35, 0.6),
-              inset 0 0 20px rgba(42, 157, 67, 0.12);
+  border: none;
+  box-shadow: none;
 }
+.membership__benefit--green .membership__benefit-description,
 .membership__benefit--green .membership__benefit-description strong {
-  color: var(--color-secondary-light, #2a9d43);
+  color: #0a0a0a;
 }
 
 /* ---------- WHITE group ---------- */
@@ -481,14 +453,14 @@
   color: #ffffff;
 }
 .membership__benefit--white {
-  border-color: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 0 26px rgba(255, 255, 255, 0.22),
-              inset 0 0 14px rgba(255, 255, 255, 0.05);
+  background: #ffffff;
+  border: none;
+  box-shadow: none;
+  color: #0a0a0a;
 }
 .membership__benefit--white:hover {
-  border-color: rgba(255, 255, 255, 0.75);
-  box-shadow: 0 0 42px rgba(255, 255, 255, 0.45),
-              inset 0 0 20px rgba(255, 255, 255, 0.1);
+  border: none;
+  box-shadow: none;
 }
 
 /* ---------- ORANGE group ---------- */
@@ -496,17 +468,18 @@
   color: var(--color-accent, #FD6500);
 }
 .membership__benefit--orange {
-  border-color: rgba(253, 101, 0, 0.45);
-  box-shadow: 0 0 26px rgba(253, 101, 0, 0.4),
-              inset 0 0 14px rgba(253, 101, 0, 0.08);
+  background: var(--color-accent, #FD6500);
+  border: none;
+  box-shadow: none;
+  color: #0a0a0a;
 }
 .membership__benefit--orange:hover {
-  border-color: rgba(253, 101, 0, 0.9);
-  box-shadow: 0 0 42px rgba(253, 101, 0, 0.65),
-              inset 0 0 20px rgba(253, 101, 0, 0.15);
+  border: none;
+  box-shadow: none;
 }
+.membership__benefit--orange .membership__benefit-description,
 .membership__benefit--orange .membership__benefit-description strong {
-  color: var(--color-accent, #FD6500);
+  color: #0a0a0a;
 }
 
 /* ============================================================

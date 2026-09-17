@@ -41,7 +41,15 @@ const DEFAULT_CONTENT = {
 
   timeline: staticContent.timeline,
 
-  services: staticContent.services,
+  services: (staticContent.services || []).map((service, index) => ({
+    id: service.id ?? `service-${index + 1}`,
+    title: service.title || '',
+    description: service.description || '',
+    icon: service.icon || '',
+    accent: service.accent || '',
+    imageId: service.imageId || '',
+    features: Array.isArray(service.features) ? service.features : []
+  })),
 
   membership: {
     title: 'Membership',

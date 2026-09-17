@@ -25,23 +25,19 @@ export function About() {
 
   // Parallax effect on image
   useEffect(() => {
-    const image = imageRef.current
-    if (!image) return
-
-    gsap.to(image, {
-      yPercent: 20,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 1
-      }
-    })
-
-    return () => {
-      ScrollTrigger.getAll().forEach(st => st.kill())
-    }
+    const ctx = gsap.context(() => {
+      gsap.to(imageRef.current, {
+        yPercent: 20,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1
+        }
+      })
+    }, sectionRef)
+    return () => ctx.revert()
   }, [])
 
   const containerVariants = {

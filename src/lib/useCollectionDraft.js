@@ -31,7 +31,7 @@ export function useCollectionDraft(collectionPath, storageKey, defaultItems) {
   }, [items, storageKey])
 
   const isDirty = publishedSnapshot
-    ? JSON.stringify(items) !== JSON.stringify(publishedSnapshot.map(stripMeta))
+    ? JSON.stringify(items.map(stripMeta)) !== JSON.stringify(publishedSnapshot.map(stripMeta))
     : true
 
   const publish = useCallback(async () => {

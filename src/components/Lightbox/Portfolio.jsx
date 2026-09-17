@@ -22,29 +22,26 @@ export function Portfolio() {
 
   // Scroll-triggered staggered animations
   useEffect(() => {
-    const items = itemRefs.current.filter(Boolean)
-    
-    gsap.set(items, { opacity: 0, y: 60, scale: 0.95 })
-    
-    const animation = gsap.to(items, {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      duration: 0.8,
-      stagger: 0.1,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: gridRef.current,
-        start: 'top 80%',
-        toggleActions: 'play none none reverse'
-      }
-    })
+    const ctx = gsap.context(() => {
+      const items = itemRefs.current.filter(Boolean)
+      gsap.set(items, { opacity: 0, y: 60, scale: 0.95 })
 
-    return () => {
-      animation.kill()
-      ScrollTrigger.getAll().forEach(st => st.kill())
-    }
-  }, [filteredImages])
+      gsap.to(items, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: gridRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse'
+        }
+      })
+    }, gridRef)
+    return () => ctx.revert()
+  }, [activeCategory])
 
   // Tilt effect on hover
   const handleMouseMove = (e, index) => {

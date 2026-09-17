@@ -56,7 +56,6 @@ function AppShell() {
     return () => {
       clearTimeout(timeout)
       window.removeEventListener('resize', handleResize)
-      ScrollTrigger.getAll().forEach(st => st.kill())
     }
   }, [])
 

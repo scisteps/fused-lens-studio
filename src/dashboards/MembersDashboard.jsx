@@ -42,10 +42,17 @@ export default function MembersDashboard() {
   }
 
   // Re-seed from DEFAULT_MEMBERS when stored version is behind.
+  // Asks first so real local edits are never silently discarded.
   useEffect(() => {
     setItems(current => {
       const storedVersion = current?.[0]?.__v ?? 1
       if (storedVersion === MEMBERS_VERSION) return current
+      if (Array.isArray(current) && current.length > 0 && typeof window !== 'undefined') {
+        const ok = window.confirm(
+          'New default members are available. Replace your unsaved local draft with the updated defaults?'
+        )
+        if (!ok) return current
+      }
       return DEFAULT_MEMBERS
     })
   }, [setItems])

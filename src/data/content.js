@@ -1,4 +1,4 @@
-export const studioInfo = {
+﻿export const studioInfo = {
   name: 'ANIMATION GUILD UGANDA',
   tagline: 'Mobilize - Mentor - Monetize',
   description: 'Building and promoting a sound, sustainable animation industry in Uganda.',
@@ -15,33 +15,43 @@ export const studioInfo = {
   }
 }
 
+export const SERVICE_ACCENTS = ['white', 'orange', 'green']
+
 export const services = [
   {
     id: 1,
     title: 'Promoting professional development',
     description: 'Building and promoting a sound, sustainable animation industry in Uganda.',
-    // icon: 'Events',
+    icon: 'prodevt',
+    accent: 'orange',
+    imageId: 'agu4',
     features: [' peer-to-peer sharing', 'Engagement Session', 'seminars', 'Highlight Films']
   },
   {
     id: 2,
     title: ' Supporting animation education ',
     description: 'Supporting animation education .',
-    // icon: 'portrait',
+    icon: 'animeduc',
+    accent: 'green',
+    imageId: 'native',
     features: [' aligning private training methodologies', 'Reviewing the basics', ]
   },
   {
     id: 3,
     title: 'Providing showcase platforms.',
     description: 'Recognizing industry excellence and outstanding achievements.',
-    // icon: 'parties',
+    icon: 'final',
+    accent: 'white',
+    imageId: 'uff',
     features: ['festivals', 'screenings', 'competitions']
   },
   {
     id: 4,
     title: 'Establishing collective representation',
     description: ' legitimize animation as a viable career path .',
-    // icon: 'event',
+    icon: 'prodevt',
+    accent: 'orange',
+    imageId: 'agu3',
     features: ['Corporate Events', 'advocacy', ' lawful collective bargaining ', ' legal support for members']
   }
 ]
@@ -116,4 +126,5 @@ export const navLinks = [
   { id: 'contact', label: 'Contact' }
 ]
 
-export const missionStatement = `At Fused Lens Studio, we believe photography is more than capturing images—it's about freezing emotions, preserving stories, and creating art that resonates across generations. Our passion lies in the details: the subtle glance, the fleeting smile, the perfect light. We blend technical mastery with artistic vision to deliver photographs that aren't just seen, but felt.`
+export const missionStatement = `At Fused Lens Studio, we believe photography is more than capturing imagesâ€”it's about freezing emotions, preserving stories, and creating art that resonates across generations. Our passion lies in the details: the subtle glance, the fleeting smile, the perfect light. We blend technical mastery with artistic vision to deliver photographs that aren't just seen, but felt.`
+

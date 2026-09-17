@@ -39,12 +39,18 @@ export default function NewsEventsDashboard() {
   const formRef = useRef(null)
 
   // Re-seed from DEFAULT_ITEMS when the stored collection predates the current
-  // version. Stored items get a sentinel `__v` on their way in, so this effect
-  // only fires once per version bump.
+  // version. Asks first so real local edits are never silently discarded.
   useEffect(() => {
     setItems(current => {
       const storedVersion = current?.[0]?.__v ?? 1
       if (storedVersion === COLLECTION_VERSION) return current
+      const hasRealEdits = Array.isArray(current) && current.length > 0
+      if (hasRealEdits && typeof window !== 'undefined') {
+        const ok = window.confirm(
+          'New default news & events are available. Replace your unsaved local draft with the updated defaults?'
+        )
+        if (!ok) return current
+      }
       return DEFAULT_ITEMS.map(item => ({ ...item, __v: COLLECTION_VERSION }))
     })
   }, [setItems])

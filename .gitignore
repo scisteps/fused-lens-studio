@@ -34,3 +34,12 @@ server/uploads/*
 # Keep the structure but not actual passwords
 # server/data/admin.json
 
+# Executables must never be committed in src/
+*.exe
+*.msi
+*.bat
+
+# Local env overrides (see .env.example for required keys)
+.env
+.env.local
+

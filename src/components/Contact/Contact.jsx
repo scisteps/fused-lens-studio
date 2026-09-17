@@ -7,6 +7,10 @@ import './Contact.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
+// Same origin as the frontend in production, Express on :3001 in dev
+// (Vite proxies /api -> :3001, see vite.config.js).
+const CONTACT_ENDPOINT = '/api/contact'
+
 // Social Icons
 const SocialIcon = ({ platform }) => {
   const icons = {
@@ -93,7 +97,7 @@ export function Contact() {
     setErrors({})
 
     try {
-      const response = await fetch('http://localhost:3002/api/contact', {
+      const response = await fetch(CONTACT_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

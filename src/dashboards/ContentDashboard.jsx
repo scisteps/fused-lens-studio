@@ -1,11 +1,13 @@
 import { useEffect, useMemo } from 'react'
 import * as staticContent from '../data/content'
+import { SERVICE_ACCENTS } from '../data/content'
+import { serviceAnimationChoices } from '../data/animations'
 import { heroSlides, imageOptions } from '../data/images'
 import { useDocumentDraft } from '../lib/useDocumentDraft'
-import { AddButton, Card, DashboardHeader, Field, PublishBar, TextArea, TextInput } from '../lib/ui'
+import { AddButton, Card, DashboardHeader, Field, PublishBar, TextArea, TextInput, inputStyle } from '../lib/ui'
 
 // Bump this whenever DEFAULT_CONTENT changes shape or seed values.
-const CONTENT_VERSION = 2
+const CONTENT_VERSION = 3
 
 const DEFAULT_CONTENT = {
   version: CONTENT_VERSION,
@@ -39,7 +41,15 @@ const DEFAULT_CONTENT = {
     description: item.description
   })),
 
-  services: staticContent.services,
+  services: staticContent.services.map((service, index) => ({
+    id: service.id ?? `service-${index + 1}`,
+    title: service.title || '',
+    description: service.description || '',
+    icon: service.icon || serviceAnimationChoices[index % serviceAnimationChoices.length].id,
+    accent: service.accent || SERVICE_ACCENTS[index % SERVICE_ACCENTS.length],
+    imageId: service.imageId || '',
+    features: Array.isArray(service.features) ? service.features : []
+  })),
 
   membership: {
     title: 'Membership',
@@ -807,8 +817,8 @@ export default function ContentDashboard() {
                     />
                   </Field>
 
-                  <Field label="Icon key">
-                    <TextInput
+                  <Field label="Icon (flip-card front)">
+                    <select
                       value={service.icon || ''}
                       onChange={event =>
                         updateArray(
@@ -818,11 +828,73 @@ export default function ContentDashboard() {
                           event.target.value
                         )
                       }
-                    />
+                      style={{
+                        ...inputStyle,
+                        background: '#141417'
+                      }}
+                    >
+                      <option value="">No icon</option>
+                      {serviceAnimationChoices.map(choice => (
+                        <option key={choice.id} value={choice.id}>
+                          {choice.label}
+                        </option>
+                      ))}
+                    </select>
                   </Field>
                 </Grid>
 
-                <Field label="Description">
+                <Grid>
+                  <Field label="Accent color">
+                    <select
+                      value={service.accent || SERVICE_ACCENTS[0]}
+                      onChange={event =>
+                        updateArray(
+                          'services',
+                          index,
+                          'accent',
+                          event.target.value
+                        )
+                      }
+                      style={{
+                        ...inputStyle,
+                        background: '#141417'
+                      }}
+                    >
+                      {SERVICE_ACCENTS.map(accent => (
+                        <option key={accent} value={accent}>
+                          {accent.charAt(0).toUpperCase() + accent.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+
+                  <Field label="Card image (front backdrop + back photo)">
+                    <select
+                      value={service.imageId || ''}
+                      onChange={event =>
+                        updateArray(
+                          'services',
+                          index,
+                          'imageId',
+                          event.target.value
+                        )
+                      }
+                      style={{
+                        ...inputStyle,
+                        background: '#141417'
+                      }}
+                    >
+                      <option value="">No image</option>
+                      {imageOptions.map(option => (
+                        <option key={option.id} value={option.id}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                </Grid>
+
+                <Field label="Description (shown on card back, under the image)">
                   <TextArea
                     value={
                       service.description || ''
@@ -863,7 +935,9 @@ export default function ContentDashboard() {
                 addArrayItem('services', {
                   id: `service-${Date.now()}`,
                   title: 'New service',
-                  icon: 'Events',
+                  icon: serviceAnimationChoices[0].id,
+                  accent: SERVICE_ACCENTS[0],
+                  imageId: imageOptions[0]?.id || '',
                   description: '',
                   features: []
                 })
@@ -1303,23 +1377,53 @@ function LivePreview({ data }) {
               >
                 {(data.services || [])
                   .slice(0, 4)
-                  .map(service => (
-                    <div
-                      key={
-                        service.id ||
-                        service.title
-                      }
-                      style={{
-                        padding: 7,
-                        background: '#1b1b20',
-                        borderRadius: 4
-                      }}
-                    >
-                      <strong>
-                        {service.title}
-                      </strong>
-                    </div>
-                  ))}
+                  .map(service => {
+                    const image = imageOptions.find(
+                      option => option.id === service.imageId
+                    )
+                    const iconChoice = serviceAnimationChoices.find(
+                      choice => choice.id === service.icon
+                    )
+                    return (
+                      <div
+                        key={
+                          service.id ||
+                          service.title
+                        }
+                        style={{
+                          padding: 7,
+                          background: '#1b1b20',
+                          borderRadius: 4
+                        }}
+                      >
+                        {image && (
+                          <img
+                            src={image.src}
+                            alt=""
+                            style={{
+                              width: '100%',
+                              height: 60,
+                              objectFit: 'cover',
+                              borderRadius: 3,
+                              marginBottom: 6
+                            }}
+                          />
+                        )}
+                        <strong style={{ fontSize: 12 }}>
+                          {service.title}
+                        </strong>
+                        <div style={{ fontSize: 10, color: '#c9a962', marginTop: 3 }}>
+                          {[service.accent, iconChoice?.label || service.icon].filter(Boolean).join(' · ')}
+                        </div>
+                        {service.description && (
+                          <div style={{ fontSize: 10, color: '#9a978f', marginTop: 3 }}>
+                            {service.description.slice(0, 90)}
+                            {service.description.length > 90 ? '…' : ''}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
               </div>
             </PreviewSection>
           )}

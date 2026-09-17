@@ -150,7 +150,6 @@ export function Membership() {
                     onClick={() => setOpenCategory(isOpen ? null : index)}
                     aria-expanded={isOpen}
                   >
-                    <span className="membership__category-shine" aria-hidden="true" />
 
                     <div className="membership__category-header">
                       <span className="membership__category-name">
@@ -231,10 +230,6 @@ export function Membership() {
                         key={index}
                         className={`membership__benefit membership__benefit--${group.variant}`}
                       >
-                        <span
-                          className="membership__benefit-shine"
-                          aria-hidden="true"
-                        />
                         <span className="membership__benefit-number">
                           {displayNumber}
                         </span>

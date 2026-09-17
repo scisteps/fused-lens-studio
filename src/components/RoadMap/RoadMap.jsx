@@ -28,45 +28,43 @@ export function RoadMap() {
   const milestoneRefs = useRef([])
 
   useEffect(() => {
-    const milestones = milestoneRefs.current.filter(Boolean)
-
-    milestones.forEach((milestone, index) => {
-      gsap.fromTo(milestone,
-        { opacity: 0, x: index % 2 === 0 ? -50 : 50 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: milestone,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse'
+    const ctx = gsap.context(() => {
+      milestoneRefs.current.filter(Boolean).forEach((milestone, index) => {
+        gsap.fromTo(milestone,
+          { opacity: 0, x: index % 2 === 0 ? -50 : 50 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: milestone,
+              start: 'top 80%',
+              toggleActions: 'play none none reverse'
+            }
           }
-        }
-      )
-    })
+        )
+      })
 
-    // Connector fill — grows top to bottom as the section scrolls through view
-    if (progressRef.current && timelineRef.current) {
-      gsap.fromTo(progressRef.current,
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: timelineRef.current,
-            start: 'top center',
-            end: 'bottom center',
-            scrub: 0.6
+      // Connector fill — grows top to bottom as the section scrolls through view
+      if (progressRef.current && timelineRef.current) {
+        gsap.fromTo(progressRef.current,
+          { scaleY: 0 },
+          {
+            scaleY: 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: timelineRef.current,
+              start: 'top center',
+              end: 'bottom center',
+              scrub: 0.6
+            }
           }
-        }
-      )
-    }
+        )
+      }
+    }, sectionRef)
 
-    return () => {
-      ScrollTrigger.getAll().forEach(st => st.kill())
-    }
+    return () => ctx.revert()
   }, [])
 
   if (content.visibility?.roadmap === false) return null

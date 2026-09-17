@@ -5,15 +5,22 @@ import { studioInfo } from '../../data/content'
 import logoImage from '../../Images/agulogo3.png';
 
 
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import './Navigation.css'
 
 export function Navigation() {
   const progress = useScrollProgress()
   const location = useLocation()
+  const navigate = useNavigate()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isDark, setIsDark] = useState(true)
+
+  const goToNewsEvents = (e) => {
+    if (e) e.preventDefault()
+    setIsMobileMenuOpen(false)
+    navigate('/news-events')
+  }
 
   // Navigation links for the main site
   const navLinks = [
@@ -120,10 +127,7 @@ export function Navigation() {
             <motion.a
               href="/news-events"
               className="nav__link clickable"
-              onClick={(e) => {
-                e.preventDefault()
-                window.location.href = '/news-events'
-              }}
+              onClick={goToNewsEvents}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 * navLinks.length, duration: 0.5 }}
@@ -189,10 +193,7 @@ export function Navigation() {
               <motion.a
                 href="/news-events"
                 className="mobile-menu__link"
-                onClick={(e) => {
-                  e.preventDefault()
-                  window.location.href = '/news-events'
-                }}
+                onClick={goToNewsEvents}
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 + navLinks.length * 0.05, duration: 0.5 }}

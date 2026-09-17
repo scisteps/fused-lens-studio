@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import './admin.css'
 
-const API_URL = 'http://localhost:3001/api'
+// Same origin in production, Vite proxies /api -> :3001 in dev.
+const API_URL = '/api'
 
 // Helper function to convert Google Drive link to direct image URL
 const convertGoogleDriveLink = (url) => {
