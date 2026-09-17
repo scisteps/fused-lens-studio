@@ -68,7 +68,7 @@ We provide training, mentorship, collaboration opportunities, and industry conne
   return (
     <section id="about" className="about section" ref={sectionRef}>
       <div className="container">
-        <h2 className="about__section-title">The Guild</h2>
+        <h2 className="about__section-title">ABOUT US</h2>
 
         <div className="about__layout">
           {/* Image Side */}
@@ -110,9 +110,9 @@ We provide training, mentorship, collaboration opportunities, and industry conne
             whileInView="visible"
             viewport={{ once: true, margin: '-100px' }}
           >
-            <motion.span className="section-label" variants={itemVariants}>
+            {/* <motion.span className="section-label" variants={itemVariants}>
               About Us
-            </motion.span>
+            </motion.span> */}
 
             <motion.h2 className="about__title" variants={itemVariants}>
               {about?.title || 'We are the Animation Guild Uganda'}

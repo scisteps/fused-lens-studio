@@ -1,222 +1,237 @@
-/* Members Page */
+/* Members Page — Executive Committee
+   Black background, blurred member slideshow, single-column rows.
+   ============================================================ */
 .members {
+  position: relative;
   min-height: 100vh;
-  background: var(--bg-dark);
-  color: var(--text-light);
+  background: #0a0a0c;
+  color: #f2f0ec;
+  overflow: hidden;
 }
 
-/* Hero Section */
+/* ---------- Blurred slideshow backdrop ---------- */
+.members__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.members__bg-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(18px) brightness(0.5);
+  transform: scale(1.15);
+  opacity: 0;
+  transition: opacity 1.6s ease;
+}
+
+.members__bg-slide.is-active {
+  opacity: 1;
+}
+
+.members__bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 12, 0.72),
+    rgba(10, 10, 12, 0.92)
+  );
+}
+
+.members .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Hero ---------- */
 .members__hero {
-  padding: 10rem 0 4rem;
-  background: linear-gradient(135deg, var(--bg-dark), rgba(201, 169, 98, 0.05));
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 10rem 0 3rem;
 }
 
 .members__hero-content {
   text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
-.members__hero-content h1 {a
-  font-size: 3.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #fff 30%, var(--gold));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-      color: var(--bg-dark);
-
+.members__eyebrow {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #c9a962;
+  margin-bottom: 1rem;
 }
 
-.members__hero-content p {
-  color: var(--text-muted);
-  font-size: 1.2rem;
-  max-width: 600px;
-  margin: 0 auto 0.5rem;
-    color: var(--bg-dark);
+.members__hero-content h2 {
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 600;
+  line-height: 1.1;
+  color: #ffffff;
+  margin: 0 0 1rem;
+}
 
+.members__subtitle {
+  color: rgba(242, 240, 236, 0.72);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin: 0 0 0.75rem;
 }
 
 .members__count {
-  color: var(--gold);
-  font-size: 1.1rem;
+  color: #c9a962;
+  font-size: 0.95rem;
   font-weight: 500;
+  letter-spacing: 0.04em;
 }
 
-/* Members List */
+/* ---------- Executive list: one column, one row each ---------- */
 .members__list {
-  padding: 4rem 0;
+  padding: 2rem 0 5rem;
 }
 
-/* Search */
-.members__search {
-  margin-bottom: 3rem;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.members__search input {
-  width: 100%;
-  padding: 0.9rem 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50px;
-  color: #fff;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  outline: none;
-}
-
-.members__search input:focus {
-  border-color: var(--gold);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 20px rgba(201, 169, 98, 0.05);
-}
-
-.members__search input::placeholder {
-  color: var(--text-muted);
-}
-
-/* Grid */
-.members__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
-}
-
-/* Card */
-.members__card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  overflow: hidden;
-  transition: all 0.4s ease;
-  text-align: center;
-}
-
-.members__card:hover {
-  transform: translateY(-8px);
-  border-color: var(--gold);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-}
-
-.members__card-image {
-  padding: 2rem 2rem 0;
+.members__column {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 880px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
 }
 
-.members__card-image img {
+/* Hairline dividers between rows — boardroom feel */
+.members__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 120px 1fr;
+  gap: 2rem;
+  align-items: center;
+  padding: 2rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.members__row:first-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.members__rank {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: rgba(201, 169, 98, 0.75);
+  min-width: 2.5rem;
+}
+
+/* ---------- Portrait: sharp, formal, gold keyline ---------- */
+.members__portrait {
   width: 120px;
-  height: 120px;
-  border-radius: 50%;
+  height: 140px;
+  overflow: hidden;
+  border-radius: 0;
+  border: 1px solid rgba(201, 169, 98, 0.45);
+  background: #141417;
+  flex-shrink: 0;
+}
+
+.members__portrait img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border: 3px solid rgba(201, 169, 98, 0.2);
-  transition: border-color 0.3s ease;
+  display: block;
+  filter: saturate(0.92);
 }
 
-.members__card:hover .members__card-image img {
-  border-color: var(--gold);
-}
-
-.members__card-avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold), #a8873e);
+.members__portrait-fallback {
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: var(--bg-dark);
-  border: 3px solid rgba(201, 169, 98, 0.2);
+  color: #0a0a0c;
+  background: linear-gradient(135deg, #c9a962, #a8873e);
 }
 
-.members__card-content {
-  padding: 1.5rem 2rem 2rem;
+/* ---------- Details ---------- */
+.members__details {
+  min-width: 0;
 }
 
-.members__card-name {
-  color: #000000;
-  font-size: 1.3rem;
+.members__name {
+  color: #ffffff;
+  font-size: 1.45rem;
   font-weight: 600;
-  margin-bottom: 0.25rem;
+  line-height: 1.25;
+  margin: 0 0 0.2rem;
 }
 
-.members__card-role {
-  color: var(--gold);
-  font-size: 0.95rem;
-  font-weight: 500;
-  margin-bottom: 0.75rem;
-}
-
-.members__card-expertise {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  margin-bottom: 0.75rem;
-}
-
-.members__card-expertise strong {
-  color: #fff;
-}
-
-.members__card-bio {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  line-height: 1.6;
-  margin-bottom: 0.75rem;
-}
-
-.members__card-joined {
-  color: var(--text-muted);
+.members__role {
+  color: #c9a962;
   font-size: 0.8rem;
-  opacity: 0.7;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin: 0 0 0.6rem;
 }
 
-/* Empty State */
+.members__meta {
+  color: rgba(242, 240, 236, 0.6);
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  margin: 0 0 0.6rem;
+}
+
+.members__bio {
+  color: rgba(242, 240, 236, 0.82);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 60ch;
+}
+
+/* ---------- Empty / loading ---------- */
 .members__empty {
   text-align: center;
   padding: 4rem;
-  color: var(--text-muted);
+  color: rgba(242, 240, 236, 0.6);
 }
 
-/* Loading */
 .members__loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 60vh;
-  color: var(--text-muted);
+  color: rgba(242, 240, 236, 0.6);
+  background: #0a0a0c;
 }
 
-/* Responsive */
+/* ---------- Responsive ---------- */
 @media (max-width: 768px) {
   .members__hero {
-    padding: 8rem 0 3rem;
+    padding: 8rem 0 2rem;
   }
 
-  .members__hero-content h1 {
-    font-size: 2.5rem;
+  .members__row {
+    grid-template-columns: auto 84px 1fr;
+    gap: 1.1rem;
+    padding: 1.5rem 0.25rem;
   }
 
-  .members__hero-content p {
-    font-size: 1rem;
-  }
-
-  .members__grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .members__card-image img,
-  .members__card-avatar {
-    width: 100px;
+  .members__portrait {
+    width: 84px;
     height: 100px;
   }
 
-  .members__card-content {
-    padding: 1.25rem;
+  .members__name {
+    font-size: 1.15rem;
+  }
+
+  .members__rank {
+    min-width: 1.75rem;
   }
 }

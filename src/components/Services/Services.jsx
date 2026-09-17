@@ -140,20 +140,22 @@ export function Services() {
                         <img src={backImage} alt={service.title} loading="lazy" />
                       </div>
                     )}
-                    <h3 className="service-card__title service-card__title--back">{service.title}</h3>
-                    {service.description && (
-                      <p className="service-card__description service-card__description--back">{service.description}</p>
-                    )}
-                    {features.length > 0 && (
-                      <ul className="service-card__features">
-                        {features.map((feature, i) => (
-                          <li key={i} className="service-card__feature">
-                            <span className="service-card__feature-icon">✓</span>
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                    <div className="service-card__back-body">
+                      <h3 className="service-card__title service-card__title--back">{service.title}</h3>
+                      {service.description && (
+                        <p className="service-card__description service-card__description--back">{service.description}</p>
+                      )}
+                      {features.length > 0 && (
+                        <ul className="service-card__features">
+                          {features.map((feature, i) => (
+                            <li key={i} className="service-card__feature">
+                              <span className="service-card__feature-icon">✓</span>
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
                   </div>
 
                 </div>

@@ -149,11 +149,10 @@ export function Contact() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <span className="section-label">Contact</span>
-          <h2 className="section-title">Let's Create Together</h2>
-          <p className="section-subtitle">
+          <h3>Contact Us</h3>
+          {/* <p className="section-subtitle">
             Ready to bring your vision to life? Get in touch and let's discuss your project.
-          </p>
+          </p> */}
         </motion.div>
 
         <div className="contact__layout">
