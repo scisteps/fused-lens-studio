@@ -1,87 +1,26 @@
+/* ============================================================
+   Site footer — brand, find us, follow us, then the link bar.
+   Deliberately restrained: location + email + socials only.
+   The phone number belongs to the Contact section, not here.
+   ============================================================ */
 .footer {
+  position: relative;
+  z-index: 1;
   background: var(--color-black, #0a0a0a);
   color: rgba(255, 255, 255, 0.8);
-  padding: var(--space-2xl, 3rem) 0 var(--space-lg, 1.5rem);
+  padding: clamp(2.5rem, 6vw, 4rem) 0 var(--space-lg, 1.5rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .footer__inner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-lg, 1.5rem);
+  gap: clamp(1.75rem, 4vw, 2.75rem);
   text-align: center;
 }
 
-.footer__name {
-  display: block;
-  font-family: var(--font-body, serif);
-  font-size: 1.4rem;
-  color: var(--color-white, #ffffff);
-}
-
-.footer__tagline {
-  display: block;
-  margin-top: 4px;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.footer__tagline-word {
-  transition: color var(--transition-fast);
-}
-
-.footer__tagline-word--white  { color: var(--color-white); }      /* #ffffff */
-.footer__tagline-word--orange { color: var(--color-accent); }     /* #F15A39 */
-.footer__tagline-word--green  { color: var(--color-secondary); }  /* #0C7923 */
-
-.footer__tagline-sep {
-  color: rgba(255, 255, 255, 0.4);
-  margin: 0 0.35em;
-}
-
-.footer__links {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-lg, 1.5rem);
-}
-
-.footer__links a {
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.875rem;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.footer__links a:hover {
-  color: var(--color-accent, #F15A39);   /* orange */
-}
-
-.footer__social {
-  display: flex;
-  gap: var(--space-md, 1rem);
-}
-
-.footer__social a {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.8rem;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.footer__social a:hover {
-  color: var(--color-secondary, #0C7923); /* green for variety */
-}
-
-.footer__copyright {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.4);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: var(--space-lg, 1.5rem);
-  width: 100%;
-}
-
+/* ---------- Brand ---------- */
 .footer__brand {
   display: flex;
   flex-direction: column;
@@ -90,20 +29,138 @@
   text-align: center;
 }
 
-.footer__logo {
-  width: 150px;
-  height: 150px;
-  object-fit: contain;
+.footer__name {
   display: block;
-  margin: 0 auto 1rem;
+  font-family: var(--font-body, serif);
+  font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+  letter-spacing: 0.04em;
+  color: var(--color-white, #ffffff);
 }
 
-@media (max-width: 768px) {
-  .footer__logo {
-    width: 120px;
-    height: 120px;
-  }
+.footer__tagline {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
+
+.footer__tagline-word {
+  transition: color var(--transition-fast);
+}
+
+.footer__tagline-word--white  { color: var(--color-white); }      /* #ffffff */
+.footer__tagline-word--orange { color: var(--color-accent); }     /* #FD6500 */
+.footer__tagline-word--green  { color: var(--color-secondary); }  /* #0C7923 */
+
+.footer__tagline-sep {
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0.35em;
+}
+
+/* ---------- Find us / Follow us ---------- */
+.footer__cols {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(2rem, 7vw, 5rem);
+}
+
+.footer__col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 200px;
+}
+
+/* A short accent rule reads cleaner than a heading underline */
+.footer__col-title {
+  margin: 0;
+  padding-bottom: 0.6rem;
+  position: relative;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-accent, #FD6500);
+}
+
+.footer__col-title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 2px;
+  background: var(--color-accent, #FD6500);
+}
+
+.footer__address {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-style: normal;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.footer__email {
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  word-break: break-word;
+  transition: color var(--transition-smooth);
+}
+
+.footer__email:hover,
+.footer__email:focus-visible {
+  color: var(--color-accent, #FD6500);
+}
+
+/* Icon-only social row. SocialLinks.css already supplies the sharp-edged
+   square icon boxes; the footer only needs to centre them. */
+.footer__col .social-links {
+  justify-content: center;
+}
+
+/* ---------- Link bar ---------- */
+.footer__bar {
+  width: 100%;
+  padding-top: clamp(1.5rem, 3vw, 2rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.footer__links a {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color var(--transition-smooth);
+}
+
+.footer__links a:hover,
+.footer__links a:focus-visible {
+  color: var(--color-accent, #FD6500);
+}
+
+.footer__copyright {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.38);
+}
+
 /* ============================================================
    Logo + particle layer
    ============================================================ */
@@ -115,8 +172,6 @@
   padding: 40px;                     /* room for particles to orbit */
 }
 
-/* Existing logo styles stay, but drop the auto margin now that
-   the wrapper handles positioning */
 .footer__logo {
   width: 150px;
   height: 150px;
@@ -125,16 +180,6 @@
   margin: 0;
   position: relative;
   z-index: 2;
-}
-
-@media (max-width: 768px) {
-  .footer__logo {
-    width: 120px;
-    height: 120px;
-  }
-  .footer__logo-wrap {
-    padding: 32px;
-  }
 }
 
 /* ============================================================
@@ -246,8 +291,27 @@
   }
 }
 
-/* Small-screen tune: smaller orbits so particles stay inside the footer */
+/* ---------- Responsive ---------- */
 @media (max-width: 768px) {
+  .footer__logo {
+    width: 120px;
+    height: 120px;
+  }
+  .footer__logo-wrap {
+    padding: 32px;
+  }
+  .footer__cols {
+    gap: 2rem;
+  }
+  .footer__col {
+    min-width: 0;
+    width: 100%;
+  }
+  .footer__links {
+    gap: 0.5rem 1.25rem;
+  }
+
+  /* Small-screen tune: smaller orbits so particles stay inside the footer */
   .footer__particle {
     width: 5px;
     height: 5px;
@@ -260,4 +324,11 @@
   .footer__particle:nth-child(6) { --tx: 45px;  --ty: -60px; }
   .footer__particle:nth-child(7) { --tx: -70px; --ty: -15px; }
   .footer__particle:nth-child(8) { --tx: 70px;  --ty: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer__particle {
+    animation: none;
+    opacity: 0.6;
+  }
 }

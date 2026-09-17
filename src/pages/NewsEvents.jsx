@@ -1,168 +1,192 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { Lightbox } from '../components/Lightbox'
 import { useCollection } from '../lib/useCollection'
-import { resolveImage } from '../data/images'
+import { heroSlides } from '../data/images'
+import { imageSource, categoryLabel, formatDate, FILTERS } from '../lib/newsFormat'
+import { BlurredBackdrop } from '../components'
+import { NewsArticle } from '../components/NewsArticle'
 import './NewsEvents.css'
-
-gsap.registerPlugin(ScrollTrigger)
-
-const imageSource = image => resolveImage(image?.imageId) || image?.url
 
 export function NewsEvents() {
   const { items: newsItems, loading } = useCollection('newsEvents')
-  const [selectedImage, setSelectedImage] = useState(null)
   const [filter, setFilter] = useState('all')
-  const gridRef = useRef(null)
-  const itemRefs = useRef([])
+  const [openId, setOpenId] = useState(null)
 
-  const categories = [
-    { id: 'all', label: 'All' },
-    { id: 'event', label: 'Events' },
-    { id: 'workshop', label: 'Workshops' },
-    { id: 'news', label: 'News' },
-    { id: 'showcase', label: 'Showcases' }
-  ]
+  const filteredItems = useMemo(
+    () => (filter === 'all' ? newsItems : newsItems.filter(item => item.category === filter)),
+    [filter, newsItems]
+  )
 
-  const filteredItems = filter === 'all' 
-    ? newsItems 
-    : newsItems.filter(item => item.category === filter)
+  // Photos for the blurred backdrop stay in published order, so the wash behind
+  // the page matches the stories a reader is looking at.
+  const backdropImages = useMemo(() => {
+    const fromNews = newsItems.flatMap(item => (item.images || []).map(imageSource)).filter(Boolean)
+    const fromHero = heroSlides.map(slide => slide.image).filter(Boolean)
+    return fromNews.length >= 2 ? fromNews : [...fromNews, ...fromHero]
+  }, [newsItems])
 
-  // Scroll animations
+  const openIndex = newsItems.findIndex(item => item.id === openId)
+  const openItem = openIndex >= 0 ? newsItems[openIndex] : null
+  const nextItem = openIndex >= 0 ? newsItems[openIndex + 1] || null : null
+  const prevItem = openIndex > 0 ? newsItems[openIndex - 1] : null
+
+  const goTo = item => {
+    if (!item) return
+    setOpenId(item.id)
+    window.scrollTo(0, 0)
+  }
+
+  // Escape from the reading view goes back to the list, like closing a book.
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      const items = itemRefs.current.filter(Boolean)
-      gsap.set(items, { opacity: 0, y: 60, scale: 0.95 })
-
-      gsap.to(items, {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: gridRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        }
-      })
-    }, gridRef)
-    return () => ctx.revert()
-  }, [filter, newsItems.length])
+    if (!openItem) return
+    const onKeyDown = event => {
+      if (event.key === 'Escape') setOpenId(null)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [openItem])
 
   if (loading) {
     return (
-      <div className="news-events__loading">
-        <div className="spinner"></div>
-        <p>Loading news & events...</p>
-      </div>
+      <main className="news-events page">
+        <div className="news-events__loading">
+          <div className="spinner" />
+          <p>Loading news &amp; events...</p>
+        </div>
+      </main>
     )
   }
 
   return (
     <main className="news-events page">
-      <section className="news-events__hero">
-        <div className="container">
-          <motion.div
-            className="news-events__hero-content"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h1>News & Events</h1>
-            <p>Stay updated with the latest happenings at Animation Guild Uganda</p>
-          </motion.div>
-        </div>
-      </section>
+      <BlurredBackdrop images={backdropImages} strength={openItem ? 'strong' : 'normal'} />
 
-      <section className="news-events__gallery">
-        <div className="container">
-          {/* Filters */}
+      <AnimatePresence mode="wait">
+        {openItem ? (
           <motion.div
-            className="news-events__filters"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            key={`article-${openItem.id}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
           >
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                className={`news-events__filter ${filter === cat.id ? 'news-events__filter--active' : ''}`}
-                onClick={() => setFilter(cat.id)}
-              >
-                {cat.label}
-              </button>
-            ))}
+            <NewsArticle
+              item={openItem}
+              next={nextItem}
+              prev={prevItem}
+              onNext={() => goTo(nextItem)}
+              onPrev={() => goTo(prevItem)}
+              onBack={() => setOpenId(null)}
+              index={openIndex}
+              total={newsItems.length}
+            />
           </motion.div>
-
-          {/* Grid */}
-          <div className="news-events__grid" ref={gridRef}>
-            <AnimatePresence mode="popLayout">
-              {filteredItems.map((item, index) => (
-                <motion.article
-                  key={item.id}
-                  ref={(el) => (itemRefs.current[index] = el)}
-                  className="news-events__card"
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  onClick={() => item.images?.length && setSelectedImage({
-                    ...item,
-                    srcLarge: imageSource(item.images[0])
-                  })}
+        ) : (
+          <motion.div
+            key="list"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <section className="news-events__hero">
+              <div className="container">
+                <motion.div
+                  className="news-events__hero-content"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8 }}
                 >
-                  <div className="news-events__card-image">
-                    {imageSource(item.images?.[0]) ? (
-                      <img src={imageSource(item.images[0])} alt={item.images[0].alt || item.title} />
-                    ) : (
-                      <div className="news-events__card-placeholder">
-                        <span>🎬</span>
-                      </div>
-                    )}
-                    <span className="news-events__card-category">{item.category}</span>
-                  </div>
-                  <div className="news-events__card-content">
-                    <time className="news-events__card-date">
-                      {new Date(item.date).toLocaleDateString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
-                    </time>
-                    <h3 className="news-events__card-title">{item.title}</h3>
-                    <p className="news-events__card-description">{item.description}</p>
-                    {item.location && (
-                      <span className="news-events__card-location">📍 {item.location}</span>
-                    )}
-                  </div>
-                </motion.article>
-              ))}
-            </AnimatePresence>
-          </div>
+                  <span className="news-events__eyebrow">Animation Guild Uganda</span>
+                  <h1>News &amp; Events</h1>
+                  <p>Dispatches, workshops and showcases from Uganda&apos;s animation community</p>
+                </motion.div>
+              </div>
+            </section>
 
-          {filteredItems.length === 0 && (
-            <div className="news-events__empty">
-              <p>No news or events found in this category.</p>
-            </div>
-          )}
-        </div>
-      </section>
+            <section className="news-events__gallery">
+              <div className="container">
+                <motion.div
+                  className="news-events__filters"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  {FILTERS.map(cat => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      className={`news-events__filter ${filter === cat.id ? 'news-events__filter--active' : ''}`}
+                      onClick={() => setFilter(cat.id)}
+                      aria-pressed={filter === cat.id}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </motion.div>
 
-      {/* Lightbox */}
-      <Lightbox
-        image={selectedImage}
-        images={filteredItems.filter(item => item.images?.length).map(item => ({
-          ...item,
-          srcLarge: imageSource(item.images[0])
-        }))}
-        onClose={() => setSelectedImage(null)}
-        onNavigate={setSelectedImage}
-      />
+                <div className="news-events__grid">
+                  <AnimatePresence mode="popLayout">
+                    {filteredItems.map((item, index) => (
+                      <motion.article
+                        key={item.id}
+                        className="news-events__card"
+                        layout
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.96 }}
+                        transition={{ duration: 0.5, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}
+                      >
+                        <button
+                          type="button"
+                          className="news-events__card-hit clickable"
+                          onClick={() => goTo(item)}
+                          aria-label={`Read: ${item.title}`}
+                        >
+                          <div className="news-events__card-image">
+                            {imageSource(item.images?.[0]) ? (
+                              <img
+                                src={imageSource(item.images[0])}
+                                alt={item.images[0].alt || item.title}
+                                loading="lazy"
+                              />
+                            ) : (
+                              <div className="news-events__card-placeholder">
+                                <span aria-hidden="true">🎬</span>
+                              </div>
+                            )}
+                            <span className="news-events__card-category">{categoryLabel(item.category)}</span>
+                          </div>
+
+                          <div className="news-events__card-content">
+                            {item.date && (
+                              <time className="news-events__card-date" dateTime={item.date}>
+                                {formatDate(item.date)}
+                              </time>
+                            )}
+                            <h3 className="news-events__card-title">{item.title}</h3>
+                            <p className="news-events__card-description">{item.description}</p>
+                            <span className="news-events__card-meta">
+                              {item.location && <span className="news-events__card-location">{item.location}</span>}
+                              <span className="news-events__card-cta">Read article →</span>
+                            </span>
+                          </div>
+                        </button>
+                      </motion.article>
+                    ))}
+                  </AnimatePresence>
+                </div>
+
+                {filteredItems.length === 0 && (
+                  <div className="news-events__empty">
+                    <p>No news or events found in this category.</p>
+                  </div>
+                )}
+              </div>
+            </section>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   )
 }

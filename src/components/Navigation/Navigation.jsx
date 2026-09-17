@@ -80,15 +80,29 @@ export function Navigation() {
     setIsMobileMenuOpen(false)
   }
 
+  // Section links must work from /members and /news-events too, where there is
+  // no #about/#services element to scroll to — send those visitors home first.
   const handleNavClick = (e, link) => {
     e.preventDefault()
-    if (link.path === '/') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    } else if (link.path.includes('#')) {
-      const sectionId = link.path.split('#')[1]
-      scrollToSection(sectionId)
-    }
     setIsMobileMenuOpen(false)
+
+    if (link.path === '/') {
+      if (location.pathname !== '/') {
+        navigate('/')
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
+    if (!link.path.includes('#')) return
+
+    const sectionId = link.path.split('#')[1]
+    if (document.getElementById(sectionId)) {
+      scrollToSection(sectionId)
+      return
+    }
+
+    navigate(link.path)
   }
 
   return (

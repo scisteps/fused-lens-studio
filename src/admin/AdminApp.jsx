@@ -88,7 +88,7 @@ function Login({ onLogin }) {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="admin-login__header">
-          <img src="/crane.png" alt="Fused Lens Studio" className="admin-login__icon" />
+          <img src="/crane2.png" alt="Fused Lens Studio" className="admin-login__icon" />
           <h1>Animation Guild Uganda</h1>
           <p>Admin Panel</p>
         </div>

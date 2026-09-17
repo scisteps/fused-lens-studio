@@ -1,0 +1,82 @@
+/* ============================================================
+   Social links — shared by the Footer, the article footer and Contact.
+   Icon boxes are square with sharp edges to match the brand cards.
+   ============================================================ */
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.social-links__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 0;
+  color: rgba(255, 255, 255, 0.88);
+  text-decoration: none;
+  transition:
+    background var(--transition-smooth),
+    border-color var(--transition-smooth),
+    color var(--transition-smooth),
+    transform var(--transition-smooth);
+}
+
+.social-links__link:hover,
+.social-links__link:focus-visible {
+  background: var(--color-accent, #FD6500);
+  border-color: var(--color-accent, #FD6500);
+  color: var(--color-black, #0a0a0a);
+  transform: translateY(-2px);
+}
+
+/* Wider pill when the platform name is shown next to the icon */
+.social-links--labels .social-links__link {
+  width: auto;
+  height: auto;
+  padding: 0.55rem 0.95rem;
+}
+
+.social-links__text {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-icon svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-links__link:hover,
+  .social-links__link:focus-visible {
+    transform: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .social-links__link {
+    width: 2.35rem;
+    height: 2.35rem;
+  }
+
+  .social-icon svg {
+    width: 15px;
+    height: 15px;
+  }
+}

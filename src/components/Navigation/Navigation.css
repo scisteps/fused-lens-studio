@@ -105,7 +105,7 @@
 }
 
 .nav__link:hover {
-  color:white;
+  color:var(--color-accent)
 }
 
 .nav__link:hover::after {

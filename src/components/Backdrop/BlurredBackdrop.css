@@ -1,0 +1,53 @@
+/* ============================================================
+   Blurred backdrop — black page + slow blurred photo slideshow
+   ============================================================ */
+.blurred-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--color-black, #0a0a0a);
+  pointer-events: none;
+}
+
+.blurred-backdrop__slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(18px) brightness(0.5);
+  transform: scale(1.15);
+  opacity: 0;
+  transition: opacity 1.6s ease;
+}
+
+.blurred-backdrop__slide.is-active {
+  opacity: 1;
+}
+
+.blurred-backdrop__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.8) 0%,
+    rgba(10, 10, 10, 0.9) 55%,
+    rgba(10, 10, 10, 0.95) 100%
+  );
+}
+
+/* Reading view needs a touch more separation from the photos. */
+.blurred-backdrop--strong .blurred-backdrop__overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.86) 0%,
+    rgba(10, 10, 10, 0.93) 55%,
+    rgba(10, 10, 10, 0.97) 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blurred-backdrop__slide {
+    transition: none;
+  }
+}

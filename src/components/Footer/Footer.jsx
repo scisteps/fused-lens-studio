@@ -1,5 +1,22 @@
+import { Link } from 'react-router-dom'
 import { useSiteContent } from '../../lib/useSiteContent'
+import { SocialLinks } from '../Social'
 import './Footer.css'
+
+// Section links are hashes on the main page, so they are written as '/#id'.
+// AppShell watches the hash and scrolls once the page has painted, which means
+// the same footer works from the main page and from every other route.
+const SECTION_LINKS = [
+  { to: '/#about', label: 'About' },
+  { to: '/#services', label: 'Services' },
+  { to: '/#membership', label: 'Membership' },
+  { to: '/#contact', label: 'Contact' }
+]
+
+const PAGE_LINKS = [
+  { to: '/news-events', label: 'News & Events' },
+  { to: '/members', label: 'Members' }
+]
 
 export function Footer() {
   const { content } = useSiteContent()
@@ -17,7 +34,7 @@ export function Footer() {
           <div className="footer__logo-wrap">
             <img
               src="/crane.png"
-              alt="Animation Guild Uganda"
+              alt={studio.name || 'Animation Guild Uganda'}
               className="footer__logo"
             />
 
@@ -37,44 +54,54 @@ export function Footer() {
             {studio.name || 'Animation Guild Uganda'}
           </strong>
 
-          {studio.tagline && (
-            <span className="footer__tagline">
-              <span className="footer__tagline-word footer__tagline-word--white">Mobilize</span>
-              <span className="footer__tagline-sep"> — </span>
-              <span className="footer__tagline-word footer__tagline-word--orange">Mentor</span>
-              <span className="footer__tagline-sep"> — </span>
-              <span className="footer__tagline-word footer__tagline-word--green">Monetize</span>
-            </span>
+          <span className="footer__tagline">
+            <span className="footer__tagline-word footer__tagline-word--white">Mobilize</span>
+            <span className="footer__tagline-sep"> — </span>
+            <span className="footer__tagline-word footer__tagline-word--orange">Mentor</span>
+            <span className="footer__tagline-sep"> — </span>
+            <span className="footer__tagline-word footer__tagline-word--green">Monetize</span>
+          </span>
+        </div>
+
+        {/* Just the essentials: where we are, how to write, where to follow.
+            The phone number is deliberately left to the Contact section. */}
+        <div className="footer__cols">
+          {(studio.address || studio.email) && (
+            <section className="footer__col">
+              <h2 className="footer__col-title">Find us</h2>
+              <address className="footer__address">
+                {studio.address && <span>{studio.address}</span>}
+                {studio.email && (
+                  <a href={`mailto:${studio.email}`} className="footer__email">
+                    {studio.email}
+                  </a>
+                )}
+              </address>
+            </section>
+          )}
+
+          {studio.social && (
+            <section className="footer__col">
+              <h2 className="footer__col-title">Follow us</h2>
+              <SocialLinks social={studio.social} />
+            </section>
           )}
         </div>
 
-        <nav className="footer__links" aria-label="Footer">
-          <a href="#about">About</a>
-          <a href="#services">Services</a>
-          <a href="#membership">Membership</a>
-          <a href="#contact">Contact</a>
-        </nav>
+        <div className="footer__bar">
+          <nav className="footer__links" aria-label="Footer">
+            {SECTION_LINKS.map(link => (
+              <Link key={link.to} to={link.to}>{link.label}</Link>
+            ))}
+            {PAGE_LINKS.map(link => (
+              <Link key={link.to} to={link.to}>{link.label}</Link>
+            ))}
+          </nav>
 
-        {studio.social && (
-          <div className="footer__social">
-            {Object.entries(studio.social).map(([platform, url]) =>
-              url ? (
-                <a
-                  key={platform}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {platform.charAt(0).toUpperCase() + platform.slice(1)}
-                </a>
-              ) : null
-            )}
-          </div>
-        )}
-
-        <p className="footer__copyright">
-          © {year} {studio.name || 'Animation Guild Uganda'}. All rights reserved.
-        </p>
+          <p className="footer__copyright">
+            © {year} {studio.name || 'Animation Guild Uganda'}. All rights reserved.
+          </p>
+        </div>
       </div>
     </footer>
   )

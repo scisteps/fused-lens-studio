@@ -25,7 +25,7 @@ const DEFAULT_ITEMS = [
   { id: 'grand-launch', title: 'Animation Guild Uganda Grand Launch', date: '2026-09-15', category: 'event', description: 'Official launch with sponsors, international guests, academic institutions and the wider East African creative community.', images: [{ imageId: 'agu4', alt: 'Grand launch' }], location: 'Kampala, Uganda' }
 ]
 
-const emptyDraft = { title: '', date: '', category: 'event', description: '', location: '', images: [] }
+const emptyDraft = { title: '', date: '', category: 'event', description: '', body: '', location: '', images: [] }
 
 export default function NewsEventsDashboard() {
   const { items, setItems, isDirty, status, lastLocalSave, publish, restoreLastPublished } =
@@ -57,7 +57,7 @@ export default function NewsEventsDashboard() {
 
   const startEdit = (item) => {
     setEditingId(item.id)
-    setDraft({ title: item.title, date: item.date, category: item.category, description: item.description, location: item.location, images: item.images || [] })
+    setDraft({ title: item.title, date: item.date, category: item.category, description: item.description, body: item.body || '', location: item.location, images: item.images || [] })
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
   const cancelEdit = () => { setEditingId(null); setDraft(emptyDraft) }
@@ -108,7 +108,7 @@ export default function NewsEventsDashboard() {
 
   const filtered = items
     .filter(it => filter === 'all' || it.category === filter)
-    .filter(it => !search.trim() || (it.title + it.description + it.location).toLowerCase().includes(search.toLowerCase()))
+    .filter(it => !search.trim() || `${it.title} ${it.description} ${it.body || ''} ${it.location || ''}`.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
 
   return (
@@ -136,7 +136,17 @@ export default function NewsEventsDashboard() {
               </select>
             </Field>
           </div>
-          <Field label="Description"><TextArea value={draft.description} onChange={e => setDraft(d => ({ ...d, description: e.target.value }))} /></Field>
+          <Field label="Description — the one-line summary shown on the card">
+            <TextArea value={draft.description} onChange={e => setDraft(d => ({ ...d, description: e.target.value }))} />
+          </Field>
+          <Field label="Full article — shown when a reader opens this entry">
+            <TextArea
+              value={draft.body}
+              onChange={e => setDraft(d => ({ ...d, body: e.target.value }))}
+              placeholder={'Write the whole story here. It can be as long as you like.\n\nLeave a blank line between paragraphs.'}
+              style={{ minHeight: 240, lineHeight: 1.7 }}
+            />
+          </Field>
           <Field label="Location"><TextInput value={draft.location} onChange={e => setDraft(d => ({ ...d, location: e.target.value }))} placeholder="e.g. Kampala, Uganda or Online" /></Field>
 
           <Field label={`Images (${draft.images.length}) — 1 shows as a single photo, 2+ shows as a carousel`}>

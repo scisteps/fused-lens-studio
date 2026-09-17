@@ -6,5 +6,7 @@ export {  Services } from './Services'
 export { Navigation } from './Navigation'
 export { Membership } from './Membership'
 export { RoadMap } from './RoadMap'
+export { SocialLinks, SocialIcon } from './Social'
+export { BlurredBackdrop } from './Backdrop'
 
 export { FloatingParticles, CursorGlow, ShimmerLine, AnimatedCounter } from './Effects'

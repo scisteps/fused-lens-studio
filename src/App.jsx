@@ -32,8 +32,18 @@ function App() {
 }
 
 function AppShell() {
-  const { pathname } = useLocation()
+  const { pathname, hash } = useLocation()
   const isDashboard = pathname.startsWith('/admin/')
+
+  // Section links from other pages arrive as '/#about'. There is no element to
+  // scroll to at the moment of navigation, so wait for the page to paint first.
+  useEffect(() => {
+    if (!hash) return
+    const timeout = setTimeout(() => {
+      document.getElementById(hash.replace('#', ''))?.scrollIntoView({ behavior: 'smooth' })
+    }, 320)
+    return () => clearTimeout(timeout)
+  }, [hash, pathname])
 
   useEffect(() => {
     // Initialize smooth scroll behavior
