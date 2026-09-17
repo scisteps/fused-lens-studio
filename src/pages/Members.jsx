@@ -46,11 +46,11 @@ export function Members() {
             transition={{ duration: 0.8 }}
           >
             <span className="members__eyebrow">Animation Guild Uganda</span>
-            <h2>The Executive Committee</h2>
-            <p className="members__subtitle">
+            <h3> Executive Committee</h3>
+            {/* <p className="members__subtitle">
               Elected leadership guiding the Guild — strategy, records,
               finance and representation for Uganda&apos;s animation community.
-            </p>
+            </p> */}
             <p className="members__count">{members.length} members</p>
           </motion.div>
         </div>

@@ -4,8 +4,8 @@
 .members {
   position: relative;
   min-height: 100vh;
-  background: #0a0a0c;
-  color: #f2f0ec;
+  background: var(--color-black);
+  color: var(--color-white);
   overflow: hidden;
 }
 
@@ -36,8 +36,8 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(10, 10, 12, 0.72),
-    rgba(10, 10, 12, 0.92)
+    rgba(10, 10, 10, 0.74),
+    rgba(10, 10, 10, 0.94)
   );
 }
 
@@ -59,30 +59,32 @@
 
 .members__eyebrow {
   display: block;
-  font-size: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 1.75rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #c9a962;
+  color: var(--color-secondary-light);
   margin-bottom: 1rem;
 }
 
 .members__hero-content h2 {
+  font-family: var(--font-display);
   font-size: clamp(2.2rem, 4vw, 3.2rem);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.1;
-  color: #ffffff;
+  color: var(--color-white);
   margin: 0 0 1rem;
 }
 
 .members__subtitle {
-  color: rgba(242, 240, 236, 0.72);
+  color: var(--color-pearl);
   font-size: 1.05rem;
   line-height: 1.7;
   margin: 0 0 0.75rem;
 }
 
 .members__count {
-  color: #c9a962;
+  color: var(--color-accent);
   font-size: 0.95rem;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -110,29 +112,30 @@
   gap: 2rem;
   align-items: center;
   padding: 2rem 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(212, 212, 212, 0.14);
 }
 
 .members__row:first-child {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(212, 212, 212, 0.14);
 }
 
 .members__rank {
+  font-family: var(--font-body);
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.2em;
-  color: rgba(201, 169, 98, 0.75);
+  color: var(--color-secondary-light);
   min-width: 2.5rem;
 }
 
-/* ---------- Portrait: sharp, formal, gold keyline ---------- */
+/* ---------- Portrait: sharp, formal, orange keyline ---------- */
 .members__portrait {
   width: 120px;
   height: 140px;
   overflow: hidden;
   border-radius: 0;
-  border: 1px solid rgba(201, 169, 98, 0.45);
-  background: #141417;
+  border: 1px solid var(--color-accent);
+  background: var(--color-charcoal);
   flex-shrink: 0;
 }
 
@@ -152,8 +155,8 @@
   justify-content: center;
   font-size: 2rem;
   font-weight: 700;
-  color: #0a0a0c;
-  background: linear-gradient(135deg, #c9a962, #a8873e);
+  color: var(--color-white);
+  background: var(--gradient-accent);
 }
 
 /* ---------- Details ---------- */
@@ -162,7 +165,7 @@
 }
 
 .members__name {
-  color: #ffffff;
+  color: var(--color-white);
   font-size: 1.45rem;
   font-weight: 600;
   line-height: 1.25;
@@ -170,7 +173,7 @@
 }
 
 .members__role {
-  color: #c9a962;
+  color: var(--color-accent);
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.18em;
@@ -179,14 +182,14 @@
 }
 
 .members__meta {
-  color: rgba(242, 240, 236, 0.6);
+  color: var(--color-silver);
   font-size: 0.85rem;
   letter-spacing: 0.02em;
   margin: 0 0 0.6rem;
 }
 
 .members__bio {
-  color: rgba(242, 240, 236, 0.82);
+  color: var(--color-pearl);
   font-size: 0.95rem;
   line-height: 1.7;
   margin: 0;
@@ -197,7 +200,7 @@
 .members__empty {
   text-align: center;
   padding: 4rem;
-  color: rgba(242, 240, 236, 0.6);
+  color: var(--color-silver);
 }
 
 .members__loading {
@@ -206,8 +209,8 @@
   align-items: center;
   justify-content: center;
   min-height: 60vh;
-  color: rgba(242, 240, 236, 0.6);
-  background: #0a0a0c;
+  color: var(--color-silver);
+  background: var(--color-black);
 }
 
 /* ---------- Responsive ---------- */
