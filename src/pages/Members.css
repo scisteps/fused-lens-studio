@@ -130,13 +130,13 @@
 
 /* ---------- Portrait: sharp, formal, orange keyline ---------- */
 .members__portrait {
-  width: 120px;
-  height: 140px;
-  overflow: hidden;
-  border-radius: 0;
-  border: 1px solid var(--color-accent);
-  background: var(--color-charcoal);
+  position: relative;
+  width: 120px;          /* adjust to whatever size you want */
+  height: 120px;         /* must equal width for a perfect circle */
+  border-radius: 50%;
+  overflow: hidden;      /* clips the image into the circle */
   flex-shrink: 0;
+  background: var(--color-graphite, #1f1f1f);
 }
 
 .members__portrait img {

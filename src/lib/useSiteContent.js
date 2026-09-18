@@ -66,7 +66,7 @@ const DEFAULT_CONTENT = {
 
     categories: [
       {
-        name: 'Ordinary / Professional Membership',
+        name: 'Professional Membership',
         fee: 'UGX 50,000',
         description:
           'For adult individual practitioners and professionals engaged in animation or related digital creative work.'
