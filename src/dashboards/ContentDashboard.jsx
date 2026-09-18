@@ -73,13 +73,7 @@ const DEFAULT_CONTENT = {
 ]
 
     ,benefits: [
-      'Guild Membership Card, Access to exclusive events.',
-      'Access professional development, mentorship and peer-to-peer learning.',
-
-      'Participate in networking, exhibitions, screenings, competitions and festivals.',
-      'Access funding for animation projects.',
-      'Receive information concerning Guild activities and finances as provided by the Constitution.',
-      'Stand for eligible Guild positions and vote where the membership has voting rights.'
+     
     ]
   }
 }

@@ -26,10 +26,10 @@ function highlightLead(text = '') {
 // If you add more benefits in the CMS, the extra indices are automatically
 // collected into a fallback "More" group at the bottom.
 const BENEFIT_GROUPS = [
-  { indices: [0, 1], variant: 'green',  label: 'Core Membership' },
-  { indices: [2, 3], variant: 'white',  label: 'Participation' },
-  { indices: [4, 5],    variant: 'orange', label: 'Professional Access' },
-  { indices: [ 6], variant: 'green',  label: 'Voting & rights' }
+  { indices: [0, 1], variant: 'white',  label: 'Core Membership' },
+  { indices: [2], variant: 'white',  label: 'Participation' },
+  { indices: [3, 4],    variant: 'orange', label: 'Professional Access' },
+  { indices: [ 5], variant: 'green',  label: 'Voting & rights' }
 ]
 
 // Category card fills cycle white → orange → green. The final card is
