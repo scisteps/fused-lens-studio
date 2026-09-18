@@ -85,12 +85,12 @@ export function Members() {
                   <div className="members__details">
                     <h3 className="members__name">{member.name}</h3>
                     <p className="members__role">{member.role}</p>
-                    <p className="members__meta">
+                    {/* <p className="members__meta">
                       {[member.expertise, member.joined && `Since ${new Date(`${member.joined}T00:00:00`).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`]
                         .filter(Boolean)
                         .join('  ·  ')}
-                    </p>
-                    {member.bio && <p className="members__bio">{member.bio}</p>}
+                    </p> */}
+                    {/* {member.bio && <p className="members__bio">{member.bio}</p>} */}
                   </div>
                 </motion.li>
               )
