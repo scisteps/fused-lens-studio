@@ -9,8 +9,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 // Same origin as the frontend in production, Express on :3001 in dev
 // (Vite proxies /api -> :3001, see vite.config.js).
-const CONTACT_ENDPOINT = '/api/contact'
-
+const CONTACT_ENDPOINT =  'https://script.google.com/macros/s/AKfycbxK5Da_gByb4xFNntM-MDVu46EpQg0zX8U7CHiJ12BE3t8SV4cVR19kJo5KxE9flOoeFg/exec'
 // Social Icons
 const SocialIcon = ({ platform }) => {
   const icons = {
@@ -45,8 +44,9 @@ export function Contact() {
   const { studioInfo } = content
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: '',
+        email: '',
+
     service: '',
     message: ''
   })
@@ -86,44 +86,52 @@ export function Contact() {
       setErrors((prev) => ({ ...prev, [name]: null }))
     }
   }
+const handleSubmit = async (e) => {
+  e.preventDefault()
+  if (!validateForm()) return
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  setIsSubmitting(true)
+  setSubmitStatus(null)
+  setErrors({})
 
-    if (!validateForm()) return
+  // Create a hidden iframe
+  const iframeName = `contact_iframe_${Date.now()}`
+  const iframe = document.createElement('iframe')
+  iframe.name = iframeName
+  iframe.style.display = 'none'
+  document.body.appendChild(iframe)
 
-    setIsSubmitting(true)
-    setSubmitStatus(null)
-    setErrors({})
+  // Create a hidden form
+  const form = document.createElement('form')
+  form.method = 'POST'
+  form.action = CONTACT_ENDPOINT
+  form.target = iframeName
+  form.style.display = 'none'
 
-    try {
-      const response = await fetch(CONTACT_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
+  // Add form data
+  Object.entries({ type: 'contact', ...formData }).forEach(([key, value]) => {
+    const input = document.createElement('input')
+    input.type = 'hidden'
+    input.name = key
+    input.value = value
+    form.appendChild(input)
+  })
 
-      const data = await response.json()
+  document.body.appendChild(form)
 
-      if (response.ok) {
-        setSubmitStatus('success')
-        setFormData({ name: '', email: '', phone: '', service: '', message: '' })
-      } else {
-        setSubmitStatus('error')
-        setErrors({ submit: data.error || 'Failed to submit form' })
-      }
-    } catch (error) {
-      console.error('Submission error:', error)
-      setSubmitStatus('error')
-      setErrors({ submit: 'Network error. Please try again.' })
-    } finally {
-      setIsSubmitting(false)
-      setTimeout(() => setSubmitStatus(null), 5000)
-    }
-  }
+  // Submit
+  form.submit()
 
+  // Clean up after a delay (assume success)
+  setTimeout(() => {
+    document.body.removeChild(form)
+    document.body.removeChild(iframe)
+    setIsSubmitting(false)
+    setSubmitStatus('success')
+    setFormData({ name: '', email: '', phone: '', service: '', message: '' })
+    setTimeout(() => setSubmitStatus(null), 5000)
+  }, 2000)
+}
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {

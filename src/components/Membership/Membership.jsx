@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useSiteContent } from '../../lib/useSiteContent'
 import { resolveImage } from '../../data/images'
 import './Membership.css'
-
+import { ApplyModal } from './ApplyModal'
 // Bolds the lead clause (up to the first comma/period) of a sentence so
 // CMS-authored text reads with a scannable, condensed feel.
 function highlightLead(text = '') {
@@ -36,13 +36,13 @@ const BENEFIT_GROUPS = [
 // always white so the list closes on a neutral card.
 const CATEGORY_VARIANTS = ['white', 'orange', 'green']
 
-const APPLY_EMAIL = 'animationguilduganda@gmail.com'
+// const APPLY_EMAIL = 'animationguilduganda@gmail.com'
 
 export function Membership() {
   const { content } = useSiteContent()
   const [activeIndex, setActiveIndex] = useState(0)
   const [openCategory, setOpenCategory] = useState(null)
-
+const [applyOpen, setApplyOpen] = useState(false)
   const bgImageIds = (content.heroSlides || [])
     .map(slide => slide.imageId)
     .filter(Boolean)
@@ -78,11 +78,11 @@ export function Membership() {
   }
 
   // Build a mailto link that pre-fills subject + body
-  const applyMailto = `mailto:${APPLY_EMAIL}?subject=${encodeURIComponent(
-    'Membership Application — Animation Guild Uganda'
-  )}&body=${encodeURIComponent(
-    'Hello Animation Guild Uganda,\n\nI would like to apply for membership.\n\nName:\nContact:\nType of artist:\nCountry of residence:\n\nThank you.'
-  )}`
+  // const applyMailto = `mailto:${APPLY_EMAIL}?subject=${encodeURIComponent(
+  //   'Membership Application — Animation Guild Uganda'
+  // )}&body=${encodeURIComponent(
+  //   'Hello Animation Guild Uganda,\n\nI would like to apply for membership.\n\nName:\nContact:\nType of artist:\nCountry of residence:\n\nThank you.'
+  // )}`
 
   return (
     <section id="membership" className="membership section section--dark">
@@ -279,11 +279,20 @@ export function Membership() {
             {membership.description ||
               'Apply now to become a member of the Animation Guild Uganda.'}
           </p>
-          <a href={applyMailto} className="btn btn--secondary">
-            Apply for Membership
-          </a>
+      <button
+  type="button"
+  className="btn btn--secondary"
+  onClick={() => setApplyOpen(true)}
+>
+  Apply for Membership
+</button>
         </motion.div>
       </div>
+      <ApplyModal
+  isOpen={applyOpen}
+  onClose={() => setApplyOpen(false)}
+  categories={membership.categories || []}
+/>
     </section>
   )
 }
