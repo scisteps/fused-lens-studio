@@ -1,9 +1,10 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useCallback } from 'react'
 import * as staticContent from '../data/content'
 import { SERVICE_ACCENTS } from '../data/content'
 import { serviceAnimationChoices } from '../data/animations'
 import { heroSlides, imageOptions } from '../data/images'
 import { useDocumentDraft } from '../lib/useDocumentDraft'
+import { VersionHistory } from '../lib/VersionHistory'
 import { AddButton, Card, DashboardHeader, Field, PublishBar, TextArea, TextInput, inputStyle } from '../lib/ui'
 
 // Bump this whenever DEFAULT_CONTENT changes shape or seed values.
@@ -72,11 +73,11 @@ const DEFAULT_CONTENT = {
 ]
 
     ,benefits: [
-      'Participate in Guild programmes, workshops, seminars and industry activities.',
+      'Guild Membership Card, Access to exclusive events.',
       'Access professional development, mentorship and peer-to-peer learning.',
+
       'Participate in networking, exhibitions, screenings, competitions and festivals.',
-      'Access professional opportunities and funding for projects.',
-      'Participate in Guild representation and advocacy for members’ professional interests.',
+      'Access funding for animation projects.',
       'Receive information concerning Guild activities and finances as provided by the Constitution.',
       'Stand for eligible Guild positions and vote where the membership has voting rights.'
     ]
@@ -98,7 +99,13 @@ export default function ContentDashboard() {
     status,
     lastLocalSave,
     publish,
-    restoreLastPublished
+    restoreLastPublished,
+    publishedSnapshot,
+    versions,
+    historyStatus,
+    loadVersions,
+    previewVersion,
+    revertToVersion
   } = useDocumentDraft('siteContent/main', 'site-content', DEFAULT_CONTENT)
 
   // Re-seed from DEFAULT_CONTENT when the stored draft predates the current
@@ -184,6 +191,63 @@ export default function ContentDashboard() {
 
     return 'Edits are saved locally until you select Publish.'
   }, [status])
+
+  // Restoring an archived version merges it over the current defaults, so a
+  // snapshot written before a schema bump can't leave the form with missing
+  // fields. Anything the snapshot does not define keeps the default value.
+  const normalizeVersion = useCallback(restored => {
+    const next = { ...DEFAULT_CONTENT, ...restored }
+
+    next.version = CONTENT_VERSION
+
+    next.studioInfo = {
+      ...DEFAULT_CONTENT.studioInfo,
+      ...(restored.studioInfo || {}),
+      social: {
+        ...DEFAULT_CONTENT.studioInfo.social,
+        ...(restored.studioInfo?.social || {})
+      }
+    }
+
+    next.about = { ...DEFAULT_CONTENT.about, ...(restored.about || {}) }
+
+    next.visibility = {
+      ...DEFAULT_CONTENT.visibility,
+      ...(restored.visibility || {})
+    }
+
+    next.services = restored.services?.length
+      ? restored.services
+      : DEFAULT_CONTENT.services
+
+    next.stats = restored.stats?.length ? restored.stats : DEFAULT_CONTENT.stats
+
+    next.timeline = restored.timeline?.length
+      ? restored.timeline
+      : DEFAULT_CONTENT.timeline
+
+    next.heroSlides = restored.heroSlides?.length
+      ? restored.heroSlides
+      : DEFAULT_CONTENT.heroSlides
+
+    next.membership = {
+      ...DEFAULT_CONTENT.membership,
+      ...(restored.membership || {}),
+      categories: restored.membership?.categories?.length
+        ? restored.membership.categories
+        : DEFAULT_CONTENT.membership.categories,
+      benefits: restored.membership?.benefits?.length
+        ? restored.membership.benefits
+        : DEFAULT_CONTENT.membership.benefits
+    }
+
+    return next
+  }, [])
+
+  const handleRevertVersion = useCallback(
+    versionId => revertToVersion(versionId, normalizeVersion),
+    [revertToVersion, normalizeVersion]
+  )
 
   const updateStudio = (field, value) => {
     setData(current => ({
@@ -320,6 +384,15 @@ export default function ContentDashboard() {
 
       <main className="content-dashboard__layout">
         <div>
+          <VersionHistory
+            versions={versions}
+            historyStatus={historyStatus}
+            onLoad={loadVersions}
+            onPreview={previewVersion}
+            onRevert={handleRevertVersion}
+            published={publishedSnapshot}
+          />
+
           <p
             style={{
               color: '#9a978f',
