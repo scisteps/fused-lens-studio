@@ -161,6 +161,36 @@ export function SignUp() {
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
 
+  // ---------- Phone verification ----------
+  // Firebase only records a phone number on the account once it has been proven
+  // with an SMS code. Merely WRITING the number to users/{uid} (which
+  // signUpWithEmail does) does not attach it to the auth account, so "sign in
+  // with phone" would find no match and silently create a second, empty account.
+  // This step is what actually links the two.
+  const [verifyStep, setVerifyStep] = useState('idle') // idle | sending | verify
+  const [otp, setOtp] = useState('')
+  const [otpError, setOtpError] = useState('')
+  const [otpNotice, setOtpNotice] = useState('')
+  const [linking, setLinking] = useState(false)
+  const confirmationRef = useRef(null)
+  const verifierRef = useRef(null)
+
+  // The country code chosen on the form, held so the link call can reuse it.
+  const [pendingPhone, setPendingPhone] = useState({ phone: '', countryCode: '' })
+
+  const clearRecaptcha = () => {
+    try {
+      verifierRef.current?.clear()
+    } catch {
+      /* ignore */
+    }
+    verifierRef.current = null
+  }
+
+  // Release the reCAPTCHA slot when the page unmounts, so returning to a stale
+  // form never fails with "reCAPTCHA has already been rendered in this element".
+  useEffect(() => () => clearRecaptcha(), [])
+
   const isStudent = isStudentCategory(form.category)
 
   // validate() keys the per-tile messages as `portfolio.<id>` so they sit
