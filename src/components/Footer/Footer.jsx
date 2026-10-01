@@ -55,11 +55,11 @@ export function Footer() {
           </strong>
 
           <span className="footer__tagline">
-            <span className="footer__tagline-word footer__tagline-word--white">Mobilize</span>
+            <span className="footer__tagline-word footer__tagline-word--orange">Mobilize</span>
             <span className="footer__tagline-sep"> — </span>
             <span className="footer__tagline-word footer__tagline-word--orange">Mentor</span>
             <span className="footer__tagline-sep"> — </span>
-            <span className="footer__tagline-word footer__tagline-word--green">Monetize</span>
+            <span className="footer__tagline-word footer__tagline-word--orange">Monetize</span>
           </span>
         </div>
 
