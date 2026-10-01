@@ -8,11 +8,16 @@
 //      bypasses this form and writes straight to Firestore with the public
 //      API key. The client-side check is UX; the rule is the actual guarantee.
 
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useRef, useEffect } from 'react'
+import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../lib/useAuth'
-import { signUpWithEmail, authErrorMessage } from '../lib/auth'
+import {
+  signUpWithEmail,
+  authErrorMessage,
+  linkPhoneToCurrentUser,
+  confirmOtp
+} from '../lib/auth'
 import { requestMembershipIntent } from '../lib/membershipIntent'
 import { BlurredBackdrop, ProfessionPicker, PortfolioLinks } from '../components'
 import { heroSlides } from '../data/images'
