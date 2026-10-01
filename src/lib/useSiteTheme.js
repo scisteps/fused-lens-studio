@@ -14,6 +14,13 @@ import { DEFAULT_THEME_ID, normalizeThemeId } from '../data/themes'
 
 export function useSiteTheme(isDashboard) {
   const [themeId, setThemeId] = useState(DEFAULT_THEME_ID)
+  // True once the real theme is known — either the snapshot arrived, or it
+  // failed and we have settled on the default.
+  //
+  // <Preloader /> waits on this before playing, because the intro animation is
+  // chosen by the theme. Starting it on the default and swapping a moment later
+  // would flash the wrong-coloured crane on every page load.
+  const [themeLoaded, setThemeLoaded] = useState(false)
 
   useEffect(() => {
     const ref = doc(db, 'siteContent', 'main')
@@ -22,9 +29,13 @@ export function useSiteTheme(isDashboard) {
       (snap) => {
         const next = normalizeThemeId(snap.data()?.themeId)
         setThemeId(next)
+        setThemeLoaded(true)
       },
       (err) => {
         console.error('useSiteTheme: falling back to default theme', err)
+        // Unblock the preloader on failure too, or a Firestore outage would
+        // leave the visitor staring at a blank white screen.
+        setThemeLoaded(true)
       }
     )
     return unsub
@@ -42,5 +53,5 @@ export function useSiteTheme(isDashboard) {
     return () => root.removeAttribute('data-theme')
   }, [themeId, isDashboard])
 
-  return { themeId }
+  return { themeId, themeLoaded }
 }

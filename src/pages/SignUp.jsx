@@ -14,7 +14,7 @@ import { motion } from 'framer-motion'
 import { useAuth } from '../lib/useAuth'
 import { signUpWithEmail, authErrorMessage } from '../lib/auth'
 import { requestMembershipIntent } from '../lib/membershipIntent'
-import { BlurredBackdrop, ProfessionPicker } from '../components'
+import { BlurredBackdrop, ProfessionPicker, PortfolioLinks } from '../components'
 import { heroSlides } from '../data/images'
 import {
   COUNTRY_CODES,
@@ -22,6 +22,12 @@ import {
   MEMBER_CATEGORIES,
   isStudentCategory
 } from '../data/signup'
+import {
+  emptyPortfolio,
+  isValidPortfolioUrl,
+  portfolioCount,
+  PORTFOLIO_LINKS
+} from '../data/portfolio'
 import './Auth.css'
 
 const CARD_MOTION = {
@@ -46,20 +52,26 @@ const AUTH_BACKDROP_IMAGES = [
 // `category` (see isStudentCategory). The derived value is what gets written to
 // the profile, because that is the field the Firestore rules pair with school.
 
-const EMPTY_FORM = {
-  // Personal details
-  name: '',
-  dateOfBirth: '',
-  countryCode: DEFAULT_COUNTRY_CODE,
-  phone: '',
-  // Digital details
-  email: '',
-  password: '',
-  confirmPassword: '',
-  // Membership
-  category: '',
-  school: '',      // students only
-  profession: ''   // everyone else
+// A factory, not a shared constant: `portfolio` is a nested object, and every
+// fresh form needs its own copy of it.
+function emptyForm() {
+  return {
+    // Personal details
+    name: '',
+    dateOfBirth: '',
+    countryCode: DEFAULT_COUNTRY_CODE,
+    phone: '',
+    // Digital details
+    email: '',
+    password: '',
+    confirmPassword: '',
+    // Membership
+    category: '',
+    school: '',      // students only
+    profession: '',  // everyone else
+    // Portfolio — a { linkedin: '…', behance: '…' } map
+    portfolio: emptyPortfolio()
+  }
 }
 
 function validate(form) {
@@ -114,6 +126,23 @@ function validate(form) {
     errors.confirmPassword = 'The two passwords do not match.'
   }
 
+  // ── Portfolio ────────────────────────────────────────────────────────────
+  // At least one link is required — the Guild's whole value is seeing member
+  // work — and each one they DID paste has to look like a link. Only the tiles
+  // they actually opened are judged, so someone who filled in two of six
+  // platforms is never told about the four they left alone.
+  if (portfolioCount(form.portfolio) === 0) {
+    errors.portfolio = 'Please share at least one link to your work.'
+  } else {
+    PORTFOLIO_LINKS.forEach((link) => {
+      const url = String(form.portfolio?.[link.id] || '').trim()
+      if (url && !isValidPortfolioUrl(url)) {
+        errors[`portfolio.${link.id}`] =
+          'That does not look like a link — check the address.'
+      }
+    })
+  }
+
   return errors
 }
 
@@ -121,13 +150,23 @@ export function SignUp() {
   const navigate = useNavigate()
   const { user, loading: authLoading } = useAuth()
 
-  const [form, setForm] = useState(EMPTY_FORM)
+  const [form, setForm] = useState(emptyForm)
   const [errors, setErrors] = useState({})
   const [formError, setFormError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
 
   const isStudent = isStudentCategory(form.category)
+
+  // validate() keys the per-tile messages as `portfolio.<id>` so they sit
+  // alongside every other field error. The picker wants them as a plain map
+  // keyed by platform id, so lift them out here rather than making the picker
+  // know about the error-naming convention.
+  const portfolioFieldErrors = PORTFOLIO_LINKS.reduce((acc, link) => {
+    const message = errors[`portfolio.${link.id}`]
+    if (message) acc[link.id] = message
+    return acc
+  }, {})
 
   const update = (field) => (event) => {
     const value =
@@ -160,6 +199,21 @@ export function SignUp() {
     setErrors((prev) => ({ ...prev, profession: undefined }))
   }
 
+  // The portfolio picker hands over the whole { id: url } map, because it owns
+  // several inputs at once. Only that platform's message is cleared, so the
+  // other tiles keep theirs while the member works down the list.
+  const setPortfolio = (portfolio) => {
+    setForm((prev) => ({ ...prev, portfolio }))
+    setErrors((prev) => {
+      const next = { ...prev }
+      delete next.portfolio
+      PORTFOLIO_LINKS.forEach((link) => {
+        delete next[`portfolio.${link.id}`]
+      })
+      return next
+    })
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault()
     setFormError('')
@@ -175,7 +229,7 @@ export function SignUp() {
       // apply-for-membership button and the benefits carousel are waiting.
       requestMembershipIntent()
       setDone(true)
-      setForm(EMPTY_FORM)
+      setForm(emptyForm())
       navigate('/welcome', { replace: true })
     } catch (err) {
       setFormError(authErrorMessage(err))
@@ -489,6 +543,25 @@ export function SignUp() {
               </div>
             </fieldset>
           )}
+
+          {/* ══ PORTFOLIO ═══════════════════════════════════════════════════
+              Asked of every member, student or not: pick a platform, paste
+              the link. Several at once is fine — a member may well keep a
+              reel on Vimeo and a profile on LinkedIn. Choices:
+              src/data/portfolio.js */}
+          <fieldset className="auth__group">
+            <legend className="auth__group-title">Your portfolio</legend>
+            <div className="auth__field">
+              <span className="auth__label">Where can we see your work?</span>
+              <PortfolioLinks
+                id="su-portfolio"
+                value={form.portfolio}
+                onChange={setPortfolio}
+                error={errors.portfolio}
+                fieldErrors={portfolioFieldErrors}
+              />
+            </div>
+          </fieldset>
 
           {formError && (
             <p className="auth__alert auth__alert--error">{formError}</p>

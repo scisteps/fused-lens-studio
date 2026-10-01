@@ -26,6 +26,7 @@ import {
   COUNTRY_CODES,
   DEFAULT_COUNTRY_CODE
 } from '../data/signup'
+import { portfolioEntries } from '../data/portfolio'
 import { BlurredBackdrop } from '../components'
 import { heroSlides } from '../data/images'
 import './Auth.css'
@@ -273,6 +274,27 @@ export function Login() {
               <dt>Status</dt>
               <dd>{profile?.status || 'pending'}</dd>
             </div>
+            {/* The portfolio links the member shared at sign-up. Rendered only
+                when there is at least one, so a pre-portfolio account does not
+                show an empty row. */}
+            {portfolioEntries(profile?.portfolio).length > 0 && (
+              <div className="auth__profile-row">
+                <dt>Portfolio</dt>
+                <dd>
+                  {portfolioEntries(profile?.portfolio).map((entry) => (
+                    <a
+                      key={entry.id}
+                      className="auth__profile-link"
+                      href={entry.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {entry.label}
+                    </a>
+                  ))}
+                </dd>
+              </div>
+            )}
           </dl>
 
           {notice && (

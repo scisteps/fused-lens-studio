@@ -37,8 +37,19 @@ import {
 } from 'firebase/firestore'
 import { app, db } from './firebase'
 // The category is what decides student-vs-everyone-else, so the write and the
-// rules agree on one definition of it (see data/signup.js).
+// rules agree on one definition of it (see data/signup.js). Likewise the
+// portfolio links: cleaned here so the Firestore document and the sheet row
+// carry byte-identical URLs.
 import { isStudentCategory } from '../data/signup'
+import {
+  cleanPortfolioLinks,
+  portfolioSummary,
+  buildPublicEntry,
+  MEMBER_PORTFOLIOS_COLLECTION,
+  PORTFOLIO_LINKS
+} from '../data/portfolio'
+// The secretariat's sheet gets its own copy of every registration.
+import { submitToSheet } from './googleSheet'
 
 export const auth = getAuth(app)
 
@@ -120,7 +131,8 @@ export async function signUpWithEmail(form) {
     dateOfBirth,
     category,
     profession,
-    school
+    school,
+    portfolio
   } = form
 
   const normalisedEmail = String(email).trim().toLowerCase()
@@ -131,6 +143,10 @@ export async function signUpWithEmail(form) {
   // The category is the single answer that decides the shape of the rest:
   // a student carries an institution, everyone else a profession.
   const student = isStudentCategory(category)
+  // Portfolio links, normalised once and then reused for BOTH destinations, so
+  // Firestore and the sheet can never disagree about a URL. Blank tiles are
+  // dropped entirely rather than stored as empty strings.
+  const portfolioLinks = cleanPortfolioLinks(portfolio)
 
   // 1. Create the auth account (this also signs the user in).
   const { user } = await createUserWithEmailAndPassword(
@@ -147,27 +163,55 @@ export async function signUpWithEmail(form) {
   }
 
   // 3. Write users/{uid}.
+  //
+  // The profile is assembled once and used for BOTH documents below, so the
+  // private record and the public portfolio card can never drift apart.
+  const profile = {
+    uid: user.uid,
+    name: String(name).trim(),
+    email: normalisedEmail,
+    phone: normalisedPhone,
+    // Kept alongside the E.164 `phone` so the secretariat knows which
+    // country the member is in without reverse-engineering the prefix.
+    countryCode: diallingCode,
+    dateOfBirth,
+    category: String(category || '').trim(),
+    // The student checker: a student stores an institution and no profession,
+    // everyone else the reverse. firestore.rules enforces the same pairing.
+    isStudent: student,
+    school: student ? String(school || '').trim() : null,
+    profession: student ? null : String(profession || '').trim(),
+    // The member's portfolio. A map keyed by platform id
+    // (see PORTFOLIO_LINKS in data/portfolio.js), e.g.
+    //   { linkedin: 'https://linkedin.com/in/jane', behance: 'https://…' }
+    // Empty tiles are omitted, so an absent key means "not provided" —
+    // never confuse that with a link that was pasted and left blank.
+    portfolio: portfolioLinks,
+    role: 'member', // never self-assigned as anything else
+    status: 'pending',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  }
+
   try {
-    await setDoc(doc(db, USERS_COLLECTION, user.uid), {
-      uid: user.uid,
-      name: String(name).trim(),
-      email: normalisedEmail,
-      phone: normalisedPhone,
-      // Kept alongside the E.164 `phone` so the secretariat knows which
-      // country the member is in without reverse-engineering the prefix.
-      countryCode: diallingCode,
-      dateOfBirth,
-      category: String(category || '').trim(),
-      // The student checker: a student stores an institution and no profession,
-      // everyone else the reverse. firestore.rules enforces the same pairing.
-      isStudent: student,
-      school: student ? String(school || '').trim() : null,
-      profession: student ? null : String(profession || '').trim(),
-      role: 'member', // never self-assigned as anything else
-      status: 'pending',
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    })
+    await setDoc(doc(db, USERS_COLLECTION, user.uid), profile)
+
+    // 3b. The public portfolio card behind /portfolio. A SEPARATE document in
+    // its own collection, holding only the shareable subset — never the email,
+    // phone or date of birth above. See MEMBER_PORTFOLIOS_COLLECTION in
+    // data/portfolio.js for why this cannot simply reuse `users`.
+    //
+    // Best-effort: if this write fails the account is still perfectly valid,
+    // so the member must not be blocked by it. They would simply be absent
+    // from the public listing until an admin re-publishes their card.
+    try {
+      await setDoc(
+        doc(db, MEMBER_PORTFOLIOS_COLLECTION, user.uid),
+        buildPublicEntry(profile)
+      )
+    } catch (publicError) {
+      console.error('Portfolio card write failed', publicError)
+    }
   } catch (error) {
     // Don't strand a half-registered account: the auth user exists but has no
     // profile, which is exactly the state that locks people out later.
@@ -181,6 +225,36 @@ export async function signUpWithEmail(form) {
   } catch {
     /* non-fatal */
   }
+
+  // 5. The secretariat's sheet. Fire-and-forget on purpose: the account is
+  // already created by this point, and a sheet outage must not turn a
+  // successful registration into an error on screen. Firestore remains the
+  // source of truth — this row is a convenience for the office.
+  submitToSheet({
+    type: 'signup',
+    name: String(name).trim(),
+    email: normalisedEmail,
+    phone: normalisedPhone,
+    countryCode: diallingCode,
+    dateOfBirth,
+    category: String(category || '').trim(),
+    school: student ? String(school || '').trim() : '',
+    profession: student ? '' : String(profession || '').trim(),
+    // One column per platform, derived from PORTFOLIO_LINKS so adding a
+    // platform in src/data/portfolio.js needs no change here. The column
+    // names match SIGNUP_HEADERS in google-apps-script/Code.gs.
+    ...Object.fromEntries(
+      PORTFOLIO_LINKS.map((link) => [
+        `portfolio${link.id.charAt(0).toUpperCase()}${link.id.slice(1)}`,
+        portfolioLinks[link.id] || ''
+      ])
+    ),
+    // …plus a joined summary, so the secretariat can sort and filter the
+    // sheet by platform without reading six columns.
+    portfolioSummary: portfolioSummary(portfolioLinks)
+  }).catch(() => {
+    /* the sheet is a copy, never the system of record */
+  })
 
   return user
 }

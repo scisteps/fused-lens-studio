@@ -7,6 +7,7 @@ import { useSiteContent } from '../../lib/useSiteContent'
 import { useAuth, useUserProfile } from '../../lib/useAuth'
 import { logOut } from '../../lib/auth'
 import { categoryLabel } from '../../data/signup'
+import { portfolioEntries } from '../../data/portfolio'
 import './Hero.css'
 import final from '../../jsons/final6.json'
 import { Player } from '@lottiefiles/react-lottie-player'
@@ -20,13 +21,6 @@ const TIMING = {
   staggerGap: 0.5,    // pause between each element after the title
   elementFade: 0.8,   // fade-in duration for description/actions/indicators/etc.
 }
-
-// Accent color cycle — one class per slide, loops if more slides than colors
-const ACCENT_COLORS = [
-  'hero__title-line--orange',
-  'hero__title-line--green',
-  'hero__title-line--white',
-]
 
 export function Hero() {
   const navigate = useNavigate()
@@ -56,9 +50,6 @@ export function Hero() {
   const cornerTlRef = useRef(null)
   const cornerBrRef = useRef(null)
 
-  // Accent color for the current slide (cycles through ACCENT_COLORS)
-  const accentColorClass = ACCENT_COLORS[currentSlide % ACCENT_COLORS.length]
-
   // Ken Burns effect on images
   useEffect(() => {
     if (!isLoaded) return
@@ -85,15 +76,16 @@ export function Hero() {
 
   // NOTE: the hero deliberately applies NO scroll transform.
   //
-  // It used to parallax the whole <section> with
-  // `translateY(scrollY * 0.4)`, which dragged the Login / Sign Up buttons off
-  // screen as soon as the visitor scrolled. Pinning them with
-  // `position: fixed` does NOT fix that on its own: a transformed ancestor
-  // becomes the containing block for fixed-position descendants, so the row
-  // would have stayed glued to the section and kept drifting. Removing the
-  // transform is what actually lets .hero__actions--fixed hold its place.
-  // (The member profile below already relies on this — it lives outside the
-  // section for the same reason.)
+  // It used to parallax the whole <section> with `translateY(scrollY * 0.4)`.
+  // A transformed ancestor also becomes the containing block for
+  // fixed-position descendants, which is why the Login / Sign Up row used to
+  // be rendered OUTSIDE the section with `position: fixed` — and that in turn
+  // pinned those buttons to the viewport for the entire page, so they floated
+  // over About, Services and everything below.
+  //
+  // Both halves of that workaround are now gone: the row lives back inside the
+  // hero as .hero__actions-hero (`position: absolute`), so it scrolls away with
+  // the hero instead of hanging over the whole site.
 
   // Preload images
   useEffect(() => {
@@ -260,8 +252,11 @@ export function Hero() {
                 exit={{ opacity: 0, y: -40 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               >
+                {/* Both lines are white. The second used to pick up a palette colour per
+                    slide (orange / green / white), which made the tagline fight
+                    the background photo and changed colour mid-rotation. */}
                 <span className="hero__title-line">{slides[currentSlide].title}</span>
-                <span className={`hero__title-line hero__title-line--accent ${accentColorClass}`}>
+                <span className="hero__title-line hero__title-line--accent">
                   {slides[currentSlide].subtitle}
                 </span>
               </motion.h2>
@@ -294,19 +289,14 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Decorative Elements */}
-      <div className="hero__decorative">
-        <div className="hero__corner hero__corner--tl" ref={cornerTlRef} style={{ opacity: 0, transform: 'scale(0)' }} />
-        <div className="hero__corner hero__corner--br" ref={cornerBrRef} style={{ opacity: 0, transform: 'scale(0)' }} />
-      </div>
-      </section>
-
-      {/* Login / Sign Up — pinned to the viewport so they stay put however far
-          the page is scrolled. This lives OUTSIDE the hero <section> for the
-          same reason the member profile below does: `position: fixed` resolves
-          against the nearest TRANSFORMED ancestor, so a row left inside the
-          hero would stay glued to it and keep drifting off screen. */}
-      <div className="hero__actions-fixed">
+{/* Login / Sign Up — belongs to the HERO, so it scrolls away with it.
+          This used to be `position: fixed` and rendered outside the <section>,
+          which pinned it to the bottom-left of the viewport for the whole page:
+          the buttons then floated over About, Services and every section below.
+          `position: absolute` (see .hero__actions-hero in Hero.css) anchors it
+          to .hero instead — same place on screen, but it now leaves with the
+          hero as soon as the visitor scrolls. */}
+      <div className="hero__actions-hero">
         <div className="hero__actions" ref={actionsRef} style={{ opacity: 0 }}>
           {/* Signed out — the invitation to join. */}
           {!authLoading && !user && (
@@ -392,6 +382,12 @@ export function Hero() {
           )}
         </div>
       </div>
+      {/* Decorative Elements */}
+      <div className="hero__decorative">
+        <div className="hero__corner hero__corner--tl" ref={cornerTlRef} style={{ opacity: 0, transform: 'scale(0)' }} />
+        <div className="hero__corner hero__corner--br" ref={cornerBrRef} style={{ opacity: 0, transform: 'scale(0)' }} />
+      </div>
+      </section>
 
       {/* Member profile — lives OUTSIDE the parallax <section> so its
           position: fixed is not trapped by the section's scroll transform. */}
@@ -454,6 +450,25 @@ export function Hero() {
                   <dt>Status</dt>
                   <dd className="hero__profile-status">{profile?.status || 'pending'}</dd>
                 </div>
+                {/* The portfolio links shared at sign-up — hidden entirely when
+                    there are none, so the pop-over never grows an empty row. */}
+                {portfolioEntries(profile?.portfolio).length > 0 && (
+                  <div className="hero__profile-row">
+                    <dt>Portfolio</dt>
+                    <dd className="hero__profile-links">
+                      {portfolioEntries(profile?.portfolio).map((entry) => (
+                        <a
+                          key={entry.id}
+                          href={entry.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {entry.label}
+                        </a>
+                      ))}
+                    </dd>
+                  </div>
+                )}
               </dl>
 
               <div className="hero__profile-actions">

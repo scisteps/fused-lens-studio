@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CategoryFee } from './CategoryFee'
-import { resolvePromo, promoCountdownLabel } from '../../lib/membershipPromo'
+import { resolvePromo, promoCountdownLabel, promoEndLabel } from '../../lib/membershipPromo'
+import { highlightLead } from '../../lib/highlightLead'
 
 const MEMBERSHIP_ENDPOINT =
   'https://script.google.com/macros/s/AKfycbxK5Da_gByb4xFNntM-MDVu46EpQg0zX8U7CHiJ12BE3t8SV4cVR19kJo5KxE9flOoeFg/exec'
@@ -22,6 +23,10 @@ export function ApplyModal({
   // Already-resolved promo from the Membership section. Welcome.jsx passes the
   // raw config instead; either shape is accepted.
   feePromo,
+  // "Who can join?" — moved here from the Membership section. It belongs with
+  // the moment of applying, not as a block of copy the visitor scrolls past
+  // before deciding they qualify.
+  eligibility = '',
   user = null,
   profile = null
 }) {
@@ -139,6 +144,18 @@ export function ApplyModal({
               Pick your category and country of residence — the rest of your
               details come from your account.
             </p>
+
+            {/* Who can join — used to be its own block on the Membership
+                section. It reads as a qualifier here, right above the form
+                they are about to fill in. */}
+            {eligibility && (
+              <div className="apply-modal__eligibility">
+                <h4 className="apply-modal__eligibility-title">Who Can Join?</h4>
+                <p className="apply-modal__eligibility-text">
+                  {highlightLead(eligibility)}
+                </p>
+              </div>
+            )}
 
             {status === 'success' ? (
               <div className="apply-modal__success">

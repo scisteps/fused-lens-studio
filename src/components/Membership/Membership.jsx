@@ -17,20 +17,6 @@ import './Membership.css'
 import { ApplyModal } from './ApplyModal'
 import { RecommendModal } from './RecommendModal'
 
-// Group benefits into rows with matching glows.
-// Indices refer to positions in membership.benefits — the numbers shown
-// on each card come from that index + 1, so they stay sequential across
-// all groups (01, 02, 03, 04, 05, 06, 07).
-//
-// If you add more benefits in the CMS, the extra indices are automatically
-// collected into a fallback "More" group at the bottom.
-const BENEFIT_GROUPS = [
-  { indices: [0, 1], variant: 'white',  label: 'Core Membership' },
-  { indices: [2], variant: 'white',  label: 'Participation' },
-  { indices: [3, 4],    variant: 'orange', label: 'Professional Access' },
-  { indices: [ 5], variant: 'green',  label: 'Voting & rights' }
-]
-
 // Category card fills cycle white → orange → green. The final card is
 // always white so the list closes on a neutral card.
 const CATEGORY_VARIANTS = ['white', 'orange', 'green']
@@ -78,23 +64,6 @@ export function Membership() {
   // The grace-period offer. Re-checked every minute so a page left open past
   // the closing date stops advertising a grace period on its own.
   const promo = usePromo(membership.feePromo)
-
-  const mappedIndices = BENEFIT_GROUPS.flatMap(g => g.indices)
-  const extras = benefits
-    .map((_, i) => i)
-    .filter(i => !mappedIndices.includes(i))
-    .map(i => ({ benefit: benefits[i], index: i }))
-
-  const benefitGroups = BENEFIT_GROUPS.map(group => ({
-    ...group,
-    items: group.indices
-      .map(i => ({ benefit: benefits[i], index: i }))
-      .filter(item => item.benefit)
-  }))
-
-  if (extras.length) {
-    benefitGroups.push({ variant: 'white', label: 'More', items: extras })
-  }
 
   // Build a mailto link that pre-fills subject + body
   // const applyMailto = `mailto:${APPLY_EMAIL}?subject=${encodeURIComponent(
@@ -173,22 +142,6 @@ export function Membership() {
           </p>
         </motion.div>
 
-        {/* Who can join — only relevant before someone has an account. */}
-        {!user && membership.eligibility && (
-          <motion.div
-            className="membership__join membership__join--light"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <h3 className="membership__join-title">Who Can Join?</h3>
-            <p className="membership__join-text">
-              {highlightLead(membership.eligibility)}
-            </p>
-          </motion.div>
-        )}
-
         {/* Membership categories (tags + fees) are for prospective joiners — a
             signed-in member already has their category, so skip it. */}
         {!user && membership.categories?.length > 0 && (
@@ -201,33 +154,11 @@ export function Membership() {
           >
             <h3 className="membership__categories-title">Membership Categories</h3>
 
-            {/* ── The grace-period offer ───────────────────────────────
-                Rendered only while the offer is genuinely live, so the page
-                never shows a stale grace period after the window has closed.
-                The fee itself is unchanged and still shown on every card. */}
-            {promo.active && (
-              <div
-                className="membership__promo"
-                role="status"
-                aria-live="polite"
-              >
-                <span className="membership__promo-flag">PAY LATER</span>
-                <div className="membership__promo-body">
-                  <strong className="membership__promo-title">
-                    {promo.label}
-                  </strong>
-                  {promo.note && (
-                    <p className="membership__promo-note">{promo.note}</p>
-                  )}
-                  <p className="membership__promo-countdown">
-                    <span>{promoCountdownLabel(promo)}</span>
-                    <span aria-hidden="true"> · </span>
-                    <span>closes {promoEndLabel(promo)}</span>
-                  </p>
-                </div>
-              </div>
-            )}
-
+            {/* Each card expands to show the fee, what that category means, and
+                — while the grace period is live — the pay-later terms. The
+                offer is deliberately NOT a banner above the list: it belongs to
+                a fee, so it is read together with the fee it applies to, in the
+                dropdown, rather than floating free of the amounts. */}
             <div className="membership__categories-grid">
               {membership.categories.map((category, index) => {
                 const isOpen = openCategory === index
@@ -288,6 +219,30 @@ export function Membership() {
                           {describeFee(category.fee, promo).kind !== 'unset' && (
                             <CategoryFee fee={category.fee} promo={promo} />
                           )}
+{/* The pay-later terms sit with the fee they apply
+                              to. The amount above is unchanged — the offer only
+                              moves the deadline — so the member reads price and
+                              terms together instead of from two separate places. */}
+                          {promo.active && (
+                            <div
+                              className="membership__category-promo"
+                              role="status"
+                              aria-live="polite"
+                            >
+                              <span className="membership__category-promo-flag">
+                                PAY LATER
+                              </span>
+                              <span className="membership__category-promo-body">
+                                <strong>{promo.label}</strong>
+                                {promo.note && <span>{promo.note}</span>}
+                                <span className="membership__category-promo-countdown">
+                                  {promoCountdownLabel(promo)}
+                                  <span aria-hidden="true"> · </span>
+                                  closes {promoEndLabel(promo)}
+                                </span>
+                              </span>
+                            </div>
+                          )}
                           <p className="membership__category-description">
                             {highlightLead(category.description)}
                           </p>
@@ -301,49 +256,12 @@ export function Membership() {
           </motion.div>
         )}
 
-        {/* Benefits — grouped into rows, globally numbered 01, 02, 03… */}
-        {benefits.length > 0 && (
-          <motion.div
-            className="membership__benefits"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <h3 className="membership__benefits-title">Member Benefits</h3>
-
-            {benefitGroups.map((group, gi) => (
-              <div
-                key={gi}
-                className={`membership__benefit-group membership__benefit-group--${group.variant}`}
-              >
-                <span className="membership__benefit-group-label">
-                  {group.label}
-                </span>
-
-                <div className="membership__benefit-row">
-                  {group.items.map(({ benefit, index }) => {
-                    const displayNumber = String(index + 1).padStart(2, '0')
-
-                    return (
-                      <div
-                        key={index}
-                        className={`membership__benefit membership__benefit--${group.variant}`}
-                      >
-                        <span className="membership__benefit-number">
-                          {displayNumber}
-                        </span>
-                        <p className="membership__benefit-description">
-                          {highlightLead(benefit)}
-                        </p>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
-          </motion.div>
-        )}
+        {/* Benefits — the carousel at the top of the section is the ONLY place
+            they are listed. The old grouped rows (Core Membership, Voting &
+            rights, …) repeated the same copy as a wall of text below the
+            categories, so it has been removed. The BenefitsCarousel above is
+            driven by the same `membership.benefits` array in the CMS, so no
+            content is lost — it just reads as one carousel now. */}
 
         {/* Executive Committee — green glowing button */}
         <motion.div
@@ -396,6 +314,7 @@ export function Membership() {
         onClose={() => setApplyOpen(false)}
         categories={membership.categories || []}
         feePromo={promo}
+        eligibility={membership.eligibility || ''}
         user={user}
         profile={profile}
       />

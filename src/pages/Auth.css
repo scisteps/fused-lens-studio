@@ -442,6 +442,28 @@
   text-align: right;
 }
 
+/* The portfolio links shared at sign-up. Wraps so several fit on one row
+   rather than pushing the panel wider. */
+.auth__profile-link {
+  margin-left: 0.5rem;
+  color: var(--color-white, #ffffff);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(var(--color-accent-rgb, 253, 101, 0), 0.6);
+  transition: color var(--transition-fast),
+    text-decoration-color var(--transition-fast);
+}
+
+.auth__profile-link:hover,
+.auth__profile-link:focus-visible {
+  color: var(--color-orange, #FD6500);
+  text-decoration-color: var(--color-orange, #FD6500);
+}
+
+.auth__profile-link:first-of-type {
+  margin-left: 0;
+}
+
 @media (max-width: 560px) {
   .auth {
     padding: 7rem 1.25rem 4rem;

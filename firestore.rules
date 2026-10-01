@@ -69,6 +69,33 @@ service cloud.firestore {
           // the authoritative E.164 value.
           && (!('countryCode' in d)
               || (d.countryCode is string && d.countryCode.matches('^\\+[1-9][0-9]{1,3}$')))
+          // ── PORTFOLIO ────────────────────────────────────────────────────
+          // A map of the member's work links, keyed by platform id:
+          //   portfolio: { linkedin: 'https://…', behance: 'https://…' }
+          // Blank tiles are omitted on write, so an absent key means "not
+          // provided". The ids must match PORTFOLIO_LINKS in
+          // src/data/portfolio.js, and each value must be a real http(s) URL
+          // within MAX_PORTFOLIO_URL_LENGTH — otherwise the secretariat's
+          // sheet fills up with junk cells that are not clickable.
+          // The whole field is optional so members who signed up before this
+          // existed keep a valid document on their next update.
+          && (!('portfolio' in d) || (
+                d.portfolio is map
+             && d.portfolio.size() >= 1
+             && d.portfolio.size() <= 6
+             && d.portfolio.keys().hasOnly([
+                  'linkedin', 'instagram', 'behance', 'dribbble', 'web', 'other'
+                ])
+             && d.portfolio.keys().hasAny([
+                  'linkedin', 'instagram', 'behance', 'dribbble', 'web', 'other'
+                ])
+             && d.portfolio.values().all(k,
+                  k is string
+               && k.size() >= 8            // rejects a bare "https://"
+               && k.size() <= 500          // MAX_PORTFOLIO_URL_LENGTH
+               && k.matches('^https?://[^\\s]+$')
+             )
+          ))
           // STUDENT CHECKER, now keyed off the category:
           //   * a student MUST name a school, and carries no profession
           //   * a non-student MUST name a profession, and carries no school
@@ -103,6 +130,55 @@ service cloud.firestore {
       }
       allow read: if true;
       allow create, update, delete: if isAdmin();
+    }
+
+    // ---------------- PUBLIC MEMBER PORTFOLIOS ----------------
+    // Backs the public /portfolio page. One document per member, written at
+    // signup by src/lib/auth.js from buildPublicEntry() (data/portfolio.js).
+    //
+    // ⚠️ THIS COLLECTION IS WORLD-READABLE. It is a SEPARATE collection, not a
+    //    sub-collection of `users`, specifically so this `allow read: if true`
+    //    cannot reach the parent document — `users/{uid}` holds each member's
+    //    email, phone and date of birth and stays owner/admin-only above.
+    //    Never copy a profile field into buildPublicEntry() without deciding it
+    //    is safe to publish.
+    //
+    // Writes are restricted to the signed-in owner and to admins. The owner
+    // clause is what stops someone creating a card for a member who never
+    // signed up; the field checks stop a junk or oversized card.
+    match /memberPortfolios/{userId} {
+
+      function isAdmin() {
+        return request.auth != null
+          && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+          && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+      }
+
+      // The listing must be renderable by the public site with no signed-in
+      // user, so reads are open. Everything written must still look like a
+      // member card: a name, and links that are real http(s) URLs.
+      allow read: if true;
+
+      allow create, update: if (request.auth != null && request.auth.uid == userId || isAdmin())
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 80
+        && request.resource.data.portfolio is map
+        && request.resource.data.portfolio.size() >= 1
+        && request.resource.data.portfolio.size() <= 6
+        && request.resource.data.portfolio.keys().hasOnly([
+             'linkedin', 'instagram', 'behance', 'dribbble', 'web', 'other'
+           ])
+        && request.resource.data.portfolio.values().all(k,
+             k is string && k.size() <= 500 && k.matches('^https?://[^\\s]+$')
+           );
+
+      // NOTE: an owner may also rewrite their own card (e.g. to add a link they
+      // did not have at signup). The field checks above bound what a card can
+      // contain; they do NOT stop a member editing their own display name.
+      // If that matters, restrict updates to admins only — the trade-off is
+      // that members could never update their own links.
+      allow delete: if isAdmin() || (request.auth != null && request.auth.uid == userId);
     }
 
     // ---------------- EXISTING COLLECTIONS (leave as-is) ----------------

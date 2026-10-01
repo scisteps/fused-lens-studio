@@ -377,6 +377,57 @@
 }
 
 /* ============================================================
+   PAY-LATER, INSIDE THE CATEGORY DROPDOWN
+   The offer used to be one banner above the whole category list.
+   It now lives under the fee it applies to, inside the open card,
+   so the amount and the terms it qualifies are read together.
+   ============================================================ */
+
+.membership__category-promo {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0 0 var(--space-md);
+  padding: 0.75rem 0.9rem;
+  background: rgba(var(--color-accent-rgb, 253, 101, 0), 0.1);
+  border: 1px solid rgba(var(--color-accent-rgb, 253, 101, 0), 0.35);
+  /* Matches the old standalone banner so the offer still reads as a distinct
+     thing rather than blending into the description. */
+}
+
+.membership__category-promo-flag {
+  flex: none;
+  padding: 0.2rem 0.5rem;
+  background: var(--color-accent, #FD6500);
+  color: var(--color-on-accent, #0a0a0a);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.membership__category-promo-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-pearl, #d4d4d4);
+}
+
+.membership__category-promo-body strong {
+  color: var(--color-white, #ffffff);
+  font-weight: 600;
+}
+
+.membership__category-promo-countdown {
+  font-size: 0.72rem;
+  color: var(--color-accent-light, #ff8133);
+}
+
+/* ============================================================
    HOVER â€” darken the card for readability, brighten the title
    ============================================================ */
 .membership__category:hover,
@@ -1159,6 +1210,34 @@
   font-size: 0.95rem;
   margin: 0 0 2rem;
   line-height: 1.5;
+}
+
+/* ---------- Who Can Join? ----------
+   Moved here from the Membership section. It sits directly above the form so a
+   prospective member reads the qualification at the moment they are about to
+   apply, rather than scrolling past it on the home page. */
+.apply-modal__eligibility {
+  margin: 0 0 1.75rem;
+  padding: 1rem 1.15rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 2px solid var(--color-accent, #FD6500);
+}
+
+.apply-modal__eligibility-title {
+  margin: 0 0 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-accent-light, #ff8133);
+}
+
+.apply-modal__eligibility-text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--color-pearl, #d4d4d4);
 }
 
 .apply-modal__form {

@@ -114,9 +114,10 @@
   font-weight: 300;
 }
 
-.hero__title-line--orange { color: var(--color-accent-light); }
-.hero__title-line--green  { color: var(--color-secondary-light); }
-.hero__title-line--white  { color: var(--color-white); }
+/* The tagline used to cycle through a palette colour per slide via
+   --orange / --green / --white classes. Those are gone: the tagline is white
+   in every palette (see the .hero__title-line--accent block further down).
+   Keeping the classes here would invite someone to re-apply them. */
 
 /* Actions */
 .hero__actions {
@@ -125,26 +126,28 @@
   gap: var(--space-md);
 }
 
-/* ---------- Fixed Login / Sign Up row ----------
-   Pinned to the bottom-left of the viewport so the two doors into the Guild
-   are reachable from anywhere on the page. The offsets mirror where the row
-   used to sit inside the hero (its container padding on the left, 15vh up
-   from the bottom), so the buttons do not visibly jump when this took over
-   from the in-flow layout. */
-.hero__actions-fixed {
-  position: fixed;
+/* ---------- Login / Sign Up row ----------
+   Sits at the bottom-left OF THE HERO. `position: absolute` resolves against
+   .hero (which is `position: relative; height: 100vh`), so the row holds the
+   same spot on screen but scrolls away with the hero. It used to be
+   `position: fixed` outside the <section>, which pinned it to the viewport and
+   left Login / Sign Up / Get in Touch floating over every section below.
+   `absolute` — not `fixed` — is the whole fix: a fixed row inside a
+   transformed ancestor is what forced the original markup outside the hero. */
+.hero__actions-hero {
+  position: absolute;
   left: var(--container-padding);
   bottom: 15vh;
-  /* Above page content, below the fixed header (z-index 1000) and the
-     profile overlay, so the nav and dialogs still win. */
-  z-index: 900;
-  max-width: calc(100vw - var(--container-padding) * 2);
+  /* Above the photo slides + overlays (z-index 1) and .hero__content, but
+     below the fixed header (z-index 1000) and the profile overlay (1200). */
+  z-index: 2;
+  max-width: calc(100% - var(--container-padding) * 2);
 }
 
 /* Below the header so the row never sits under it, and clear of the safe area
    on notched phones. */
 @media (max-width: 768px) {
-  .hero__actions-fixed {
+  .hero__actions-hero {
     bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
   }
 }
@@ -333,6 +336,31 @@
 
 .hero__profile-status {
   text-transform: capitalize;
+}
+
+/* The member's portfolio links, stacked so several fit without crowding the
+   label. */
+.hero__profile-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+}
+
+.hero__profile-links a {
+  color: var(--color-white, #ffffff);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(var(--color-accent-rgb, 253, 101, 0), 0.6);
+  transition: color var(--transition-fast),
+    text-decoration-color var(--transition-fast);
+}
+
+.hero__profile-links a:hover,
+.hero__profile-links a:focus-visible {
+  color: var(--color-orange, #FD6500);
+  text-decoration-color: var(--color-orange, #FD6500);
 }
 
 .hero__profile-actions {
@@ -560,13 +588,13 @@
 
 .hero__title-line--accent {
   font-weight: 300;
-  /* Slightly stronger shadow on the accent line — colored text is often lower contrast */
+  /* The tagline is always white, on every slide and in every palette. It
+     already inherits that from .hero__title; stating it here means the line
+     stays white even if a palette class is ever re-applied to it. */
+  color: var(--color-white);
+  /* Slightly stronger shadow so white text stays readable over bright image areas */
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.6),
     0 2px 10px rgba(0, 0, 0, 0.4),
     0 4px 28px rgba(0, 0, 0, 0.3);
 }
-
-.hero__title-line--orange { color: var(--color-accent-light); }
-.hero__title-line--green  { color: var(--color-secondary-light); }
-.hero__title-line--white  { color: var(--color-white); }

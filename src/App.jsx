@@ -23,13 +23,12 @@ import { Welcome } from './pages/Welcome'
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 
+// Plays the themed intro animation before the site appears. The crane that
+// plays is chosen by the admin's palette — see data/themes.js. Set this to
+// false to skip straight to the page.
+const SHOW_PRELOADER = true
+
 function App() {
-  const [loading, setLoading] = useState(true)
-
-  // if (loading) {
-  //   return <Preloader onComplete={() => setLoading(false)} />
-  // }
-
   return (
     <Router>
       <AppShell />
@@ -40,10 +39,15 @@ function App() {
 function AppShell() {
   const { pathname, hash } = useLocation()
   const isDashboard = pathname.startsWith('/admin/')
+  const [loading, setLoading] = useState(true)
 
   // Public-site palette chosen by the admin (Content Dashboard → Site theme).
   // Dashboards are excluded inside the hook — the CMS keeps its dark + gold chrome.
-  useSiteTheme(isDashboard)
+  // `themeId` also picks the preloader animation, so it has to be read here,
+  // alongside the gate that decides whether the intro plays at all.
+  // `themeLoaded` holds the intro until the palette is known — without it the
+  // crane would start in the default colour and then swap.
+  const { themeId, themeLoaded } = useSiteTheme(isDashboard)
 
   // Section links from other pages arrive as '/#about'. There is no element to
   // scroll to at the moment of navigation, so wait for the page to paint first.
@@ -81,6 +85,17 @@ function AppShell() {
 
   return (
     <div className="app">
+        {/* The themed intro: the crane played is chosen by the admin's palette
+            (orange / grey / gold). `ready` holds the white screen until that
+            palette is known, so the first crane seen is already the right one. */}
+        {SHOW_PRELOADER && !isDashboard && loading && (
+          <Preloader
+            themeId={themeId}
+            ready={themeLoaded}
+            onComplete={() => setLoading(false)}
+          />
+        )}
+
         {/* {!isDashboard && <FloatingParticles count={25} />} */}
         {/* {!isDashboard && <CursorGlow />} */}
         {!isDashboard && <Navigation />}
