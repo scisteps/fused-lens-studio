@@ -7,6 +7,9 @@ import logoImage from '../../Images/agublack.png';
 
 import { useLocation, useNavigate } from 'react-router-dom'
 import { NotificationsBell } from '../Notifications'
+import { MemberProfilePanel } from '../MemberProfile'
+import { useAuth, useUserProfile } from '../../lib/useAuth'
+import { categoryLabel } from '../../data/signup'
 import './Navigation.css'
 
 export function Navigation() {
@@ -16,6 +19,16 @@ export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isDark, setIsDark] = useState(true)
+  // The member chip needs the signed-in member to know what category to show.
+  const { user, loading: authLoading } = useAuth()
+  const { profile } = useUserProfile(user?.uid)
+  const [profileOpen, setProfileOpen] = useState(false)
+
+  // Sign out from anywhere on the site must also close the panel, or it would
+  // be left open over the page for someone who is no longer a member.
+  useEffect(() => {
+    if (!user) setProfileOpen(false)
+  }, [user])
 
   // Navigation links for the main site. The header shows only these four:
   // the three main sections plus News, which lives on its own page.
@@ -179,10 +192,30 @@ export function Navigation() {
             Book Session
           </motion.button> */}
 
-          {/* Bell + hamburger are grouped so they sit together at the right
-              edge; left loose, space-between would push them apart. */}
+          {/* Bell + member + hamburger are grouped so they sit together at the
+              right edge; left loose, space-between would push them apart. */}
           <div className="nav__actions">
             <NotificationsBell />
+
+            {/* Signed in — the member's category chip opens their profile. The
+                SAME panel the hero chip opens (MemberProfilePanel), so the two
+                can never show different details or offer a different share
+                link. Signed out, nothing renders here: Login / Sign Up live in
+                the hero and on the account page. */}
+            {!authLoading && user && (
+              <button
+                type="button"
+                className="nav__member clickable"
+                onClick={() => setProfileOpen(true)}
+                aria-label={`Your member profile — ${categoryLabel(profile?.category) || 'Member'}`}
+                title="Your member profile"
+              >
+                <span className="nav__member-dot" aria-hidden="true" />
+                <span className="nav__member-label">
+                  {categoryLabel(profile?.category) || 'Member'}
+                </span>
+              </button>
+            )}
 
             <button
               className={`nav__mobile-toggle ${isMobileMenuOpen ? 'nav__mobile-toggle--open' : ''}`}
@@ -243,6 +276,16 @@ export function Navigation() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* The member's profile panel, opened from the header chip. Deliberately
+          outside <motion.header> so its position: fixed is not trapped by the
+          header's entry animation transform. */}
+      <MemberProfilePanel
+        isOpen={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        user={user}
+        profile={profile}
+      />
     </>
   )
 }

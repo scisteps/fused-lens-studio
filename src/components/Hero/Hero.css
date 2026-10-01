@@ -1,9 +1,16 @@
 .hero {
   position: relative;
+  /* Two height declarations on purpose: `svh` is the "small viewport height", so
+     the hero keeps a stable size on mobile even while the browser's address bar
+     is showing. Without it, `100vh` includes that chrome and the bottom-anchored
+     copy/buttons get pushed under it. The `100vh` line is the fallback for
+     browsers without `svh`. */
   height: 100vh;
-  min-height: 700px;
+  height: 100svh;
+  /* Deliberately modest — the old 700px floor forced a scrollbar on short
+     (landscape) windows. Layout below is compacted by a @media (max-height) rule. */
+  min-height: 520px;
   width: 100%;
-  /* margin-left: 10px; */
   overflow: hidden;
   background: #ffffff;   /* white stage behind the intro */
 }
@@ -51,73 +58,130 @@
   );
 }
 
-/* Content */
+/* ─────────────────────────────────────────────────────────────
+   Content column
+   One bottom-anchored flex stack: lottie → wording → buttons.
+   Everything below this block used to be positioned separately and
+   collided; keeping the three pieces in ONE flow column with a single
+   `gap` is what makes overlap structurally impossible at any width.
+   ───────────────────────────────────────────────────────────── */
 .hero__content {
   position: relative;
+  /* Above the photo slides + overlays. Below the fixed header (z-index 1000)
+     and the profile overlay (1200). */
+  z-index: 2;
   height: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 var(--container-padding);
+  /* Top padding clears the fixed header. Bottom padding is the breathing room
+     under the buttons, and also clears the home indicator on notched phones. */
+  padding-top: calc(var(--header-height) + var(--space-lg));
+  padding-right: var(--container-padding);
+  padding-bottom: max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 1rem));
+  padding-left: var(--container-padding);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding-bottom: 15vh;
+  gap: clamp(1.25rem, 3vh, 2.5rem);
 }
 
 .hero__text {
+  width: 100%;
   max-width: 800px;
   display: flex;
   flex-direction: column;
+  gap: clamp(1rem, 2.5vh, 2rem);
+  min-width: 0;   /* let the headline shrink instead of forcing overflow */
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Lottie — sits directly above the tagline/description.
-   `margin-bottom` controls the gap below it.
-   Smaller value = closer to the tagline.
+   Lottie — the crane, sitting directly above the tagline.
+
+   It used to be `position: absolute` with a hard-coded 650px box, and the
+   space it occupied was then faked by `margin-top: 420px` on the title
+   wrapper. Those two magic numbers only lined up at one exact viewport size,
+   so any other screen put the crane through the wording. It is now a normal
+   flow item that scales with the viewport, and the tuck underneath it is a
+   single fluid `margin-bottom`.
+
+   Sizing is deliberately bounded on BOTH axes: `vmin` keeps it from
+   sprawling on a wide monitor, and `svh` keeps it from eating the vertical
+   budget the headline and buttons need. The hero is a bottom-anchored
+   `100svh` column, so a crane sized on width alone grows until it pushes the
+   wording off the top of the screen. min() of the two is what lets it be
+   genuinely large on a big display while still shrinking on a short window.
    ───────────────────────────────────────────────────────────── */
 .hero__lottie {
-  position: absolute;
-  left: -40px;   /* ← adjust X here */
-  bottom: 220px;                    /* ← adjust Y here (distance from bottom of hero__content) */
-  width: 650px;
-  height: 650px;
+  position: relative;
+  width: clamp(200px, min(42vmin, 40svh), 460px);
+  aspect-ratio: 1 / 1;
+  /* Pulls the crane down onto the title so they read as one composition
+     without the two boxes ever landing on top of each other. Scales with the
+     crane, but stops short of true proportional — the crane artwork carries
+     transparent padding at its foot, and a full-ratio tuck would ride the
+     headline itself. */
+  margin-bottom: clamp(-3.5rem, -6vmin, -0.75rem);
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
   line-height: 0;
   pointer-events: none;
-  z-index: 1;
+  flex-shrink: 0;
 }
-
-
 
 .hero__title-wrapper {
   position: relative;
-  margin-bottom: 60px;
-  margin-top: 420px;   /* ← reserve visual space the lottie now overlaps; tune alongside bottom above */
+  min-width: 0;
 }
 
 .hero__title {
+  margin: 0;
   font-family: var(--font-body);
-  font-size: clamp(2rem, 5vw, 2rem);
+  /* The old `clamp(2rem, 5vw, 2rem)` was a no-op — min equalled max, so the
+     headline never actually scaled. This one grows on large screens and eases
+     down on phones. */
+  font-size: clamp(1.5rem, 1.05rem + 2.4vw, 3rem);
   font-weight: 400;
   color: var(--color-white);
-  line-height: 1.1;
+  line-height: 1.15;
+  /* Contrast — soft dark shadow so the wording stays readable over the
+     brightest areas of the photo. */
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.35),
+    0 4px 24px rgba(0, 0, 0, 0.25);
+  text-wrap: balance;
+  /* Long single-word titles from the admin must not blow out the column. */
+  overflow-wrap: break-word;
 }
 
 .hero__title-line {
   display: block;
   overflow: hidden;
+  /* The reveal mask would clip both the descenders and the shadow set on
+     .hero__title; the padding + negative margin give both room to breathe. */
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+  text-shadow: inherit;
 }
 
 .hero__title-line--accent {
   font-weight: 300;
+  /* The tagline is always white, on every slide and in every palette. It
+     already inherits that from .hero__title; stating it here means the line
+     stays white even if a palette class is ever re-applied to it. */
+  color: var(--color-white);
+  /* Slightly stronger shadow so white text stays readable over bright image areas */
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.6),
+    0 2px 10px rgba(0, 0, 0, 0.4),
+    0 4px 28px rgba(0, 0, 0, 0.3);
 }
 
 /* The tagline used to cycle through a palette colour per slide via
    --orange / --green / --white classes. Those are gone: the tagline is white
-   in every palette (see the .hero__title-line--accent block further down).
-   Keeping the classes here would invite someone to re-apply them. */
+   in every palette (see .hero__title-line--accent above). Keeping the classes
+   here would invite someone to re-apply them. */
 
 /* Actions */
 .hero__actions {
@@ -134,22 +198,24 @@
    left Login / Sign Up / Get in Touch floating over every section below.
    `absolute` — not `fixed` — is the whole fix: a fixed row inside a
    transformed ancestor is what forced the original markup outside the hero. */
-.hero__actions-hero {
-  position: absolute;
-  left: var(--container-padding);
-  bottom: 15vh;
-  /* Above the photo slides + overlays (z-index 1) and .hero__content, but
-     below the fixed header (z-index 1000) and the profile overlay (1200). */
-  z-index: 2;
-  max-width: calc(100% - var(--container-padding) * 2);
-}
+/* ---------- Login / Sign Up row ----------
+   This is the LAST item of the .hero__content stack (see Hero.jsx), so it sits
+   under the wording with the column's `gap` between them and can never overlap
+   it.
 
-/* Below the header so the row never sits under it, and clear of the safe area
-   on notched phones. */
-@media (max-width: 768px) {
-  .hero__actions-hero {
-    bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
-  }
+   It used to be `position: absolute; bottom: 15vh` as a SIBLING of
+   .hero__content, which already ended 15vh from the bottom via its own
+   `padding-bottom: 15vh`. Both therefore resolved to the same horizontal band
+   and the buttons landed on the title; a 60px `margin-bottom` was all that kept
+   them apart, which is why a slightly longer headline pushed them into each
+   other. (Even earlier it was `position: fixed` outside the <section>, pinning
+   it over About, Services and every section below.) In normal flow the row
+   scrolls away with the hero AND holds its own space. */
+.hero__actions-hero {
+  width: 100%;
+  max-width: 800px;   /* keeps the buttons on the same measure as the wording */
+  align-self: flex-start;
+  flex-shrink: 0;
 }
 
 .hero__btn {
@@ -517,84 +583,157 @@
   border-top: none;
 }
 
-@media (max-width: 768px) {
-  .hero__content { padding-bottom: 15vh; }
+/* ============================================================
+   RESPONSIVE
+   Ordered widest breakpoint first so narrower rules win by source
+   order. Only real structural changes live here; the type and the
+   crane already scale fluidly via clamp()/vmin above.
+   ============================================================ */
+
+/* ---------- Large desktop ----------
+   The crane gets the most generous size here: this is the one case with both
+   a wide screen and a tall one, so `vmin` is no longer the binding axis. */
+@media (min-width: 1440px) {
+  .hero__lottie { width: clamp(480px, 38vmin, 520px); }
+}
+
+/* ---------- Laptop / small desktop ---------- */
+@media (max-width: 1200px) {
+  .hero__lottie { width: clamp(460px, 34vmin, 380px); }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 900px) {
+  .hero__lottie {
+    width: clamp(410px, 32vmin, 400px);
+    margin-bottom: clamp(-2.5rem, -5vmin, -0.5rem);
+  }
+
+  .hero__text,
+  .hero__actions-hero { max-width: 100%; }
+}
+
+/* ---------- Phone ---------- */
+@media (max-width: 640px) {
+  .hero {
+    /* svh already keeps the address bar from covering the bottom, so the
+       safe-area floor is all that is left to honour here. */
+    min-height: 480px;
+  }
+
+  .hero__content {
+    padding-top: calc(var(--header-height) + var(--space-md));
+    gap: clamp(1rem, 2.5vh, 1.75rem);
+  }
 
   .hero__lottie {
-    width: 600px;
-    height: 600px;
-    left: -20px;
-    bottom:220px;   /* ← adjust per breakpoint */
+    width: clamp(160px, 46vw, 230px);
+    margin-bottom: clamp(-1.5rem, -4vmin, -0.25rem);
   }
-.hero__title-wrapper {
-  position: relative;
-  margin-bottom: 40px;
-  margin-top: 80px;   /* ← reserve visual space the lottie now overlaps; tune alongside bottom above */
-}
+
+  /* Stack the buttons: three side-by-side CTAs do not fit a phone width. */
+  .hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.625rem;
+  }
+
+  .hero__btn {
+    width: 100%;
+    /* Roomier vertical padding than the desktop chip so the tap target clears
+       the 44px minimum without making the row feel bulky. */
+    padding: 1rem 1.25rem;
+    text-align: center;
+  }
 
   .hero__indicators { right: var(--space-md); }
   .hero__indicator { height: 30px; }
   .hero__corner { width: 50px; height: 50px; }
+
+  /* The bottom-right corner bracket sits where the stacked buttons now live. */
+  .hero__corner--br { bottom: var(--space-lg); }
 }
 
-@media (max-width: 480px) {
-  .hero__actions { flex-direction: column; }
-  .hero__btn { width: 100%; text-align: center; }
-.hero__title-wrapper {
-  position: relative;
-  margin-bottom: 20px;
-  margin-top: 130px;   /* ← reserve visual space the lottie now overlaps; tune alongside bottom above */
+/* ---------- Small phone ---------- */
+@media (max-width: 380px) {
+  .hero__lottie {
+    width: clamp(140px, 44vw, 180px);
+    margin-bottom: -1rem;
+  }
+
+  /* Tighter type and padding so a three-line headline plus three buttons
+     still clear the header on a 360px-wide device. */
+  .hero__title {
+    font-size: 1.4rem;
+    line-height: 1.2;
+  }
+
+  .hero__btn {
+    padding: 0.9rem 1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+  }
+
+  .hero__corner { display: none; }
 }
+
+/* ---------- Short / landscape viewports ----------
+   Height, not width, is the constraint here (a phone on its side, or a short
+   laptop window). Everything vertical is compressed so the stack still fits
+   inside the viewport without the hero clipping its own buttons. */
+@media (max-height: 620px) and (min-width: 641px) {
+  .hero {
+    min-height: 400px;
+  }
+
+  .hero__content {
+    padding-top: calc(var(--header-height) + var(--space-sm));
+    gap: 0.75rem;
+  }
 
   .hero__lottie {
-    width: 450px;
-    height: 450px;
-    left: 10px;
-    bottom: 270px;
+    width: clamp(90px, 18vh, 160px);
+    margin-bottom: -1.25rem;
   }
-}
-@media (max-width: 480px) {
-  .hero__actions { flex-direction: column; }
-  .hero__btn { width: 100%; text-align: center; }
 
+  .hero__title { font-size: clamp(1.25rem, 3.4vh, 1.75rem); }
+  .hero__btn { padding: 0.75rem 1.75rem; }
+  .hero__corner { display: none; }
+}
+
+/* ---------- Very short landscape (phones on their side) ---------- */
+@media (max-height: 480px) {
   .hero__lottie {
-    width: 450px;
-    height: 450px;
-    margin-left: -60px;
-        margin-bottom: -100px;
+    width: 90px;
+    margin-bottom: -0.75rem;
+  }
 
-    align-items: center;
+  .hero__title { font-size: 1.2rem; }
+
+  /* Back to a single row so the buttons do not eat the remaining height. */
+  .hero__actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .hero__btn {
+    width: auto;
+    flex: 1 1 auto;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.7rem;
   }
 }
-.hero__title {
-  font-family: var(--font-body);
-  font-size: clamp(2rem, 5vw, 2rem);
-  font-weight: 400;
-  color: var(--color-white);
-  line-height: 1.1;
-  /* Contrast fix — soft dark shadow so text stays readable over bright image areas */
-  text-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.5),
-    0 2px 8px rgba(0, 0, 0, 0.35),
-    0 4px 24px rgba(0, 0, 0, 0.25);
-}
 
-.hero__title-line {
-  display: block;
-  overflow: hidden;
-  /* Inherit shadow on each line so the clipped overflow doesn't hide it */
-  text-shadow: inherit;
-}
+/* ---------- Reduced motion ----------
+   The Ken Burns pan on each slide and the indicator fill are the only
+   continuous animations here; both are decorative, so visitors who ask for
+   reduced motion get a static hero instead. */
+@media (prefers-reduced-motion: reduce) {
+  .hero__image { will-change: auto; }
 
-.hero__title-line--accent {
-  font-weight: 300;
-  /* The tagline is always white, on every slide and in every palette. It
-     already inherits that from .hero__title; stating it here means the line
-     stays white even if a palette class is ever re-applied to it. */
-  color: var(--color-white);
-  /* Slightly stronger shadow so white text stays readable over bright image areas */
-  text-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.6),
-    0 2px 10px rgba(0, 0, 0, 0.4),
-    0 4px 28px rgba(0, 0, 0, 0.3);
+  .hero__indicator--active .hero__indicator-fill {
+    animation: none;
+    transform: scaleY(1);
+  }
 }

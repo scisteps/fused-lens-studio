@@ -46,8 +46,12 @@ const BENEFIT_INTERVAL = 5000
 // the dashboard, so the lookup matches on keywords rather than one exact string.
 const CATEGORY_FEE_KEYWORDS = {
   student: ['student'],
-  professional: ['professional'],
   studio: ['studio', 'corporate', 'organisation', 'organization'],
+  international: ['international', 'associate'],
+  // Retired ids, kept only so an older profile still finds its fee row. They
+  // are no longer offered on the sign-up form — see LEGACY_CATEGORY_LABELS in
+  // src/data/signup.js.
+  professional: ['professional', 'ordinary'],
   associate: ['associate', 'international'],
   patron: ['patron', 'honorary']
 }

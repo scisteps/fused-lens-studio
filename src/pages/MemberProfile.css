@@ -1,0 +1,254 @@
+/* ============================================================
+   MemberProfile — the public page behind a share link: /member/:uid
+   Dark blurred backdrop, single centred card. Reuses the auth
+   pages' visual language so a shared link looks native.
+   ============================================================ */
+
+.member-page {
+  position: relative;
+  min-height: 100vh;
+  background: var(--color-black, #0a0a0a);
+  color: var(--color-white, #ffffff);
+  overflow: hidden;
+}
+
+/* ---------- Blurred backdrop ---------- */
+
+.member-page__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.member-page__bg-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(var(--lens-blur, 10px)) brightness(var(--lens-brightness, 0.7))
+    saturate(var(--lens-saturate, 1.05));
+  transform: scale(1.08);
+}
+
+.member-page__bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.55),
+    rgba(10, 10, 10, 0.88)
+  );
+}
+
+.member-page__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  padding: 8rem 1.5rem 5rem;
+}
+
+.member-page__card {
+  width: 100%;
+  max-width: 520px;
+  padding: 2.5rem 2rem;
+  background: rgba(14, 14, 14, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ---------- Header ---------- */
+
+.member-page__eyebrow {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-accent, #FD6500);
+}
+
+.member-page__name {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--color-white, #ffffff);
+  word-break: break-word;
+}
+
+.member-page__category {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.3rem 0.75rem;
+  background: rgba(var(--color-accent-rgb, 253, 101, 0), 0.14);
+  border: 1px solid rgba(var(--color-accent-rgb, 253, 101, 0), 0.4);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent-light, #ff8133);
+}
+
+/* ---------- Details ---------- */
+
+.member-page__list {
+  margin: 1.75rem 0 0;
+}
+
+.member-page__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.9rem;
+}
+
+.member-page__row dt {
+  flex: none;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-silver, #9a9a9a);
+}
+
+.member-page__row dd {
+  margin: 0;
+  text-align: right;
+  color: var(--color-white, #ffffff);
+  word-break: break-word;
+}
+
+/* ---------- Portfolio ---------- */
+
+.member-page__portfolio {
+  margin-top: 1.75rem;
+}
+
+.member-page__portfolio-title {
+  margin: 0 0 0.9rem;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-silver, #9a9a9a);
+}
+
+.member-page__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.member-page__links a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-decoration: none;
+  transition: border-color var(--transition-fast),
+    background var(--transition-fast), transform var(--transition-fast);
+}
+
+.member-page__links a:hover,
+.member-page__links a:focus-visible {
+  border-color: rgba(var(--color-accent-rgb, 253, 101, 0), 0.6);
+  background: rgba(var(--color-accent-rgb, 253, 101, 0), 0.08);
+  transform: translateY(-2px);
+}
+
+.member-page__link-label {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-white, #ffffff);
+}
+
+/* The bare host, so a visitor can see where a link goes before clicking. */
+.member-page__link-host {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.75rem;
+  color: var(--color-silver, #9a9a9a);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member-page__empty {
+  margin: 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  font-size: 0.85rem;
+  color: var(--color-silver, #9a9a9a);
+}
+
+/* ---------- Actions ---------- */
+
+.member-page__actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+.member-page__btn {
+  flex: 1 1 auto;
+  padding: 0.9rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  color: var(--color-white, #ffffff);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.member-page__btn:hover,
+.member-page__btn:focus-visible {
+  background: var(--color-white, #ffffff);
+  color: var(--color-charcoal, #141414);
+}
+
+.member-page__btn--primary {
+  background: var(--color-white, #ffffff);
+  color: var(--color-charcoal, #141414);
+}
+
+.member-page__btn--primary:hover,
+.member-page__btn--primary:focus-visible {
+  background: var(--color-orange, #FD6500);
+  color: var(--color-on-accent, #0a0a0a);
+}
+
+@media (max-width: 560px) {
+  .member-page__inner {
+    padding: 6rem 1.25rem 3.5rem;
+  }
+
+  .member-page__card {
+    padding: 2rem 1.5rem;
+  }
+
+  .member-page__actions {
+    flex-direction: column;
+  }
+}

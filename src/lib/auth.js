@@ -332,17 +332,39 @@ export async function sendPhoneOtp(phone, containerId, countryCode = '+256') {
 // Attach a phone number to the CURRENTLY signed-in account. This is what makes
 // "sign in with either email or phone" reach the SAME account — without it,
 // phone sign-in would silently create a second, duplicate account.
-export async function linkPhoneToCurrentUser(phone, containerId) {
+//
+// `countryCode` is the dialling code the member picked on the sign-up form (see
+// data/signup.js COUNTRY_CODES). It used to be omitted, so toE164 fell back to
+// its '+256' default and every non-Ugandan member had their number filed under
+// the wrong country — signing in with the number they actually chose then never
+// matched. The failure was invisible for Ugandan members and total for everyone
+// else.
+export async function linkPhoneToCurrentUser(
+  phone,
+  containerId,
+  countryCode = '+256'
+) {
   if (!auth.currentUser) throw new Error('Not signed in.')
   const verifier = new RecaptchaVerifier(auth, containerId, {
     size: 'invisible'
   })
-  const confirmation = await linkWithPhoneNumber(
-    auth.currentUser,
-    toE164(phone),
-    verifier
-  )
-  return { confirmation, verifier }
+  try {
+    const confirmation = await linkWithPhoneNumber(
+      auth.currentUser,
+      toE164(phone, countryCode),
+      verifier
+    )
+    return { confirmation, verifier }
+  } catch (error) {
+    // Free the reCAPTCHA slot, or every later attempt fails with
+    // "reCAPTCHA has already been rendered in this element".
+    try {
+      verifier.clear()
+    } catch {
+      /* ignore */
+    }
+    throw error
+  }
 }
 
 export const confirmOtp = (confirmation, code) => confirmation.confirm(code)

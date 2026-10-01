@@ -78,11 +78,11 @@ const DEFAULT_CONTENT = {
     },
 
   categories: [
-  { name: 'Ordinary / Professional Membership', fee: 'UGX 50,000', description: 'Adult animators and creative professionals working in the industry.' },
-  { name: 'Student Membership', fee: 'To be determined', description: 'Full-time students in animation or related fields, with proof of status.' },
-  { name: 'Studio / Corporate Membership', fee: 'To be determined', description: 'Studios, broadcasters, NGOs, schools and companies supporting animation.' },
-  { name: 'Honorary / Patron Membership', fee: 'By invitation', description: 'For those recognised for outstanding contribution to the craft.' },
-  { name: 'International / Associate Membership', fee: 'To be determined', description: 'For members based outside Uganda who support the Guild\'s mission.' }
+  // One word each, matching the three ids in MEMBER_CATEGORIES
+  // (src/data/signup.js). These names must stay in sync with that list.
+  { name: 'Student', fee: 'UGX 50,000', description: 'Full-time students in animation or related fields, with proof of status.' },
+  { name: 'Studio', fee: 'To be determined', description: 'Studios, broadcasters, NGOs, schools and companies supporting animation.' },
+  { name: 'International', fee: 'To be determined', description: 'For members based outside Uganda who support the Guild\'s mission.' }
 ]
 
     ,benefits: [

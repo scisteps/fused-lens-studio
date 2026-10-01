@@ -5,21 +5,21 @@ import gsap from 'gsap'
 import { heroSlides, resolveImage } from '../../data/images'
 import { useSiteContent } from '../../lib/useSiteContent'
 import { useAuth, useUserProfile } from '../../lib/useAuth'
-import { logOut } from '../../lib/auth'
 import { categoryLabel } from '../../data/signup'
-import { portfolioEntries } from '../../data/portfolio'
+import { MemberProfilePanel } from '../MemberProfile'
+import { themeIntro } from '../../data/themes'
+import { useTheme } from '../../lib/useSiteTheme'
 import './Hero.css'
-import final from '../../jsons/final6.json'
 import { Player } from '@lottiefiles/react-lottie-player'
 
-// ─── Intro timing (seconds) ────────────────────────────────────────────
+// --- Intro timing (seconds) -------------------------------------------
 const TIMING = {
-  introHold: 2,       // how long the lottie plays alone on white bg
+  introHold: 3.5,       // how long the lottie plays alone on white bg
   slidesFade: 1.2,    // background slideshow fade-in duration
   titleGap: 0.3,      // pause after slides before the title starts fading in
-  titleFade: 0.8,     // title fade-in duration
+  titleFade: 0.6,     // title fade-in duration
   staggerGap: 0.5,    // pause between each element after the title
-  elementFade: 0.8,   // fade-in duration for description/actions/indicators/etc.
+  elementFade: 0.6,   // fade-in duration for description/actions/indicators/etc.
 }
 
 export function Hero() {
@@ -27,6 +27,10 @@ export function Hero() {
   const { content } = useSiteContent()
   const { user, loading: authLoading } = useAuth()
   const { profile } = useUserProfile(user?.uid)
+  // The palette decides which crane animation plays in the hero. Read from
+  // context so this does not open a second Firestore listener on the same
+  // document that useSiteTheme() already watches.
+  const { themeId, themeLoaded } = useTheme()
   const studioInfo = content.studioInfo
   const slides = useMemo(() => (
     (content.heroSlides?.length ? content.heroSlides : heroSlides).map(slide => ({
@@ -192,11 +196,6 @@ export function Hero() {
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  const handleMemberSignOut = async () => {
-    setProfileOpen(false)
-    await logOut()
-  }
-
   return (
     <>
       <section id="home" className="hero">
@@ -231,15 +230,24 @@ export function Hero() {
       {/* Content */}
       <div className="hero__content">
         <div className="hero__text">
-          {/* Lottie — sits directly above the tagline/description block */}
+          {/* The crane. Which FILE it is depends on the admin's palette
+              (orange / grey / gold) — see themeIntro() in data/themes.js.
+              It replaces the old single animation outright; there is no
+              second one. Nothing renders until the palette has resolved, so
+              the wrong colour is never shown and then swapped. */}
           <div className="hero__lottie">
-            <Player
-              autoplay
-              keepLastFrame
-              loop={false}
-              src={final}
-              style={{ width: '100%', height: '100%' }}
-            />
+            {themeLoaded && (
+              <Player
+                // Keyed on the animation so switching the palette remounts the
+                // Player with the new file rather than reusing the old instance.
+                key={themeId}
+                autoplay
+                keepLastFrame
+                loop={false}
+                src={themeIntro(themeId)}
+                style={{ width: '100%', height: '100%' }}
+              />
+            )}
           </div>
 
           <div className="hero__title-wrapper" ref={titleWrapRef} style={{ opacity: 0 }}>
@@ -287,101 +295,104 @@ export function Hero() {
             transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
           /> */}
         </div>
-      </div>
 
-{/* Login / Sign Up — belongs to the HERO, so it scrolls away with it.
-          This used to be `position: fixed` and rendered outside the <section>,
-          which pinned it to the bottom-left of the viewport for the whole page:
-          the buttons then floated over About, Services and every section below.
-          `position: absolute` (see .hero__actions-hero in Hero.css) anchors it
-          to .hero instead — same place on screen, but it now leaves with the
-          hero as soon as the visitor scrolls. */}
-      <div className="hero__actions-hero">
-        <div className="hero__actions" ref={actionsRef} style={{ opacity: 0 }}>
-          {/* Signed out — the invitation to join. */}
-          {!authLoading && !user && (
-            <>
-              <motion.a
-                href="/login"
-                className="hero__btn hero__btn--primary"
-                onClick={(event) => {
-                  event.preventDefault()
-                  navigate('/login')
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span>Login</span>
-              </motion.a>
-              <motion.a
-                href="/signup"
-                className="hero__btn hero__btn--outline"
-                onClick={(event) => {
-                  event.preventDefault()
-                  navigate('/signup')
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span>Sign Up</span>
-              </motion.a>
-              <motion.a
-                href="#contact"
-                className="hero__btn hero__btn--outline"
-                onClick={(event) => {
-                  event.preventDefault()
-                  scrollToContact()
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Get in Touch
-              </motion.a>
-            </>
-          )}
+        {/* Login / Sign Up — the LAST item of the .hero__content stack, so the
+            column's `gap` holds it below the wording and the two can never
+            overlap. It used to be `position: absolute; bottom: 15vh` as a
+            SIBLING of .hero__content, which itself ended 15vh from the bottom
+            via its own padding — both resolved to the same band and the buttons
+            landed on the headline. (And before that it was `position: fixed`
+            outside the <section>, pinning it over About, Services and every
+            section below for the whole page.) In flow it scrolls away with the
+            hero AND holds its own space. */}
+        <div className="hero__actions-hero">
+          <div className="hero__actions" ref={actionsRef} style={{ opacity: 0 }}>
+            {/* Signed out — the invitation to join. */}
+            {!authLoading && !user && (
+              <>
+                <motion.a
+                  href="/login"
+                  className="hero__btn hero__btn--primary"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    navigate('/login')
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <span>Login</span>
+                </motion.a>
+                <motion.a
+                  href="/signup"
+                  className="hero__btn hero__btn--outline"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    navigate('/signup')
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <span>Sign Up</span>
+                </motion.a>
+                <motion.a
+                  href="#contact"
+                  className="hero__btn hero__btn--outline"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    scrollToContact()
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Get in Touch
+                </motion.a>
+              </>
+            )}
 
-          {/* Signed in — their membership category (opens the profile) plus
-              the two doors they actually need: Contact and News. */}
-          {!authLoading && user && (
-            <>
-              <motion.button
-                type="button"
-                className="hero__btn hero__btn--category"
-                onClick={() => setProfileOpen(true)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span className="hero__category-dot" aria-hidden="true" />
-                <span>{categoryLabel(profile?.category) || 'Member'}</span>
-              </motion.button>
-              <motion.a
-                href="#contact"
-                className="hero__btn hero__btn--outline"
-                onClick={(event) => {
-                  event.preventDefault()
-                  scrollToContact()
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Contact Us
-              </motion.a>
-              <motion.a
-                href="/news-events"
-                className="hero__btn hero__btn--outline"
-                onClick={(event) => {
-                  event.preventDefault()
-                  navigate('/news-events')
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                News
-              </motion.a>
-            </>
-          )}
+            {/* Signed in — their membership category (opens the profile) plus
+                the two doors they actually need: Contact and News. */}
+            {!authLoading && user && (
+              <>
+                <motion.button
+                  type="button"
+                  className="hero__btn hero__btn--category"
+                  onClick={() => setProfileOpen(true)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <span className="hero__category-dot" aria-hidden="true" />
+                  <span>{categoryLabel(profile?.category) || 'Member'}</span>
+                </motion.button>
+                <motion.a
+                  href="#contact"
+                  className="hero__btn hero__btn--outline"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    scrollToContact()
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Contact Us
+                </motion.a>
+                <motion.a
+                  href="/news-events"
+                  className="hero__btn hero__btn--outline"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    navigate('/news-events')
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  News
+                </motion.a>
+              </>
+            )}
+            </div>
         </div>
-      </div>
+        </div>
+
       {/* Decorative Elements */}
       <div className="hero__decorative">
         <div className="hero__corner hero__corner--tl" ref={cornerTlRef} style={{ opacity: 0, transform: 'scale(0)' }} />
@@ -389,106 +400,17 @@ export function Hero() {
       </div>
       </section>
 
-      {/* Member profile — lives OUTSIDE the parallax <section> so its
-          position: fixed is not trapped by the section's scroll transform. */}
+      {/* Member profile — shared with the header button, so both show the same
+          details and offer the same share link. Rendered OUTSIDE the parallax
+          <section> because it is position: fixed. */}
       <AnimatePresence>
         {profileOpen && user && (
-          <motion.div
-            className="hero__profile-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            onClick={() => setProfileOpen(false)}
-          >
-            <motion.div
-              className="hero__profile"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Your member profile"
-              initial={{ opacity: 0, y: 24, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 24, scale: 0.98 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              onClick={(event) => event.stopPropagation()}
-            >
-              <span className="hero__profile-eyebrow">Members Area</span>
-              <h2 className="hero__profile-name">
-                {profile?.name || user.displayName || 'Member'}
-              </h2>
-              <span className="hero__profile-category">
-                {categoryLabel(profile?.category) || 'Member'}
-              </span>
-
-              <dl className="hero__profile-list">
-                <div className="hero__profile-row">
-                  <dt>Email</dt>
-                  <dd>{profile?.email || user.email}</dd>
-                </div>
-                <div className="hero__profile-row">
-                  <dt>Phone</dt>
-                  <dd>{profile?.phone || '—'}</dd>
-                </div>
-                <div className="hero__profile-row">
-                  <dt>Category</dt>
-                  <dd>{categoryLabel(profile?.category) || '—'}</dd>
-                </div>
-                {/* Students name an institution, everyone else a profession —
-                    the same branch the sign-up form and Login screen use. */}
-                {profile?.isStudent ? (
-                  <div className="hero__profile-row">
-                    <dt>Institution</dt>
-                    <dd>{profile?.school || '—'}</dd>
-                  </div>
-                ) : (
-                  <div className="hero__profile-row">
-                    <dt>Profession</dt>
-                    <dd>{profile?.profession || '—'}</dd>
-                  </div>
-                )}
-                <div className="hero__profile-row">
-                  <dt>Status</dt>
-                  <dd className="hero__profile-status">{profile?.status || 'pending'}</dd>
-                </div>
-                {/* The portfolio links shared at sign-up — hidden entirely when
-                    there are none, so the pop-over never grows an empty row. */}
-                {portfolioEntries(profile?.portfolio).length > 0 && (
-                  <div className="hero__profile-row">
-                    <dt>Portfolio</dt>
-                    <dd className="hero__profile-links">
-                      {portfolioEntries(profile?.portfolio).map((entry) => (
-                        <a
-                          key={entry.id}
-                          href={entry.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {entry.label}
-                        </a>
-                      ))}
-                    </dd>
-                  </div>
-                )}
-              </dl>
-
-              <div className="hero__profile-actions">
-                <button
-                  type="button"
-                  className="hero__profile-exit"
-                  onClick={handleMemberSignOut}
-                >
-                  Sign Out
-                </button>
-                <button
-                  type="button"
-                  className="hero__profile-close"
-                  onClick={() => setProfileOpen(false)}
-                >
-                  Close
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
+          <MemberProfilePanel
+            isOpen
+            onClose={() => setProfileOpen(false)}
+            user={user}
+            profile={profile}
+          />
         )}
       </AnimatePresence>
     </>

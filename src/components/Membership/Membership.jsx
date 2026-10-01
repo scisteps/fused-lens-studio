@@ -115,7 +115,7 @@ export function Membership() {
 
         {/* The one thing we want them to do next. A signed-in member has
             already joined, so they get an invite-a-friend action instead. */}
-        <motion.div
+        {/* <motion.div
           className="membership__apply"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -140,7 +140,7 @@ export function Membership() {
               ? 'Invite someone who belongs in the Guild — it only takes a moment.'
               : 'Applying is free. Sign in or create an account, then choose your category.'}
           </p>
-        </motion.div>
+        </motion.div> */}
 
         {/* Membership categories (tags + fees) are for prospective joiners — a
             signed-in member already has their category, so skip it. */}
@@ -182,9 +182,10 @@ export function Membership() {
                       .join(' ')}
                     onClick={() => setOpenCategory(isOpen ? null : index)}
                     aria-expanded={isOpen}
+                    aria-controls={`membership-category-details-${index}`}
                   >
 
-                    <div className="membership__category-header">
+                    <span className="membership__category-header">
                       <span className="membership__category-name">
                         {category.name}
                       </span>
@@ -205,26 +206,34 @@ export function Membership() {
                           <polyline points="6 9 12 15 18 9" />
                         </svg>
                       </span>
-                    </div>
+                    </span>
 
                     <AnimatePresence initial={false}>
                       {isOpen && (
-                        <motion.div
+                        <motion.span
+                          id={`membership-category-details-${index}`}
                           className="membership__category-details"
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.3, ease: 'easeInOut' }}
                         >
-                          {describeFee(category.fee, promo).kind !== 'unset' && (
-                            <CategoryFee fee={category.fee} promo={promo} />
-                          )}
-{/* The pay-later terms sit with the fee they apply
+                          {/* CategoryFee already renders nothing when the fee is
+                              unset, so the describeFee() guard that used to sit
+                              here was pure duplication — and it referenced an
+                              import this file did not have, which threw a
+                              ReferenceError the moment a card was opened. */}
+                          <CategoryFee
+                            fee={category.fee}
+                            promo={promo}
+                            as="span"
+                          />
+                          {/* The pay-later terms sit with the fee they apply
                               to. The amount above is unchanged — the offer only
                               moves the deadline — so the member reads price and
                               terms together instead of from two separate places. */}
                           {promo.active && (
-                            <div
+                            <span
                               className="membership__category-promo"
                               role="status"
                               aria-live="polite"
@@ -241,12 +250,12 @@ export function Membership() {
                                   closes {promoEndLabel(promo)}
                                 </span>
                               </span>
-                            </div>
+                            </span>
                           )}
-                          <p className="membership__category-description">
+                          <span className="membership__category-description">
                             {highlightLead(category.description)}
-                          </p>
-                        </motion.div>
+                          </span>
+                        </motion.span>
                       )}
                     </AnimatePresence>
                   </button>

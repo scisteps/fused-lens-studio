@@ -53,24 +53,14 @@ export const MEMBER_CATEGORIES = [
     blurb: 'Studying animation or a related field right now.'
   },
   {
-    id: 'professional',
-    label: 'Professional',
-    blurb: 'A practising animator, artist or creative working in the industry.'
-  },
-  {
     id: 'studio',
-    label: 'Studio / Organisation',
+    label: 'Studio',
     blurb: 'A studio, production house, broadcaster, NGO or school.'
   },
   {
-    id: 'associate',
-    label: 'Associate / International',
+    id: 'international',
+    label: 'International',
     blurb: 'Supporting the industry from outside Uganda, or as a partner.'
-  },
-  {
-    id: 'patron',
-    label: 'Honorary / Patron',
-    blurb: 'Recognised for outstanding contribution to the industry.'
   }
 ]
 
@@ -79,13 +69,43 @@ export const STUDENT_CATEGORY_ID = 'student'
 // Convenience list for validation and for the Firestore rules comment.
 export const CATEGORY_IDS = MEMBER_CATEGORIES.map((category) => category.id)
 
+/**
+ * Categories that existed before the list was cut down to three one-word
+ * options. They are no longer offered on the form, but members who signed up
+ * earlier still have one stored on their profile.
+ *
+ * These ids stay in:
+ *   • firestore.rules  → otherwise those profiles FAIL validation and the owner
+ *     can no longer update their own document — they would be locked out of
+ *     editing their portfolio links.
+ *   • LEGACY_LABELS    → so an old profile still shows a sensible name in the
+ *     header chip and on their shareable page instead of a raw id.
+ *
+ * Once no live profile uses one, drop it from here and from the rules.
+ */
+export const LEGACY_CATEGORY_LABELS = {
+  professional: 'Professional',
+  associate: 'International',
+  patron: 'Patron'
+}
+
+export const LEGACY_CATEGORY_IDS = Object.keys(LEGACY_CATEGORY_LABELS)
+
+/** Every id the rules must accept: the three current ones plus the legacy ones. */
+export const ALL_CATEGORY_IDS = [...CATEGORY_IDS, ...LEGACY_CATEGORY_IDS]
+
 /** The single source of truth for "does this member name an institution?". */
 export function isStudentCategory(value) {
   return value === STUDENT_CATEGORY_ID
 }
 
-/** Human label for a stored category id; falls back to the raw value. */
+/**
+ * Human label for a stored category id; falls back to the raw value.
+ * Knows the retired categories too, so an older profile still reads properly.
+ */
 export function categoryLabel(value) {
   if (!value) return ''
-  return MEMBER_CATEGORIES.find((c) => c.id === value)?.label || value
+  const current = MEMBER_CATEGORIES.find((c) => c.id === value)
+  if (current) return current.label
+  return LEGACY_CATEGORY_LABELS[value] || value
 }

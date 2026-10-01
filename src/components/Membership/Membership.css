@@ -272,6 +272,11 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.25rem;
+  /* Grid items default to `align-items: stretch`, so opening ONE card used to
+     drag every other card in the same row to the same height, leaving the
+     closed ones as tall blocks of empty colour. Each card now keeps its own
+     height. */
+  align-items: start;
 }
 
 .membership__category {
@@ -305,6 +310,8 @@
   display: none;
 }
 
+/* A <span>, not a <div>: the whole card is a <button>, which may only contain
+   phrasing content. Already a flex container, so it lays out as before. */
 .membership__category-header {
   display: flex;
   align-items: center;
@@ -355,10 +362,15 @@
   overflow: hidden;
   position: relative;
   z-index: 2;
+  /* This panel is a <span> (a <button> may only contain phrasing content), so
+     it has to be told to behave as a block again. */
+  display: block;
+  margin-top: var(--space-md);
 }
 
 .membership__category-fee {
-  margin: var(--space-md) 0 var(--space-sm);
+  display: block;   /* see .membership__category-details */
+  margin: 0 0 var(--space-sm);
   font-size: 1.05rem;
   font-weight: 600;
 }
@@ -371,6 +383,7 @@
 }
 
 .membership__category-description {
+  display: block;   /* see .membership__category-details */
   margin: 0;
   font-size: 0.95rem;
   line-height: 1.7;
