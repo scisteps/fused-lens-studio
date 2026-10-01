@@ -249,6 +249,64 @@ export function SignUp() {
     })
   }
 
+  // Send the code that proves this number belongs to them, so Firebase will
+  // attach it to the account they just created.
+  const handleSendLinkCode = async (phone, countryCode) => {
+    setOtpError('')
+    setOtpNotice('')
+    setVerifyStep('sending')
+    try {
+      const { confirmation, verifier } = await linkPhoneToCurrentUser(
+        phone,
+        'signup-recaptcha',
+        countryCode
+      )
+      confirmationRef.current = confirmation
+      verifierRef.current = verifier
+      setPendingPhone({ phone, countryCode })
+      setVerifyStep('verify')
+      setOtpNotice(`We sent a 6-digit code to ${phone.trim()}.`)
+    } catch (err) {
+      clearRecaptcha()
+      setOtpError(authErrorMessage(err))
+      setVerifyStep('idle')
+    }
+  }
+
+  // The account exists and the number is proven — hand them straight over.
+  const goToWelcome = () => {
+    requestMembershipIntent()
+    setDone(true)
+    navigate('/welcome', { replace: true })
+  }
+
+  const handleVerifyLinkCode = async (event) => {
+    event?.preventDefault()
+    setOtpError('')
+    if (!confirmationRef.current) {
+      setOtpError('Request a new code, then try again.')
+      return
+    }
+    setLinking(true)
+    try {
+      await confirmOtp(confirmationRef.current, otp.trim())
+      clearRecaptcha()
+      goToWelcome()
+    } catch (err) {
+      setOtpError(authErrorMessage(err))
+    } finally {
+      setLinking(false)
+    }
+  }
+
+  // Registration must never be hostage to the SMS step. If they cannot receive
+  // or do not want to enter the code, they still go to the welcome screen and
+  // can sign in with email as normal — only phone sign-in stays unavailable.
+  const handleSkipPhone = () => {
+    clearRecaptcha()
+    goToWelcome()
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault()
     setFormError('')
@@ -260,12 +318,10 @@ export function SignUp() {
     setSubmitting(true)
     try {
       await signUpWithEmail(form)
-      // They are signed in now — hand them to the welcome screen, where the
-      // apply-for-membership button and the benefits carousel are waiting.
-      requestMembershipIntent()
-      setDone(true)
-      setForm(emptyForm())
-      navigate('/welcome', { replace: true })
+      // They are signed in now. Prove the phone number BEFORE leaving, because
+      // this is the only moment the account is guaranteed to be the current
+      // user — which is what linkWithPhoneNumber requires.
+      await handleSendLinkCode(form.phone, form.countryCode)
     } catch (err) {
       setFormError(authErrorMessage(err))
     } finally {
@@ -282,27 +338,86 @@ export function SignUp() {
     )
   }
 
-  // Already registered and signed in — send them to the account panel.
+  // Already signed in — no reason to show a registration form, and no reason to
+  // make them press a button to get where they were already going. This used to
+  // render a "Go to my account" card, which was a dead end: a signed-in member
+  // who followed it landed on the account panel instead of their welcome screen.
+  // Send them straight through instead.
   if (user && !done) {
+    return <Navigate to="/welcome" replace />
+  }
+
+  // ---------- Registered — proving the phone number ----------
+  // Shown between "account created" and the welcome screen. The account is
+  // already saved, so this is an optional step, never a gate.
+  if (verifyStep === 'verify' || verifyStep === 'sending') {
     return (
       <section className="auth">
         <BlurredBackdrop images={AUTH_BACKDROP_IMAGES} />
         <motion.div className="auth__card" {...CARD_MOTION}>
-          <span className="auth__eyebrow">Members Area</span>
-          <h1 className="auth__title">You already have an account</h1>
+          <span className="auth__eyebrow">One more step</span>
+          <h1 className="auth__title">Verify your phone number</h1>
           <p className="auth__subtitle">
-            You&apos;re signed in as{' '}
-            <strong>{user.displayName || user.email}</strong>.
+            Your account is created. Enter the code we sent to{' '}
+            <strong>{pendingPhone.phone}</strong> so you can sign in with your
+            phone number in future.
           </p>
-          <div className="auth__actions">
-            <button
-              type="button"
-              className="auth__submit"
-              onClick={() => navigate('/login')}
-            >
-              Go to my account
-            </button>
-          </div>
+
+          {verifyStep === 'sending' ? (
+            <p className="auth__alert">Sending code…</p>
+          ) : (
+            <form className="auth__form" onSubmit={handleVerifyLinkCode}>
+              <div className="auth__field">
+                <label className="auth__label" htmlFor="signup-otp">
+                  Enter the 6-digit code
+                </label>
+                <input
+                  id="signup-otp"
+                  className="auth__otp"
+                  type="text"
+                  name="otp"
+                  autoComplete="one-time-code"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(event) =>
+                    setOtp(event.target.value.replace(/\D/g, '').slice(0, 6))
+                  }
+                  placeholder="123456"
+                  required
+                />
+              </div>
+
+              {otpError && (
+                <p className="auth__alert auth__alert--error">{otpError}</p>
+              )}
+              {otpNotice && (
+                <p className="auth__alert auth__alert--success">{otpNotice}</p>
+              )}
+
+              <div className="auth__actions">
+                <button
+                  type="submit"
+                  className="auth__submit"
+                  disabled={linking}
+                >
+                  {linking ? 'Verifying…' : 'Verify & Continue'}
+                </button>
+                <button
+                  type="button"
+                  className="auth__ghost"
+                  onClick={handleSkipPhone}
+                  disabled={linking}
+                >
+                  Skip for now
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Invisible reCAPTCHA mounts into this node. */}
+          <div id="signup-recaptcha" className="auth__recaptcha" />
         </motion.div>
       </section>
     )

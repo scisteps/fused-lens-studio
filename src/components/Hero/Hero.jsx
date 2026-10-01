@@ -14,7 +14,7 @@ import { Player } from '@lottiefiles/react-lottie-player'
 
 // --- Intro timing (seconds) -------------------------------------------
 const TIMING = {
-  introHold: 3.5,       // how long the lottie plays alone on white bg
+  introHold: 3.8,       // how long the lottie plays alone on white bg
   slidesFade: 1.2,    // background slideshow fade-in duration
   titleGap: 0.3,      // pause after slides before the title starts fading in
   titleFade: 0.6,     // title fade-in duration
