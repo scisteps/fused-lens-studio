@@ -1,6 +1,6 @@
 // components/NewsCarousel
 //
-// A horizontal strip of news & events stories, shown on the home page directly
+// A horizontal strip of news stories, shown on the home page directly
 // under the hero — but only to signed-in members, because it links straight
 // into the members-only article view.
 //
@@ -113,7 +113,7 @@ export function NewsCarousel() {
   return (
     <motion.section
       className="news-carousel"
-      aria-label="Latest news and events"
+      aria-label="Latest news"
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
@@ -123,7 +123,7 @@ export function NewsCarousel() {
         <div className="news-carousel__head">
           <div>
             <span className="news-carousel__eyebrow">Members</span>
-            <h2 className="news-carousel__title">Latest News &amp; Events</h2>
+            <h2 className="news-carousel__title">Latest News</h2>
           </div>
 
           <div className="news-carousel__controls">
@@ -155,7 +155,7 @@ export function NewsCarousel() {
         // A scroll region with a label is announced as such, and keyboard
         // users can still reach the cards because each one is a real button.
         role="region"
-        aria-label="News and events stories, scrollable"
+        aria-label="News stories, scrollable"
         tabIndex={0}
       >
         {stories.map(item => (

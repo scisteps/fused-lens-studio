@@ -1,6 +1,6 @@
 // src/lib/imageUpload.js
 //
-// Used by the News & Events dashboard (and any dashboard that needs images)
+// Used by the News dashboard (and any dashboard that needs images)
 // to upload a file straight to Firebase Storage and get back a public URL
 // to store on the entry. Draft state only ever holds URLs/strings — never
 // raw File objects — so it stays JSON-serialisable for localStorage.

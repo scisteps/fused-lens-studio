@@ -33,7 +33,7 @@ function ArticleFooter({ socials, next, onNext, onBack }) {
       )}
 
       <button type="button" className="news-article__back" onClick={onBack}>
-        ← All news &amp; events
+        ← All news
       </button>
     </footer>
   )
@@ -79,7 +79,7 @@ export function NewsArticle({ item, next, prev, onNext, onPrev, onBack, index = 
         <div className="container">
           <nav className="news-article__crumbs" aria-label="Breadcrumb">
             <button type="button" className="news-article__crumb-link" onClick={onBack}>
-              News &amp; Events
+              News
             </button>
             <span aria-hidden="true">/</span>
             <span>{categoryLabel(item.category)}</span>

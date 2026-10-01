@@ -14,7 +14,7 @@ const SECTION_LINKS = [
 ]
 
 const PAGE_LINKS = [
-  { to: '/news-events', label: 'News & Events' },
+  { to: '/news-events', label: 'News' },
   { to: '/members', label: 'Members' }
 ]
 

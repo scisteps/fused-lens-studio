@@ -32,6 +32,13 @@ html, body {
   --color-secondary-light: #2a9d43;
   --color-secondary-dark: #075418;
 
+  /* In-readability ink — the text colour to paint ON a filled accent /
+     secondary surface (benefit cards, carousels). Each theme keeps these in
+     step with its own fills, so a swap like royal's black "secondary" can
+     never leave black text sitting on a black card. */
+  --color-on-accent: #0a0a0a;     /* on --color-accent (orange) */
+  --color-on-secondary: #ffffff;  /* on --color-secondary (green) */
+
   /* Functional colors */
   --color-success: #0C7923;
   --color-error: #FD6500;
@@ -435,6 +442,8 @@ button {
   --color-secondary: #6b6b6b;
   --color-secondary-light: #9a9a9a;
   --color-secondary-dark: #2e2e2e;
+  --color-on-accent: #0a0a0a;
+  --color-on-secondary: #ffffff;
   --color-success: #6b6b6b;
   --color-error: #e8e8e8;
   --color-orange: #e8e8e8;
@@ -459,6 +468,8 @@ button {
   --color-secondary: #0a0a0a;
   --color-secondary-light: #2e2e2e;
   --color-secondary-dark: #0a0a0a;
+  --color-on-accent: #ffffff;     /* royal blue is dark enough for white ink */
+  --color-on-secondary: #ffffff;
   --color-success: #4169e1;
   --color-error: #4169e1;
   --color-orange: #4169e1;
@@ -483,6 +494,8 @@ button {
   --color-secondary: #0a0a0a;
   --color-secondary-light: #2e2e2e;
   --color-secondary-dark: #0a0a0a;
+  --color-on-accent: #0a0a0a;
+  --color-on-secondary: #ffffff;
   --color-success: #c9a962;
   --color-error: #c9a962;
   --color-orange: #c9a962;

@@ -130,6 +130,7 @@
   align-items: center;
   justify-content: center;
   padding: 1.125rem 2.5rem;
+  font-family: inherit;      /* so the <button> variants match the <a> ones */
   font-size: 0.8125rem;
   font-weight: 500;
   letter-spacing: 0.15em;
@@ -179,6 +180,178 @@
 .hero__btn--outline:hover {
   border-color: var(--color-white);
   background: rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- Signed-in actions ----------
+   The membership-category chip is filled with the palette accent and inked
+   with the matching --color-on-accent token, so its label reads in every
+   theme (the same system the benefits cards use). */
+.hero__btn--category {
+  gap: 0.65rem;
+  border: none;
+  font-weight: 600;
+  background: var(--color-accent, #FD6500);
+  color: var(--color-on-accent, #0a0a0a);
+}
+
+.hero__btn--category:hover {
+  background: var(--color-accent-light, #ff8133);
+  color: var(--color-on-accent, #0a0a0a);
+}
+
+.hero__category-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+/* ---------- Member profile panel ----------
+   Opened by tapping the category chip. Rendered outside the parallax section
+   (see Hero.jsx) so position: fixed is not trapped by its scroll transform. */
+.hero__profile-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(10, 10, 10, 0.62);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.hero__profile {
+  position: relative;
+  width: min(460px, 100%);
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 2.25rem 2rem;
+  background: var(--color-charcoal, #141414);
+  color: var(--color-white);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+.hero__profile-eyebrow {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-accent, #FD6500);
+}
+
+.hero__profile-name {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-white);
+}
+
+.hero__profile-category {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0.45rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: var(--color-accent, #FD6500);
+  color: var(--color-on-accent, #0a0a0a);
+}
+
+.hero__profile-list {
+  margin: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero__profile-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hero__profile-row dt {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-silver, #9a9a9a);
+}
+
+.hero__profile-row dd {
+  margin: 0;
+  text-align: right;
+  font-size: 0.95rem;
+  color: var(--color-white);
+  word-break: break-word;
+}
+
+.hero__profile-status {
+  text-transform: capitalize;
+}
+
+.hero__profile-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+.hero__profile-exit {
+  flex: 1 1 auto;
+  padding: 0.9rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  background: var(--color-accent, #FD6500);
+  color: var(--color-on-accent, #0a0a0a);
+  transition: background var(--transition-fast);
+}
+
+.hero__profile-exit:hover {
+  background: var(--color-accent-light, #ff8133);
+}
+
+.hero__profile-close {
+  flex: 1 1 auto;
+  padding: 0.9rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: transparent;
+  color: var(--color-white);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.hero__profile-close:hover {
+  border-color: var(--color-white);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 480px) {
+  .hero__profile-actions { flex-direction: column; }
 }
 
 /* Indicators */

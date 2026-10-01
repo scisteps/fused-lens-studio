@@ -17,52 +17,45 @@ export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isDark, setIsDark] = useState(true)
 
-  const goToNewsEvents = (e) => {
-    if (e) e.preventDefault()
-    setIsMobileMenuOpen(false)
-    navigate('/news-events')
-  }
-
-  // Navigation links for the main site
+  // Navigation links for the main site. The header shows only these four:
+  // the three main sections plus News, which lives on its own page.
   const navLinks = [
-    { id: 'home', label: 'Home', path: '/' },
     { id: 'about', label: 'About', path: '/#about' },
     { id: 'services', label: 'Services', path: '/#services' },
-    { id: 'membership', label: 'Membership', path: '/#membership' },
     { id: 'contact', label: 'Contact', path: '/#contact' },
+    { id: 'news', label: 'News', path: '/news-events' },
   ]
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
-      
-      // Determine active section and theme based on scroll position
-      const sections = navLinks.map(link => {
-        if (link.path.includes('#')) {
-          return document.getElementById(link.path.split('#')[1])
-        }
-        return null
-      })
+
+      // The hero owns the top of the page and is always dark, so while it still
+      // fills most of the viewport keep the header in its dark style. Below it,
+      // follow whichever section sits under the reading line.
+      if (window.scrollY < window.innerHeight * 0.5) {
+        setIsDark(true)
+        return
+      }
+
+      const sections = navLinks.map(link =>
+        link.path.includes('#') ? document.getElementById(link.path.split('#')[1]) : null
+      )
       const scrollPos = window.scrollY + window.innerHeight / 3
-      
-      sections.forEach((section, index) => {
-        if (section) {
-          const top = section.offsetTop
-          const height = section.offsetHeight
-          
-          if (scrollPos >= top && scrollPos < top + height) {
-            // Check if section has dark background
-            const isDarkSection = section.classList.contains('section--dark') || 
-                                  navLinks[index].id === 'home'
-            setIsDark(isDarkSection)
-          }
+
+      sections.forEach(section => {
+        if (!section) return
+        const top = section.offsetTop
+        const height = section.offsetHeight
+        if (scrollPos >= top && scrollPos < top + height) {
+          setIsDark(section.classList.contains('section--dark'))
         }
       })
     }
-    
+
     window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
-    
+
     return () => window.removeEventListener('scroll', handleScroll)
   }, [location])
 
@@ -81,8 +74,9 @@ export function Navigation() {
     setIsMobileMenuOpen(false)
   }
 
-  // Section links must work from /members and /news-events too, where there is
+  // Section links must work from /news-events and /members too, where there is
   // no #about/#services element to scroll to — send those visitors home first.
+  // News is a real page, so just navigate there.
   const handleNavClick = (e, link) => {
     e.preventDefault()
     setIsMobileMenuOpen(false)
@@ -95,7 +89,15 @@ export function Navigation() {
       return
     }
 
-    if (!link.path.includes('#')) return
+    // A full page (e.g. News) rather than an in-page section.
+    if (!link.path.includes('#')) {
+      if (location.pathname !== link.path) {
+        navigate(link.path)
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+      return
+    }
 
     const sectionId = link.path.split('#')[1]
     if (document.getElementById(sectionId)) {
@@ -138,18 +140,6 @@ export function Navigation() {
                 {link.label}
               </motion.a>
             ))}
-            {/* News & Events link - separate page */}
-            <motion.a
-              href="/news-events"
-              className="nav__link clickable"
-              onClick={goToNewsEvents}
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * navLinks.length, duration: 0.5 }}
-              whileHover={{ y: -2 }}
-            >
-              News & Events
-            </motion.a>
           </nav>
 
           {/* <motion.button
@@ -211,17 +201,6 @@ export function Navigation() {
                   {link.label}
                 </motion.a>
               ))}
-              <motion.a
-                href="/news-events"
-                className="mobile-menu__link"
-                onClick={goToNewsEvents}
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 + navLinks.length * 0.05, duration: 0.5 }}
-              >
-                <span className="mobile-menu__link-number">0{navLinks.length + 1}</span>
-                News & Events
-              </motion.a>
             </nav>
             
             <motion.div

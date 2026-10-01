@@ -47,7 +47,7 @@ export default function NewsEventsDashboard() {
       const hasRealEdits = Array.isArray(current) && current.length > 0
       if (hasRealEdits && typeof window !== 'undefined') {
         const ok = window.confirm(
-          'New default news & events are available. Replace your unsaved local draft with the updated defaults?'
+          'New default news are available. Replace your unsaved local draft with the updated defaults?'
         )
         if (!ok) return current
       }
@@ -120,7 +120,7 @@ export default function NewsEventsDashboard() {
         @media (max-width: 760px) { .news-dashboard__layout { display: block; } .news-dashboard__layout > div:first-child { position: static !important; margin-bottom: 24px; } }
       `}</style>
 
-      <DashboardHeader eyebrow="ANIMATION GUILD UGANDA" title="News & events">
+      <DashboardHeader eyebrow="ANIMATION GUILD UGANDA" title="News">
         <PublishBar isDirty={isDirty} status={status} lastLocalSave={lastLocalSave} onPublish={publish} onRestore={restoreLastPublished} />
       </DashboardHeader>
 
@@ -275,12 +275,12 @@ const miniBtnStyle = {
 
 function NewsLivePreview({ items }) {
   return (
-    <aside className="news-dashboard__preview" aria-label="Live News and Events preview">
+    <aside className="news-dashboard__preview" aria-label="Live news preview">
       <div style={{ fontSize: 11, color: '#c9a962', letterSpacing: '.08em', marginBottom: 8 }}>DESKTOP LIVE PREVIEW</div>
       <div style={{ border: '7px solid #252529', borderRadius: 18, overflow: 'hidden', background: '#111114', boxShadow: '0 16px 45px rgba(0,0,0,.35)' }}>
         <div style={{ height: 18, background: '#252529', display: 'flex', gap: 4, padding: '6px 8px' }}><i style={previewDot} /><i style={previewDot} /><i style={previewDot} /></div>
         <div style={{ maxHeight: 'calc(100vh - 110px)', overflowY: 'auto' }}>
-          <div style={{ padding: '21px 15px', background: 'linear-gradient(135deg, #1d1b21, #101014)', color: '#fff' }}><div style={{ color: '#d5b76d', fontSize: 9, letterSpacing: '.08em' }}>ANIMATION GUILD UGANDA</div><strong style={{ display: 'block', fontSize: 21, marginTop: 7 }}>News & Events</strong></div>
+          <div style={{ padding: '21px 15px', background: 'linear-gradient(135deg, #1d1b21, #101014)', color: '#fff' }}><div style={{ color: '#d5b76d', fontSize: 9, letterSpacing: '.08em' }}>ANIMATION GUILD UGANDA</div><strong style={{ display: 'block', fontSize: 21, marginTop: 7 }}>News</strong></div>
           <div style={{ padding: 12, display: 'grid', gap: 10 }}>
             {items.slice(0, 5).map(item => {
               const image = item.images?.[0]

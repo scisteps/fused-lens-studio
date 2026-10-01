@@ -80,7 +80,7 @@ export function NewsEvents() {
       <main className="news-events page">
         <div className="news-events__loading">
           <div className="spinner" />
-          <p>Loading news &amp; events...</p>
+          <p>Loading news...</p>
         </div>
       </main>
     )
@@ -131,7 +131,7 @@ export function NewsEvents() {
                   transition={{ duration: 0.8 }}
                 >
                   <span className="news-events__eyebrow">Animation Guild Uganda</span>
-                  <h1>News &amp; Events</h1>
+                  <h1>News</h1>
                   <p>Dispatches, workshops and showcases from Uganda&apos;s animation community</p>
                 </motion.div>
               </div>

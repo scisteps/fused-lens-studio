@@ -34,7 +34,7 @@
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.02em;
-  color: #0a0a0a;
+  color: inherit;        /* follows the slide's ink token */
   opacity: 0.9;
 }
 
@@ -43,25 +43,31 @@
   font-family: var(--font-body);
   font-size: 1.15rem;
   line-height: 1.6;
-  color: #0a0a0a;
+  color: inherit;        /* follows the slide's ink token */
 }
 
 .benefits-carousel__text strong {
   font-weight: 700;
-  color: #0a0a0a;
+  color: inherit;
 }
 
-/* ---------- Card fills (cycle white → orange → green) ---------- */
+/* ---------- Card fills (cycle white → orange → green) ----------
+   Each fill names the ink that reads on it, so a theme whose accent or
+   secondary is dark (royal / gold make secondary black) can never end up
+   with black text on a black card. */
 .benefits-carousel__slide--white {
   background: #ffffff;
+  color: #0a0a0a;
 }
 
 .benefits-carousel__slide--orange {
   background: var(--color-accent, #FD6500);
+  color: var(--color-on-accent, #0a0a0a);
 }
 
 .benefits-carousel__slide--green {
   background: var(--color-secondary, #0C7923);
+  color: var(--color-on-secondary, #ffffff);
 }
 
 /* ---------- Timer ---------- */

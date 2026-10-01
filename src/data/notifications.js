@@ -21,19 +21,19 @@ export const NOTIFICATION_IMAGE_SIZE = 100
 export const NOTIFICATION_IMAGE_UPLOAD_SIZE = 400
 
 // ── Where a notification can point ───────────────────────────────────────────
-//   article — one specific news & events story (members only)
-//   news    — the news & events index page
+//   article — one specific news story (members only)
+//   news    — the news index page
 //   login   — straight to the sign-in page
 export const NOTIFICATION_TYPES = [
   {
     id: 'article',
-    label: 'News & events article',
+    label: 'News article',
     hint: 'Links to one story. Members must sign in to read it.'
   },
   {
     id: 'news',
-    label: 'News & events page',
-    hint: 'Links to the news & events index.'
+    label: 'News page',
+    hint: 'Links to the news index.'
   },
   {
     id: 'login',

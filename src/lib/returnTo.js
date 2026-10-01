@@ -1,6 +1,6 @@
 // src/lib/returnTo.js
 //
-// Notifications (and the news & events articles they link to) are member
+// Notifications (and the news articles they link to) are member
 // content. A signed-out visitor who taps one has to sign in first, and then
 // land exactly where they were trying to go rather than dumped on the home
 // page. This tiny helper is that memory.

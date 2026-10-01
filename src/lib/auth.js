@@ -90,6 +90,10 @@ const MESSAGES = {
   'auth/unauthorized-domain':
     'This domain is not authorised for sign-in. Please contact the administrator.',
   'auth/quota-exceeded': 'SMS limit reached. Please try again later.',
+  'auth/invalid-verification-code':
+    'That code is not correct. Check the 6 digits and try again.',
+  'auth/code-expired': 'That code has expired. Request a new one.',
+  'auth/missing-verification-code': 'Please enter the 6-digit code.',
   // Firestore side of signup
   'permission-denied':
     'Your account was created but the profile could not be saved. Please contact the administrator.'
@@ -225,13 +229,30 @@ export function subscribeProfile(uid, callback) {
 // attempt fails with "reCAPTCHA has already been rendered in this element".
 // ---------------------------------------------------------------------------
 
-// Sign in an existing account with a phone number + SMS code.
-export async function sendPhoneOtp(phone, containerId) {
+// Sign in an existing account with a phone number + SMS code. `countryCode`
+// is the dialling code the visitor picked (see data/signup.js COUNTRY_CODES);
+// it feeds toE164 so a Kenyan +254 number is not stored as a Ugandan one.
+export async function sendPhoneOtp(phone, containerId, countryCode = '+256') {
   const verifier = new RecaptchaVerifier(auth, containerId, {
     size: 'invisible'
   })
-  const confirmation = await signInWithPhoneNumber(auth, toE164(phone), verifier)
-  return { confirmation, verifier }
+  try {
+    const confirmation = await signInWithPhoneNumber(
+      auth,
+      toE164(phone, countryCode),
+      verifier
+    )
+    return { confirmation, verifier }
+  } catch (error) {
+    // Free the reCAPTCHA slot, or every later attempt fails with
+    // "reCAPTCHA has already been rendered in this element".
+    try {
+      verifier.clear()
+    } catch {
+      /* ignore */
+    }
+    throw error
+  }
 }
 
 // Attach a phone number to the CURRENTLY signed-in account. This is what makes

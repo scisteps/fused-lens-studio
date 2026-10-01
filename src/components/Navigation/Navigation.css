@@ -5,8 +5,9 @@
   right: 0;
   z-index: 1000;
   padding: 0 var(--container-padding);
-  /* Blur + translucent backdrop always on */
-  background: rgba(10, 10, 10, 0.35);
+  /* Blur + translucent backdrop always on, and dark enough that white text
+     never washes out over a bright photo sitting behind the header. */
+  background: rgba(10, 10, 10, 0.5);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   transition: background var(--transition-smooth),
@@ -14,23 +15,33 @@
               color var(--transition-smooth);
 }
 
-/* When scrolled — lighter/stronger backdrop so text stays readable */
-.nav--scrolled {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+/* ---------- Header theming: keep the tabs legible on any background ---------
+   Each theme carries its OWN background as well as its text colour, so the
+   links can never end up as dark text on a dark bar (or white on white) —
+   whatever section sits behind the header, the tabs stay readable. */
+
+/* Dark theme — over the hero and the dark sections */
+.nav--dark {
+  color: var(--color-white);
+  background: rgba(10, 10, 10, 0.5);
 }
 
-/* Also handle a scrolled state on dark themes */
+/* Scrolled dark — deepen the bar a touch for extra contrast */
 .nav--dark.nav--scrolled {
-  background: rgba(10, 10, 10, 0.55);
+  background: rgba(10, 10, 10, 0.78);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.nav--dark  { color: var(--color-white); }
-.nav--light { color: var(--color-charcoal); }
-.nav--dark.nav--scrolled { color: var(--color-white); }
+/* Light theme — over the light sections */
+.nav--light {
+  color: var(--color-charcoal);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+}
+
+.nav--light.nav--scrolled {
+  background: rgba(255, 255, 255, 0.96);
+}
 
 .nav__container {
   max-width: var(--container-max);
@@ -121,6 +132,21 @@
 .nav__link:hover::after {
   transform: scaleX(1);
   transform-origin: left;
+}
+
+/* A soft shadow keeps the white tabs crisp over busy or bright photos. */
+.nav--dark .nav__link {
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+}
+
+/* On the light bar the plain accent can be too pale (the mono theme is almost
+   white), so use the darker accent for the hover colour and underline. */
+.nav--light .nav__link:hover {
+  color: var(--color-accent-dark);
+}
+
+.nav--light .nav__link::after {
+  background: var(--color-accent-dark);
 }
 
 .nav__link-indicator {

@@ -3,8 +3,8 @@
 // Manages the bell menu on the public site.
 //
 // A notification is a title, a subtitle, a square image and a destination. The
-// destination is chosen from a fixed set of kinds (an article, the news and
-// events page, or the sign-in page) so a link can never point somewhere
+// destination is chosen from a fixed set of kinds (an article, the news page,
+// or the sign-in page) so a link can never point somewhere
 // arbitrary - see data/notifications.js.
 //
 // Like the other collection dashboards it keeps a working draft in
@@ -334,7 +334,7 @@ export default function NotificationsDashboard() {
                   </select>
                   {publishedNews.length === 0 && (
                     <span style={{ display: 'block', fontSize: 12, color: '#c98a8a', marginTop: 6 }}>
-                      No published stories found. Publish some in News and Events
+                      No published stories found. Publish some in News
                       first, or pick a different destination.
                     </span>
                   )}

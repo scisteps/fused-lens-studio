@@ -15,6 +15,7 @@ import {
 } from '../../lib/membershipPromo'
 import './Membership.css'
 import { ApplyModal } from './ApplyModal'
+import { RecommendModal } from './RecommendModal'
 
 // Group benefits into rows with matching glows.
 // Indices refer to positions in membership.benefits — the numbers shown
@@ -44,6 +45,7 @@ export function Membership() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [openCategory, setOpenCategory] = useState(null)
   const [applyOpen, setApplyOpen] = useState(false)
+  const [recommendOpen, setRecommendOpen] = useState(false)
 
   // Applying is members-only. Signed-out visitors sign in first; the auth pages
   // then hand them back to /welcome, where the apply button is waiting.
@@ -142,7 +144,8 @@ export function Membership() {
           </motion.div>
         )}
 
-        {/* The one thing we want them to do next — deliberately loud */}
+        {/* The one thing we want them to do next. A signed-in member has
+            already joined, so they get an invite-a-friend action instead. */}
         <motion.div
           className="membership__apply"
           initial={{ opacity: 0, y: 20 }}
@@ -150,17 +153,28 @@ export function Membership() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.25 }}
         >
-          <button type="button" className="btn btn--apply" onClick={handleApply}>
-            Apply for Membership
-          </button>
+          {user ? (
+            <button
+              type="button"
+              className="btn btn--recommend"
+              onClick={() => setRecommendOpen(true)}
+            >
+              Recommend to Others
+            </button>
+          ) : (
+            <button type="button" className="btn btn--apply" onClick={handleApply}>
+              Apply for Membership
+            </button>
+          )}
           <p className="membership__apply-note">
             {user
-              ? 'Pick your category and country — the rest comes from your account.'
+              ? 'Invite someone who belongs in the Guild — it only takes a moment.'
               : 'Applying is free. Sign in or create an account, then choose your category.'}
           </p>
         </motion.div>
 
-        {membership.eligibility && (
+        {/* Who can join — only relevant before someone has an account. */}
+        {!user && membership.eligibility && (
           <motion.div
             className="membership__join membership__join--light"
             initial={{ opacity: 0, y: 20 }}
@@ -348,18 +362,30 @@ export function Membership() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
-          <h3>Ready to Join?</h3>
+          <h3>{user ? 'Spread the Word' : 'Ready to Join?'}</h3>
           <p>
-            {membership.description ||
-              'Apply now to become a member of the Animation Guild Uganda.'}
+            {user
+              ? 'Know someone who belongs in the Guild? Recommend us — it only takes a moment.'
+              : membership.description ||
+                'Apply now to become a member of the Animation Guild Uganda.'}
           </p>
-          <button
-            type="button"
-            className="btn btn--apply"
-            onClick={handleApply}
-          >
-            Apply for Membership
-          </button>
+          {user ? (
+            <button
+              type="button"
+              className="btn btn--recommend"
+              onClick={() => setRecommendOpen(true)}
+            >
+              Recommend to Others
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn btn--apply"
+              onClick={handleApply}
+            >
+              Apply for Membership
+            </button>
+          )}
         </motion.div>
       </div>
       <ApplyModal
@@ -369,6 +395,10 @@ export function Membership() {
         feePromo={promo}
         user={user}
         profile={profile}
+      />
+      <RecommendModal
+        isOpen={recommendOpen}
+        onClose={() => setRecommendOpen(false)}
       />
     </section>
   )

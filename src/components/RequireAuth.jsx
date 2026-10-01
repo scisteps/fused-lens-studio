@@ -1,6 +1,6 @@
 // src/components/RequireAuth.jsx
 //
-// Route guard for member-only content — the news & events article view, and
+// Route guard for member-only content — the news article view, and
 // anything a notification links to.
 //
 // A signed-out visitor is sent to /login with the path they were trying to

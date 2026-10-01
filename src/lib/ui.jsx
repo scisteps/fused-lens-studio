@@ -113,7 +113,7 @@ export function DashboardHeader({ eyebrow, title, children }) {
 // this a new dashboard can only be opened by typing its URL.
 export const DASHBOARD_LINKS = [
   { to: '/admin/content', label: 'Content' },
-  { to: '/admin/news-events', label: 'News & Events' },
+  { to: '/admin/news-events', label: 'News' },
   { to: '/admin/members', label: 'Members' },
   { to: '/admin/notifications', label: 'Notifications' }
 ]

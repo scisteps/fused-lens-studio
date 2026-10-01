@@ -1,5 +1,5 @@
 // src/lib/newsFormat.js
-// Shared formatting helpers for the News & Events page and its article view.
+// Shared formatting helpers for the News page and its article view.
 
 import { resolveImage } from '../data/images'
 
