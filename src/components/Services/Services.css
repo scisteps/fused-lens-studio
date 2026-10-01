@@ -1,6 +1,8 @@
 /* ============================================================
    SERVICES
-   Flip cards with SOLID color fills (white → #FD6500 → green)
+   Flip cards with SOLID color fills (white → accent → secondary)
+   Both color slots resolve through the theme tokens, so switching the
+   published palette in the Content Dashboard recolors these cards.
    No glows. Clean, professional, flat-color surfaces.
    ============================================================ */
 
@@ -97,14 +99,19 @@
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.9) 100%);
 }
 
-/* Orange cards */
+/* Orange cards — accent slot.
+   NOTE: the class name is the *slot* (the primary/accent token), NOT a literal
+   orange. Resolving through --color-accent-rgb means this card automatically
+   follows whichever palette the admin published (mono / royal / gold / guild).
+   The `-rgb` triplet tokens are defined in styles/index.css for every theme. */
 .service-card--orange .service-card__front-bg::after {
-  background: linear-gradient(180deg, rgba(253, 101, 0, 0.68) 0%, rgba(253, 101, 0, 0.88) 100%);
+  background: linear-gradient(180deg, rgba(var(--color-accent-rgb, 253, 101, 0), 0.68) 0%, rgba(var(--color-accent-rgb, 253, 101, 0), 0.88) 100%);
 }
 
-/* Green cards */
+/* Green cards — secondary slot. Same token-driven behavior as the accent
+   card above, so it also follows the active theme. */
 .service-card--green .service-card__front-bg::after {
-  background: linear-gradient(180deg, rgba(12, 121, 35, 0.68) 0%, rgba(12, 121, 35, 0.88) 100%);
+  background: linear-gradient(180deg, rgba(var(--color-secondary-rgb, 12, 121, 35), 0.68) 0%, rgba(var(--color-secondary-rgb, 12, 121, 35), 0.88) 100%);
 }
 
 .service-card__front-top,
@@ -435,7 +442,9 @@
 
 /* ============================================================
    SOLID COLOR VARIANTS — no glows, just fills
-   Card 1,4,7… white · Card 2,5,8… #FD6500 · Card 3,6,9… green
+   Card 1,4,7… white · Card 2,5,8… accent · Card 3,6,9… secondary
+   ("orange" / "green" class names are legacy labels for those two slots;
+   the actual colors come from --color-accent / --color-secondary.)
    ============================================================ */
 
 /* ---------- WHITE ---------- */
@@ -478,10 +487,10 @@
   color: var(--color-charcoal, #141414);
 }
 
-/* ---------- ORANGE (#FD6500) ---------- */
+/* ---------- ORANGE (accent slot — follows the active theme) ---------- */
 .service-card--orange .service-card__front,
 .service-card--orange .service-card__back {
-  background: #FD6500;
+  background: var(--color-accent, #FD6500);
   border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
@@ -518,7 +527,7 @@
   color: #0a0a0a;
 }
 
-/* ---------- GREEN (#0C7923) ---------- */
+/* ---------- GREEN (secondary slot — follows the active theme) ---------- */
 .service-card--green .service-card__front,
 .service-card--green .service-card__back {
   background: var(--color-secondary, #0C7923);
@@ -624,7 +633,7 @@
   height: 64px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #FD6500;
+  border: 3px solid var(--color-accent, #FD6500);
   flex-shrink: 0;
 }
 
@@ -677,8 +686,8 @@
 }
 
 .testimonials__dot--active {
-  background: #FD6500;
-  border-color: #FD6500;
+  background: var(--color-accent, #FD6500);
+  border-color: var(--color-accent, #FD6500);
   transform: scale(1.3);
 }
 

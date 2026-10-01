@@ -1,0 +1,207 @@
+/* ============================================================
+   ProfessionPicker — the "Profession" field on the sign-up form
+   Trigger styled like the other Auth inputs; the box that opens
+   underneath lays the categories out row by column, one label per
+   tile. The tiles are text-only — the Lottie artwork each one used
+   to carry has been removed.
+
+   The tile LABELS are chosen in src/data/professions.js — not here.
+   Everything below is layout/skin only.
+   ============================================================ */
+
+.prof-picker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ---------- Trigger (looks like .auth__field input) ---------- */
+
+.prof-picker__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0;
+  color: var(--color-white, #ffffff);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.prof-picker__trigger:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.prof-picker__trigger:focus-visible {
+  outline: none;
+  border-color: var(--color-orange, #FD6500);
+}
+
+.prof-picker__trigger[aria-expanded='true'] {
+  border-color: var(--color-orange, #FD6500);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.prof-picker__trigger[aria-invalid='true'] {
+  border-color: var(--color-error, #FD6500);
+}
+
+.prof-picker__value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prof-picker__value.is-placeholder {
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.prof-picker__chevron {
+  flex: none;
+  color: var(--color-silver, #9a9a9a);
+  transition: transform var(--transition-fast);
+}
+
+.prof-picker__trigger[aria-expanded='true'] .prof-picker__chevron {
+  transform: rotate(180deg);
+}
+
+/* ---------- The box with the categories ---------- */
+
+.prof-picker__panel {
+  padding: 0.9rem;
+  background: rgba(10, 10, 10, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Row by column. Fixed-width columns so every tile keeps the same
+   footprint no matter how many categories there are. */
+.prof-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(116px, 1fr));
+  gap: 0.6rem;
+}
+
+.prof-picker__tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem 0.45rem 0.6rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0;
+  color: var(--color-white, #ffffff);
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: border-color var(--transition-fast),
+    background var(--transition-fast), transform var(--transition-fast);
+}
+
+.prof-picker__tile:hover,
+.prof-picker__tile:focus-visible {
+  outline: none;
+  border-color: rgba(253, 101, 0, 0.75);
+  background: rgba(253, 101, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.prof-picker__tile.is-selected {
+  border-color: var(--color-orange, #FD6500);
+  background: rgba(253, 101, 0, 0.12);
+}
+
+/* ---------- The tile label ----------
+   The tiles are text-only. The 100x100 animation window that used to sit
+   above this label is gone, so the tile is now just the label, given enough
+   height that the grid rows stay even whichever label is longest. */
+.prof-picker__tile-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+}
+
+/* "Other" reads as the escape hatch, not another job title. */
+.prof-picker__tile--other .prof-picker__tile-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ---------- The free-text box under the grid ---------- */
+
+.prof-picker__other {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  overflow: hidden;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.prof-picker__other-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-silver, #9a9a9a);
+}
+
+.prof-picker__other input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0;
+  color: var(--color-white, #ffffff);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.prof-picker__other input::placeholder {
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.prof-picker__other input:focus {
+  outline: none;
+  border-color: var(--color-accent, #a1a1a1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.prof-picker__other input[aria-invalid='true'] {
+  border-color: var(--color-error, #FD6500);
+}
+
+.prof-picker__other-hint {
+  font-size: 0.72rem;
+  color: var(--color-ash, #6b6b6b);
+}
+
+/* ---------- Small screens: fewer, smaller tiles ---------- */
+
+@media (max-width: 640px) {
+  .prof-picker__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .prof-picker__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

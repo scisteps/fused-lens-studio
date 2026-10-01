@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useScrollProgress } from '../../hooks'
 import { studioInfo } from '../../data/content'
-import logoImage from '../../Images/agulogo3.png';
+import logoImage from '../../Images/agublack.png';
 
 
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { NotificationsBell } from '../Notifications'
 import './Navigation.css'
 
 export function Navigation() {
@@ -160,15 +161,21 @@ export function Navigation() {
             Book Session
           </motion.button> */}
 
-          <button
-            className={`nav__mobile-toggle ${isMobileMenuOpen ? 'nav__mobile-toggle--open' : ''}`}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
+          {/* Bell + hamburger are grouped so they sit together at the right
+              edge; left loose, space-between would push them apart. */}
+          <div className="nav__actions">
+            <NotificationsBell />
+
+            <button
+              className={`nav__mobile-toggle ${isMobileMenuOpen ? 'nav__mobile-toggle--open' : ''}`}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
         </div>
 
         {/* Scroll Progress Bar */}

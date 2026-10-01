@@ -21,8 +21,10 @@
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: blur(18px) brightness(0.5);
-  transform: scale(1.15);
+  /* Light camera-lens blur (see --lens-* in styles/index.css) */
+  filter: blur(var(--lens-blur, 10px)) brightness(var(--lens-brightness, 0.7))
+    saturate(var(--lens-saturate, 1.05));
+  transform: scale(1.08);
   opacity: 0;
   transition: opacity 1.6s ease;
 }
@@ -36,8 +38,8 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(10, 10, 10, 0.74),
-    rgba(10, 10, 10, 0.94)
+    rgba(10, 10, 10, 0.5),
+    rgba(10, 10, 10, 0.82)
   );
 }
 

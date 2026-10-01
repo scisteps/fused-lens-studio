@@ -1,0 +1,204 @@
+/* ============================================================
+   BENEFITS CAROUSEL — one benefit at a time, 5s per card
+   Flat solids, sharp edges, matching the Membership palette.
+   ============================================================ */
+.benefits-carousel {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.benefits-carousel__viewport {
+  position: relative;
+  padding: 0 3.25rem;      /* keeps the card clear of the arrows */
+  overflow: hidden;
+}
+
+.benefits-carousel__slide {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  min-height: 150px;
+  padding: 2rem 2rem 2rem 2.25rem;
+  border-radius: 0;         /* sharp edges, in step with the benefits grid */
+  border: none;
+  color: #0a0a0a;
+}
+
+.benefits-carousel__number {
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: #0a0a0a;
+  opacity: 0.9;
+}
+
+.benefits-carousel__text {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: #0a0a0a;
+}
+
+.benefits-carousel__text strong {
+  font-weight: 700;
+  color: #0a0a0a;
+}
+
+/* ---------- Card fills (cycle white → orange → green) ---------- */
+.benefits-carousel__slide--white {
+  background: #ffffff;
+}
+
+.benefits-carousel__slide--orange {
+  background: var(--color-accent, #FD6500);
+}
+
+.benefits-carousel__slide--green {
+  background: var(--color-secondary, #0C7923);
+}
+
+/* ---------- Timer ---------- */
+.benefits-carousel__progress {
+  position: relative;
+  height: 3px;
+  margin: 1rem auto 0;
+  max-width: 620px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+
+.benefits-carousel__progress-bar {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  background: var(--gradient-accent, linear-gradient(90deg, #FD6500, #0C7923));
+  animation-name: benefitsCarouselTimer;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes benefitsCarouselTimer {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ---------- Arrows ---------- */
+.benefits-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0 4px;
+  background: rgba(10, 10, 10, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.benefits-carousel__arrow--prev { left: 0; }
+.benefits-carousel__arrow--next { right: 0; }
+
+.benefits-carousel__arrow:hover {
+  background: var(--color-accent, #FD6500);
+  border-color: var(--color-accent, #FD6500);
+  color: #0a0a0a;
+}
+
+.benefits-carousel__arrow:focus-visible {
+  outline: 2px solid var(--color-accent, #FD6500);
+  outline-offset: 3px;
+}
+
+/* ---------- Dots ---------- */
+.benefits-carousel__dots {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.benefits-carousel__dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.28);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.benefits-carousel__dot:hover {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.benefits-carousel__dot.is-active {
+  background: var(--color-accent, #FD6500);
+  transform: scale(1.35);
+}
+
+.benefits-carousel__dot:focus-visible {
+  outline: 2px solid var(--color-accent, #FD6500);
+  outline-offset: 3px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .benefits-carousel__viewport {
+    padding: 0 0.25rem;
+    /* Arrows move below the card on small screens, so stop clipping them. */
+    overflow: visible;
+  }
+
+  .benefits-carousel__slide {
+    min-height: 130px;
+    padding: 1.5rem 1.25rem;
+    gap: 1rem;
+  }
+
+  .benefits-carousel__number {
+    font-size: 1.6rem;
+  }
+
+  .benefits-carousel__text {
+    font-size: 1rem;
+  }
+
+  /* Arrows overlap the card on small screens, so tuck them under it —
+     clear of the timer bar and the dots. */
+  .benefits-carousel__arrow {
+    top: auto;
+    bottom: -4.25rem;
+    transform: none;
+  }
+
+  .benefits-carousel__dots {
+    margin-top: 5rem;      /* clears the relocated arrows */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .benefits-carousel__progress-bar {
+    animation: none;
+    transform: scaleX(1);
+  }
+}

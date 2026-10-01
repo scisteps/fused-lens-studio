@@ -4,14 +4,17 @@ import { SERVICE_ACCENTS } from '../data/content'
 import { serviceAnimationChoices } from '../data/animations'
 import { heroSlides, imageOptions } from '../data/images'
 import { useDocumentDraft } from '../lib/useDocumentDraft'
+import { THEMES, DEFAULT_THEME_ID, normalizeThemeId } from '../data/themes'
+import { resolvePromo, promoCountdownLabel, promoEndLabel } from '../lib/membershipPromo'
 import { VersionHistory } from '../lib/VersionHistory'
-import { AddButton, Card, DashboardHeader, Field, PublishBar, TextArea, TextInput, inputStyle } from '../lib/ui'
+import { AddButton, Card, DashboardHeader, DashboardNav, Field, PublishBar, TextArea, TextInput, inputStyle } from '../lib/ui'
 
 // Bump this whenever DEFAULT_CONTENT changes shape or seed values.
-const CONTENT_VERSION = 3
+const CONTENT_VERSION = 4
 
 const DEFAULT_CONTENT = {
   version: CONTENT_VERSION,
+  themeId: DEFAULT_THEME_ID,
   studioInfo: staticContent.studioInfo,
 
   about: {
@@ -64,6 +67,16 @@ const DEFAULT_CONTENT = {
     eligibility:
       'Membership is open to individuals and organisations connected with, practising, supporting, or contributing to animation and related digital creative arts in East Africa, including Uganda, Kenya, Tanzania, Rwanda and Burundi.',
 
+    // Time-limited fee waiver ("join free while the offer lasts"). Ships
+    // DISABLED so it changes nothing until it is switched on and published.
+    // The end date is INCLUSIVE — '2027-09-30' runs through that whole day.
+    feePromo: {
+      enabled: false,
+      label: 'Founding member offer',
+      note: 'Waived for everyone who joins during our first year as a Guild.',
+      endsOn: '2027-09-30'
+    },
+
   categories: [
   { name: 'Ordinary / Professional Membership', fee: 'UGX 50,000', description: 'Adult animators and creative professionals working in the industry.' },
   { name: 'Student Membership', fee: 'To be determined', description: 'Full-time students in animation or related fields, with proof of status.' },
@@ -113,6 +126,8 @@ export default function ContentDashboard() {
         ...current,
         version: CONTENT_VERSION,
 
+        themeId: normalizeThemeId(current.themeId),
+
         studioInfo: {
           ...DEFAULT_CONTENT.studioInfo,
           ...(stale ? {} : current.studioInfo),
@@ -160,7 +175,16 @@ export default function ContentDashboard() {
               categories:
                 current.membership?.categories?.length
                   ? current.membership.categories
-                  : DEFAULT_CONTENT.membership.categories
+                  : DEFAULT_CONTENT.membership.categories,
+              // Merged per field so a draft saved before the fee offer existed
+              // gains it in the OFF state, keeping every other edit intact.
+              // (CONTENT_VERSION is deliberately NOT bumped for this — a bump
+              // would take the `stale` branch above and reset the admin's
+              // categories and benefits to defaults.)
+              feePromo: {
+                ...DEFAULT_CONTENT.membership.feePromo,
+                ...(current.membership?.feePromo || {})
+              }
             }
       }
     })
@@ -193,6 +217,8 @@ export default function ContentDashboard() {
     const next = { ...DEFAULT_CONTENT, ...restored }
 
     next.version = CONTENT_VERSION
+
+    next.themeId = normalizeThemeId(restored.themeId)
 
     next.studioInfo = {
       ...DEFAULT_CONTENT.studioInfo,
@@ -232,7 +258,13 @@ export default function ContentDashboard() {
         : DEFAULT_CONTENT.membership.categories,
       benefits: restored.membership?.benefits?.length
         ? restored.membership.benefits
-        : DEFAULT_CONTENT.membership.benefits
+        : DEFAULT_CONTENT.membership.benefits,
+      // Merged per field: a version archived before the fee offer existed must
+      // revert to "offer off", not to an enabled promo with no end date.
+      feePromo: {
+        ...DEFAULT_CONTENT.membership.feePromo,
+        ...(restored.membership?.feePromo || {})
+      }
     }
 
     return next
@@ -333,6 +365,26 @@ export default function ContentDashboard() {
     }))
   }
 
+  // The fee-waiver offer. Merged over the defaults so a draft saved before
+  // the offer existed still has every key to edit.
+  const updateFeePromo = (field, value) => {
+    setData(current => ({
+      ...current,
+      membership: {
+        ...current.membership,
+        feePromo: {
+          ...DEFAULT_CONTENT.membership.feePromo,
+          ...(current.membership?.feePromo || {}),
+          [field]: value
+        }
+      }
+    }))
+  }
+
+  // The offer as it would render right now, so the admin can see the
+  // countdown and whether the date is valid before publishing.
+  const feePromoNow = resolvePromo(data.membership?.feePromo)
+
   return (
     <div style={pageStyle}>
       <style>{`
@@ -375,6 +427,8 @@ export default function ContentDashboard() {
           onRestore={restoreLastPublished}
         />
       </DashboardHeader>
+
+      <DashboardNav current="/admin/content" />
 
       <main className="content-dashboard__layout">
         <div>
@@ -531,6 +585,73 @@ export default function ContentDashboard() {
                 )
               )}
             </Grid>
+          </Section>
+
+          <Section
+            title="Site theme"
+            description="Pick the color palette for the public site (every page except the dashboards, which always stay dark + gold). Publish to make it live."
+          >
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                gap: 10
+              }}
+            >
+              {THEMES.map(theme => {
+                const selected = (data.themeId || DEFAULT_THEME_ID) === theme.id
+                return (
+                  <label
+                    key={theme.id}
+                    style={{
+                      display: 'flex',
+                      gap: 12,
+                      alignItems: 'center',
+                      background: '#141417',
+                      border: selected
+                        ? '1px solid #c9a962'
+                        : '1px solid rgba(255,255,255,.08)',
+                      padding: '12px 14px',
+                      borderRadius: 8,
+                      cursor: 'pointer',
+                      boxShadow: selected
+                        ? '0 0 0 3px rgba(201,169,98,0.15)'
+                        : 'none'
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="site-theme"
+                      checked={selected}
+                      onChange={() =>
+                        setData(current => ({
+                          ...current,
+                          themeId: theme.id
+                        }))
+                      }
+                    />
+                    <span style={{ display: 'flex', gap: 5 }}>
+                      {theme.swatches.map(swatch => (
+                        <span
+                          key={swatch}
+                          style={{
+                            width: 18,
+                            height: 18,
+                            borderRadius: '50%',
+                            background: swatch,
+                            border: '1px solid rgba(255,255,255,0.25)'
+                          }}
+                        />
+                      ))}
+                    </span>
+                    <span>
+                      <span style={{ display: 'block', fontSize: 14 }}>{theme.label}</span>
+                      <span style={{ display: 'block', fontSize: 12, color: '#9a978f' }}>{theme.desc}</span>
+                    </span>
+                  </label>
+                )
+              })}
+            </div>
           </Section>
 
           <Section
@@ -1086,6 +1207,110 @@ export default function ContentDashboard() {
             >
               Membership categories
             </h3>
+
+            {/* ── Free-join offer ─────────────────────────────────────────
+                A time-limited waiver. The panel states plainly whether the
+                offer is live, waiting to start, already finished or broken,
+                so nobody has to publish to find out. */}
+            <div
+              style={{
+                background: '#141417',
+                border: `1px solid ${
+                  feePromoNow.active
+                    ? 'rgba(201,169,98,.45)'
+                    : 'rgba(255,255,255,.07)'
+                }`,
+                borderRadius: 10,
+                padding: 18,
+                marginBottom: 20
+              }}
+            >
+              <label
+                style={{
+                  display: 'flex',
+                  gap: 9,
+                  alignItems: 'center',
+                  marginBottom: 14,
+                  cursor: 'pointer'
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={Boolean(membership.feePromo?.enabled)}
+                  onChange={event =>
+                    updateFeePromo('enabled', event.target.checked)
+                  }
+                />
+                <span>
+                  <strong style={{ display: 'block', fontSize: 15 }}>
+                    Free-join offer
+                  </strong>
+                  <span style={{ color: '#9a978f', fontSize: 13 }}>
+                    Waive the fee for anyone who joins before the closing date.
+                    Publish to put it live.
+                  </span>
+                </span>
+              </label>
+
+              <Grid>
+                <Field label="Headline">
+                  <TextInput
+                    value={membership.feePromo?.label || ''}
+                    onChange={event =>
+                      updateFeePromo('label', event.target.value)
+                    }
+                    placeholder="Founding member offer"
+                  />
+                </Field>
+                <Field label="Closes on (inclusive)">
+                  <TextInput
+                    type="date"
+                    value={membership.feePromo?.endsOn || ''}
+                    onChange={event =>
+                      updateFeePromo('endsOn', event.target.value)
+                    }
+                  />
+                </Field>
+              </Grid>
+
+              <Field label="Supporting line (optional)">
+                <TextInput
+                  value={membership.feePromo?.note || ''}
+                  onChange={event =>
+                    updateFeePromo('note', event.target.value)
+                  }
+                  placeholder="Waived for everyone who joins during our first year."
+                />
+              </Field>
+
+              <div
+                style={{
+                  fontSize: 13,
+                  lineHeight: 1.5,
+                  padding: '10px 12px',
+                  borderRadius: 8,
+                  background: feePromoNow.active
+                    ? 'rgba(201,169,98,.10)'
+                    : 'rgba(255,255,255,.04)',
+                  borderLeft: `3px solid ${
+                    feePromoNow.active ? '#c9a962' : '#5b584f'
+                  }`
+                }}
+              >
+                <strong style={{ color: '#c9a962' }}>Now: </strong>
+                {!membership.feePromo?.enabled
+                  ? 'OFF — the ordinary fees are shown. Nothing is waived.'
+                  : !feePromoNow.valid
+                  ? 'BROKEN — the closing date is missing or unreadable, so no fee is being waived. Enter a date such as 2027-09-30.'
+                  : feePromoNow.active
+                  ? `LIVE — every priced category reads FREE. ${promoCountdownLabel(
+                      feePromoNow
+                    )} (${promoEndLabel(feePromoNow)}).`
+                  : `FINISHED — the offer closed on ${promoEndLabel(
+                      feePromoNow
+                    )}, so the ordinary fees are shown again.`}
+              </div>
+            </div>
 
             {(membership.categories || []).map(
               (category, index) => (

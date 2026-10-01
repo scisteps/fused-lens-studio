@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { imageOptions, resolveImage } from '../data/images'
 import { useCollectionDraft } from '../lib/useCollectionDraft'
-import { DashboardHeader, Field, PublishBar, TextArea, TextInput, inputStyle } from '../lib/ui'
+import { DashboardHeader, DashboardNav, Field, PublishBar, TextArea, TextInput, inputStyle } from '../lib/ui'
 
 // Bump this whenever DEFAULT_MEMBERS changes.
 const MEMBERS_VERSION = 2
@@ -62,6 +62,8 @@ export default function MembersDashboard() {
   return <div style={pageStyle}>
     <style>{`.members-dashboard__layout { max-width: 1380px; margin: 0 auto; padding: 28px 28px 80px; display: grid; grid-template-columns: 340px minmax(0, 1fr) 320px; gap: 28px; } .members-dashboard__preview { position: sticky; top: 20px; height: fit-content; } @media (max-width: 1200px) { .members-dashboard__layout { max-width: 1000px; grid-template-columns: 340px minmax(0, 1fr); } .members-dashboard__preview { display: none; } } @media (max-width: 760px) { .members-dashboard__layout { display: block; } .members-dashboard__form { position: static !important; margin-bottom: 24px; } }`}</style>
     <DashboardHeader eyebrow="ANIMATION GUILD UGANDA" title="Members"><PublishBar isDirty={isDirty} status={status} lastLocalSave={lastLocalSave} onPublish={publish} onRestore={restoreLastPublished} /></DashboardHeader>
+    <DashboardNav current="/admin/members" />
+
     <main className="members-dashboard__layout">
       <section ref={formRef} className="members-dashboard__form" style={formStyle}>
         <h2 style={formTitleStyle}>{editingId ? 'Edit member' : 'Add member'}</h2>

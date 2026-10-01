@@ -1,22 +1,20 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useSiteContent } from '../../lib/useSiteContent'
+import { useAuth, useUserProfile } from '../../lib/useAuth'
+import { requestMembershipIntent } from '../../lib/membershipIntent'
+import { highlightLead } from '../../lib/highlightLead'
 import { resolveImage } from '../../data/images'
+import { BenefitsCarousel } from '../BenefitsCarousel'
+import { CategoryFee } from './CategoryFee'
+import {
+  usePromo,
+  promoCountdownLabel,
+  promoEndLabel
+} from '../../lib/membershipPromo'
 import './Membership.css'
 import { ApplyModal } from './ApplyModal'
-// Bolds the lead clause (up to the first comma/period) of a sentence so
-// CMS-authored text reads with a scannable, condensed feel.
-function highlightLead(text = '') {
-  const match = text.match(/^([^,.:]+)([,.:]?.*)$/s)
-  if (!match) return text
-  return (
-    <>
-      <strong>{match[1]}</strong>
-      {match[2]}
-    </>
-  )
-}
 
 // Group benefits into rows with matching glows.
 // Indices refer to positions in membership.benefits — the numbers shown
@@ -39,10 +37,25 @@ const CATEGORY_VARIANTS = ['white', 'orange', 'green']
 // const APPLY_EMAIL = 'animationguilduganda@gmail.com'
 
 export function Membership() {
+  const navigate = useNavigate()
   const { content } = useSiteContent()
+  const { user } = useAuth()
+  const { profile } = useUserProfile(user?.uid)
   const [activeIndex, setActiveIndex] = useState(0)
   const [openCategory, setOpenCategory] = useState(null)
-const [applyOpen, setApplyOpen] = useState(false)
+  const [applyOpen, setApplyOpen] = useState(false)
+
+  // Applying is members-only. Signed-out visitors sign in first; the auth pages
+  // then hand them back to /welcome, where the apply button is waiting.
+  const handleApply = () => {
+    if (!user) {
+      requestMembershipIntent()
+      navigate('/login')
+      return
+    }
+    setApplyOpen(true)
+  }
+
   const bgImageIds = (content.heroSlides || [])
     .map(slide => slide.imageId)
     .filter(Boolean)
@@ -59,6 +72,10 @@ const [applyOpen, setApplyOpen] = useState(false)
 
   const membership = content.membership || {}
   const benefits = membership.benefits || []
+
+  // The free-join offer. Re-checked every minute so a page left open past the
+  // closing date stops advertising a free join on its own.
+  const promo = usePromo(membership.feePromo)
 
   const mappedIndices = BENEFIT_GROUPS.flatMap(g => g.indices)
   const extras = benefits
@@ -111,6 +128,38 @@ const [applyOpen, setApplyOpen] = useState(false)
           <h2 className="section-title">Join Our Community</h2>
         </motion.div>
 
+        {/* Lead with what members actually get — one benefit at a time, 5s each */}
+        {benefits.length > 0 && (
+          <motion.div
+            className="membership__carousel"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+          >
+            <h3 className="membership__carousel-title">What Members Get</h3>
+            <BenefitsCarousel benefits={benefits} interval={5000} />
+          </motion.div>
+        )}
+
+        {/* The one thing we want them to do next — deliberately loud */}
+        <motion.div
+          className="membership__apply"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.25 }}
+        >
+          <button type="button" className="btn btn--apply" onClick={handleApply}>
+            Apply for Membership
+          </button>
+          <p className="membership__apply-note">
+            {user
+              ? 'Pick your category and country — the rest comes from your account.'
+              : 'Applying is free. Sign in or create an account, then choose your category.'}
+          </p>
+        </motion.div>
+
         {membership.eligibility && (
           <motion.div
             className="membership__join membership__join--light"
@@ -135,6 +184,33 @@ const [applyOpen, setApplyOpen] = useState(false)
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <h3 className="membership__categories-title">Membership Categories</h3>
+
+            {/* ── The free-join offer ─────────────────────────────────────
+                Rendered only while the offer is genuinely live, so the page
+                never shows a stale "FREE" after the window has closed. */}
+            {promo.active && (
+              <div
+                className="membership__promo"
+                role="status"
+                aria-live="polite"
+              >
+                <span className="membership__promo-flag">FREE JOIN</span>
+                <div className="membership__promo-body">
+                  <strong className="membership__promo-title">
+                    {promo.label}
+                  </strong>
+                  {promo.note && (
+                    <p className="membership__promo-note">{promo.note}</p>
+                  )}
+                  <p className="membership__promo-countdown">
+                    <span>{promoCountdownLabel(promo)}</span>
+                    <span aria-hidden="true"> · </span>
+                    <span>closes {promoEndLabel(promo)}</span>
+                  </p>
+                </div>
+              </div>
+            )}
+
             <div className="membership__categories-grid">
               {membership.categories.map((category, index) => {
                 const isOpen = openCategory === index
@@ -192,10 +268,8 @@ const [applyOpen, setApplyOpen] = useState(false)
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.3, ease: 'easeInOut' }}
                         >
-                          {category.fee && (
-                            <p className="membership__category-fee">
-                              <strong>{category.fee}</strong>
-                            </p>
+                          {describeFee(category.fee, promo).kind !== 'unset' && (
+                            <CategoryFee fee={category.fee} promo={promo} />
                           )}
                           <p className="membership__category-description">
                             {highlightLead(category.description)}
@@ -279,20 +353,23 @@ const [applyOpen, setApplyOpen] = useState(false)
             {membership.description ||
               'Apply now to become a member of the Animation Guild Uganda.'}
           </p>
-      <button
-  type="button"
-  className="btn btn--secondary"
-  onClick={() => setApplyOpen(true)}
->
-  Apply for Membership
-</button>
+          <button
+            type="button"
+            className="btn btn--apply"
+            onClick={handleApply}
+          >
+            Apply for Membership
+          </button>
         </motion.div>
       </div>
       <ApplyModal
-  isOpen={applyOpen}
-  onClose={() => setApplyOpen(false)}
-  categories={membership.categories || []}
-/>
+        isOpen={applyOpen}
+        onClose={() => setApplyOpen(false)}
+        categories={membership.categories || []}
+        feePromo={promo}
+        user={user}
+        profile={profile}
+      />
     </section>
   )
 }

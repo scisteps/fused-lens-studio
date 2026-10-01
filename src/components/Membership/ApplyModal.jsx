@@ -1,31 +1,71 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { CategoryFee } from './CategoryFee'
+import { resolvePromo, promoCountdownLabel } from '../../lib/membershipPromo'
 
 const MEMBERSHIP_ENDPOINT =
   'https://script.google.com/macros/s/AKfycbxK5Da_gByb4xFNntM-MDVu46EpQg0zX8U7CHiJ12BE3t8SV4cVR19kJo5KxE9flOoeFg/exec'
 
-const EMPTY_FORM = {
-  name: '',
-  email: '',
-  phone: '',
-  category: '',
-  country: '',
-  artistType: '',
-  message: ''
-}
+// Countries the Guild accepts applications from — the East African scope from
+// the constitution. Kept here rather than in the CMS because this value is what
+// lands on the application row.
+export const RESIDENCE_COUNTRIES = ['Uganda', 'Kenya', 'Tanzania', 'Rwanda', 'DRC']
 
-export function ApplyModal({ isOpen, onClose, categories = [] }) {
-  const [form, setForm] = useState(EMPTY_FORM)
+// The applicant is always signed in before this opens, so the only two things
+// the secretariat needs them to choose are the category and the country.
+// Everything else (name, email, phone, profession) is already on the member
+// profile and rides along as hidden fields — nothing is asked for twice.
+export function ApplyModal({
+  isOpen,
+  onClose,
+  categories = [],
+  // Already-resolved promo from the Membership section. Welcome.jsx passes the
+  // raw config instead; either shape is accepted.
+  feePromo,
+  user = null,
+  profile = null
+}) {
+  const [category, setCategory] = useState('')
+  const [country, setCountry] = useState('')
   const [status, setStatus] = useState(null) // null | 'sending' | 'success' | 'error'
   const [errorMsg, setErrorMsg] = useState('')
 
-  const handleChange = (e) =>
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  // A resolved promo arrives as { active, ... }; raw config as { enabled }.
+  const promo = feePromo?.active !== undefined
+    ? feePromo
+    : resolvePromo(feePromo)
+
+  const selectCategory = (value) => {
+    setCategory(value)
+    setErrorMsg('')
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    setStatus('sending')
+
+    if (!category) {
+      setErrorMsg('Choose a membership category to continue.')
+      return
+    }
+    if (!country) {
+      setErrorMsg('Choose your country of residence to continue.')
+      return
+    }
+
     setErrorMsg('')
+    setStatus('sending')
+
+    // Details the profile already holds — carried silently so the
+    // secretariat's sheet still receives a complete application.
+    const payload = {
+      type: 'membership',
+      name: profile?.name || user?.displayName || '',
+      email: profile?.email || user?.email || '',
+      phone: profile?.phone || '',
+      artistType: profile?.profession || '',
+      category,
+      country
+    }
 
     // Hidden iframe bypasses Google Apps Script CORS restrictions
     const iframeName = `member_iframe_${Date.now()}`
@@ -40,7 +80,7 @@ export function ApplyModal({ isOpen, onClose, categories = [] }) {
     submitForm.target = iframeName
     submitForm.style.display = 'none'
 
-    Object.entries({ type: 'membership', ...form }).forEach(([key, value]) => {
+    Object.entries(payload).forEach(([key, value]) => {
       const input = document.createElement('input')
       input.type = 'hidden'
       input.name = key
@@ -56,7 +96,8 @@ export function ApplyModal({ isOpen, onClose, categories = [] }) {
       document.body.removeChild(submitForm)
       document.body.removeChild(iframe)
       setStatus('success')
-      setForm(EMPTY_FORM)
+      setCategory('')
+      setCountry('')
     }, 1800)
   }
 
@@ -95,7 +136,8 @@ export function ApplyModal({ isOpen, onClose, categories = [] }) {
 
             <h3 className="apply-modal__title">Apply for Membership</h3>
             <p className="apply-modal__subtitle">
-              Tell us a bit about yourself and we'll get back to you.
+              Pick your category and country of residence — the rest of your
+              details come from your account.
             </p>
 
             {status === 'success' ? (
@@ -104,7 +146,7 @@ export function ApplyModal({ isOpen, onClose, categories = [] }) {
                 <p>Thanks! Your application has been received.</p>
                 <button
                   type="button"
-                  className="btn btn--secondary"
+                  className="apply-modal__submit"
                   onClick={handleClose}
                 >
                   Close
@@ -112,70 +154,101 @@ export function ApplyModal({ isOpen, onClose, categories = [] }) {
               </div>
             ) : (
               <form className="apply-modal__form" onSubmit={handleSubmit}>
-                <input
-                  name="name"
-                  placeholder="Full name"
-                  value={form.name}
-                  onChange={handleChange}
-                  required
-                />
-                <input
-                  name="email"
-                  type="email"
-                  placeholder="Email"
-                  value={form.email}
-                  onChange={handleChange}
-                  required
-                />
-                <input
-                  name="phone"
-                  placeholder="Phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                />
-                <select
-                  name="category"
-                  value={form.category}
-                  onChange={handleChange}
-                >
-                  <option value="">Preferred category…</option>
-                  {categories.map((c, i) => (
-                    <option key={i} value={c.name}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  name="country"
-                  placeholder="Country of residence"
-                  value={form.country}
-                  onChange={handleChange}
-                />
-                <input
-                  name="artistType"
-                  placeholder="Type of artist (2D, 3D, VFX, …)"
-                  value={form.artistType}
-                  onChange={handleChange}
-                />
-                <textarea
-                  name="message"
-                  placeholder="Anything else? (optional)"
-                  rows="3"
-                  value={form.message}
-                  onChange={handleChange}
-                />
+                {/* Preferred category — cards, name + price only */}
+                <fieldset className="apply-modal__fieldset">
+                  <legend className="apply-modal__legend">
+                    Preferred category
+                  </legend>
+
+                  {/* While the free-join offer is live, say so here too —
+                      this is the last screen before someone applies, so it
+                      must not contradict the Membership section. */}
+                  {promo.active && (
+                    <p className="apply-modal__promo">
+                      <span className="apply-modal__promo-flag">FREE JOIN</span>
+                      <span>
+                        {promo.note || 'Your membership fee is waived.'}{' '}
+                        {promoCountdownLabel(promo).toLowerCase()}.
+                      </span>
+                    </p>
+                  )}
+
+                  {categories.length > 0 ? (
+                    <div className="apply-modal__categories">
+                      {categories.map((c, i) => {
+                        const value = c.name || `Category ${i + 1}`
+                        const selected = category === value
+
+                        return (
+                          <button
+                            key={`${value}-${i}`}
+                            type="button"
+                            className={`apply-modal__category ${
+                              selected ? 'is-selected' : ''
+                            }`}
+                            onClick={() => selectCategory(value)}
+                            aria-pressed={selected}
+                          >
+                            <span className="apply-modal__category-name">
+                              {value}
+                            </span>
+                            <CategoryFee
+                              fee={c.fee}
+                              promo={promo}
+                              as="span"
+                              className="apply-modal__category-fee"
+                            />
+                          </button>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    <p className="apply-modal__note">
+                      Categories are being updated — contact the secretariat and
+                      we will place you in the right one.
+                    </p>
+                  )}
+                </fieldset>
+
+                {/* Country of residence */}
+                <div className="apply-modal__field">
+                  <label className="apply-modal__label" htmlFor="apply-country">
+                    Country of residence
+                  </label>
+                  <select
+                    id="apply-country"
+                    name="country"
+                    value={country}
+                    onChange={(e) => {
+                      setCountry(e.target.value)
+                      setErrorMsg('')
+                    }}
+                  >
+                    <option value="">Select a country…</option>
+                    {RESIDENCE_COUNTRIES.map((name) => (
+                      <option key={name} value={name}>
+                        {name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {errorMsg && (
+                  <p className="apply-modal__error">{errorMsg}</p>
+                )}
 
                 <button
                   type="submit"
-                  className="btn btn--secondary apply-modal__submit"
+                  className="apply-modal__submit"
                   disabled={status === 'sending'}
                 >
                   {status === 'sending' ? 'Sending…' : 'Submit Application'}
                 </button>
 
-                {status === 'error' && (
-                  <p className="apply-modal__error">{errorMsg}</p>
-                )}
+                <p className="apply-modal__note">
+                  Applying is free — the secretariat reviews every application
+                  before membership is activated.
+                </p>
               </form>
             )}
           </motion.div>

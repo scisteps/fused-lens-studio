@@ -410,6 +410,95 @@ button {
   }
 }
 
+/* ============================================================
+   SITE THEMES — chosen by the admin in Content Dashboard → "Site theme",
+   stored as `themeId` on siteContent/main, applied as data-theme on <html>.
+   Only the accent/secondary tokens change; neutrals stay the same so every
+   component keeps working. Dashboards never get data-theme (see
+   lib/useSiteTheme.js) so the CMS chrome stays dark + gold.
+
+   --color-accent-rgb / --color-secondary-rgb exist so translucent glows can
+   use color-mix() and follow the active palette automatically.
+   ============================================================ */
+
+/* Default (guild) RGB helpers — match the :root values above */
+:root {
+  --color-accent-rgb: 253, 101, 0;
+  --color-secondary-rgb: 12, 121, 35;
+}
+
+/* Mono — black + white shades only */
+:root[data-theme='mono'] {
+  --color-accent: #e8e8e8;
+  --color-accent-light: #ffffff;
+  --color-accent-dark: #9a9a9a;
+  --color-secondary: #6b6b6b;
+  --color-secondary-light: #9a9a9a;
+  --color-secondary-dark: #2e2e2e;
+  --color-success: #6b6b6b;
+  --color-error: #e8e8e8;
+  --color-orange: #e8e8e8;
+  --color-green: #6b6b6b;
+  --gradient-accent: linear-gradient(90deg, #ffffff 0%, #6b6b6b 100%);
+  --gradient-accent-soft: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(107, 107, 107, 0.15) 100%
+  );
+  --color-accent-rgb: 232, 232, 232;
+  --color-secondary-rgb: 107, 107, 107;
+  --shadow-glow: 0 0 40px rgba(255, 255, 255, 0.2);
+  --shadow-glow-green: 0 0 40px rgba(107, 107, 107, 0.18);
+}
+
+/* Royal — black + white + royal blue */
+:root[data-theme='royal'] {
+  --color-accent: #4169e1;
+  --color-accent-light: #6f8ff0;
+  --color-accent-dark: #2b49b8;
+  --color-secondary: #0a0a0a;
+  --color-secondary-light: #2e2e2e;
+  --color-secondary-dark: #0a0a0a;
+  --color-success: #4169e1;
+  --color-error: #4169e1;
+  --color-orange: #4169e1;
+  --color-green: #0a0a0a;
+  --gradient-accent: linear-gradient(90deg, #4169e1 0%, #0a0a0a 100%);
+  --gradient-accent-soft: linear-gradient(
+    90deg,
+    rgba(65, 105, 225, 0.15) 0%,
+    rgba(10, 10, 10, 0.15) 100%
+  );
+  --color-accent-rgb: 65, 105, 225;
+  --color-secondary-rgb: 10, 10, 10;
+  --shadow-glow: 0 0 40px rgba(65, 105, 225, 0.2);
+  --shadow-glow-green: 0 0 40px rgba(10, 10, 10, 0.18);
+}
+
+/* Gold — black + white + gold (matches the admin/CMS chrome) */
+:root[data-theme='gold'] {
+  --color-accent: #c9a962;
+  --color-accent-light: #e3c98a;
+  --color-accent-dark: #9a7c3f;
+  --color-secondary: #0a0a0a;
+  --color-secondary-light: #2e2e2e;
+  --color-secondary-dark: #0a0a0a;
+  --color-success: #c9a962;
+  --color-error: #c9a962;
+  --color-orange: #c9a962;
+  --color-green: #0a0a0a;
+  --gradient-accent: linear-gradient(90deg, #c9a962 0%, #0a0a0a 100%);
+  --gradient-accent-soft: linear-gradient(
+    90deg,
+    rgba(201, 169, 98, 0.15) 0%,
+    rgba(10, 10, 10, 0.15) 100%
+  );
+  --color-accent-rgb: 201, 169, 98;
+  --color-secondary-rgb: 10, 10, 10;
+  --shadow-glow: 0 0 40px rgba(201, 169, 98, 0.2);
+  --shadow-glow-green: 0 0 40px rgba(10, 10, 10, 0.18);
+}
+
 /* Mobile adjustments */
 @media (max-width: 768px) {
   :root {

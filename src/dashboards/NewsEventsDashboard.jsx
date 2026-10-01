@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useCollectionDraft } from '../lib/useCollectionDraft'
 import { uploadImage } from '../lib/imageUpload'
 import { imageOptions, resolveImage } from '../data/images'
-import { Field, TextInput, TextArea, DashboardHeader, PublishBar, inputStyle } from '../lib/ui'
+import { Field, TextInput, TextArea, DashboardHeader, DashboardNav, PublishBar, inputStyle } from '../lib/ui'
 
 const FONT_LINK = 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap'
 const COLLECTION_PATH = 'newsEvents'
@@ -123,6 +123,8 @@ export default function NewsEventsDashboard() {
       <DashboardHeader eyebrow="ANIMATION GUILD UGANDA" title="News & events">
         <PublishBar isDirty={isDirty} status={status} lastLocalSave={lastLocalSave} onPublish={publish} onRestore={restoreLastPublished} />
       </DashboardHeader>
+
+      <DashboardNav current="/admin/news-events" />
 
       <div className="news-dashboard__layout">
         <div ref={formRef} style={{ background: '#141417', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: 20, height: 'fit-content', position: 'sticky', top: 20 }}>

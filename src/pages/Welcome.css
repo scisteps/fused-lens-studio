@@ -1,0 +1,139 @@
+/* ============================================================
+   Welcome — the screen a new member lands on
+   Black page + light lens-blurred photo slideshow, crane Lottie at
+   the top, one loud ask ("Apply for Membership"), then the member
+   benefits carousel underneath it.
+   ============================================================ */
+
+.welcome {
+  position: relative;
+  z-index: 1;                 /* paints above the fixed BlurredBackdrop */
+  min-height: 100vh;
+  padding: 8rem 1.5rem 6rem;  /* clears the fixed nav */
+  color: var(--color-white, #ffffff);
+  /* No background of its own — <BlurredBackdrop> supplies the blurred photo
+     slideshow (and its own black base) behind this page. */
+}
+
+/* Keep every direct child (the content column, the loading line) above the
+   fixed backdrop, but leave the backdrop itself alone. */
+.welcome > *:not(.blurred-backdrop) {
+  position: relative;
+  z-index: 1;
+}
+
+.welcome__loading {
+  position: relative;
+  z-index: 1;
+  margin: 4rem auto 0;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--color-silver, #9a9a9a);
+}
+
+.welcome__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ---------- Header ---------- */
+
+.welcome__head {
+  margin-bottom: 2.5rem;
+}
+
+.welcome__lottie {
+  width: min(300px, 62vw);
+  height: min(300px, 62vw);
+  margin: 0 auto 0.5rem;
+  line-height: 0;
+  pointer-events: none;
+}
+
+.welcome__eyebrow {
+  display: block;
+  margin-bottom: 0.85rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-accent, #FD6500);
+}
+
+.welcome__title {
+  margin: 0 0 1rem;
+  font-family: var(--font-body);
+  font-size: clamp(1.9rem, 4.5vw, 2.9rem);
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.welcome__text {
+  margin: 0 auto;
+  max-width: 620px;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-pearl, #d4d4d4);
+}
+
+/* ---------- The one ask ---------- */
+
+.welcome__apply {
+  margin-bottom: 4.5rem;
+}
+
+.welcome__apply-note {
+  margin: 1.25rem auto 0;
+  max-width: 520px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-pearl, #d4d4d4);
+}
+
+/* ---------- Benefits carousel ---------- */
+
+.welcome__benefits {
+  margin-bottom: 3.5rem;
+}
+
+.welcome__benefits-title {
+  margin: 0 0 2rem;
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* ---------- Footer links ---------- */
+
+.welcome__links {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-silver, #9a9a9a);
+}
+
+.welcome__link {
+  color: var(--color-silver, #9a9a9a);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.welcome__link:hover {
+  color: #ffffff;
+}
+
+@media (max-width: 560px) {
+  .welcome {
+    padding: 6.5rem 1.25rem 4rem;
+  }
+
+  .welcome__lottie {
+    width: min(220px, 70vw);
+    height: min(220px, 70vw);
+  }
+
+  .welcome__apply {
+    margin-bottom: 3.5rem;
+  }
+}

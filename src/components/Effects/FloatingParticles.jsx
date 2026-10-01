@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './FloatingParticles.css'
 
-const DEFAULT_COLORS = ['#ffffff', '#F15A39', '#0C7923']
+// Theme-aware default: white + current accent + current secondary.
+// The var() fallbacks keep it working if the CSS tokens ever fail to load.
+const DEFAULT_COLORS = ['#ffffff', 'var(--color-accent, #F15A39)', 'var(--color-secondary, #0C7923)']
 
 export function FloatingParticles({
   originRef,                       // ref to the element to sprout from

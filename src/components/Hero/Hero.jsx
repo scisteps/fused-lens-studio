@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import gsap from 'gsap'
 import { heroSlides, resolveImage } from '../../data/images'
 import { useSiteContent } from '../../lib/useSiteContent'
 import './Hero.css'
-import final from '../../jsons/final5.json'
+import final from '../../jsons/final6.json'
 import { Player } from '@lottiefiles/react-lottie-player'
 
 // ─── Intro timing (seconds) ────────────────────────────────────────────
@@ -25,6 +26,7 @@ const ACCENT_COLORS = [
 ]
 
 export function Hero() {
+  const navigate = useNavigate()
   const { content } = useSiteContent()
   const studioInfo = content.studioInfo
   const slides = useMemo(() => (
@@ -235,14 +237,32 @@ export function Hero() {
           </div>
 
           <div className="hero__actions" ref={actionsRef} style={{ opacity: 0 }}>
-            <motion.button
+            {/* This slot used to be the "About" button. The About section is
+                still reachable from the nav bar and the scroll indicator. */}
+            <motion.a
+              href="/login"
               className="hero__btn hero__btn--primary"
-              onClick={scrollToAbout}
+              onClick={(event) => {
+                event.preventDefault()
+                navigate('/login')
+              }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <span>About</span>
-            </motion.button>
+              <span>Login</span>
+            </motion.a>
+            <motion.a
+              href="/signup"
+              className="hero__btn hero__btn--outline"
+              onClick={(event) => {
+                event.preventDefault()
+                navigate('/signup')
+              }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span>Sign Up</span>
+            </motion.a>
             <motion.a
               href="#contact"
               className="hero__btn hero__btn--outline"

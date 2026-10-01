@@ -20,8 +20,10 @@
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: blur(18px) brightness(0.55);
-  transform: scale(1.15);
+  /* Light camera-lens blur — keep in step with --lens-* in styles/index.css */
+  filter: blur(var(--lens-blur, 10px)) brightness(var(--lens-brightness, 0.7))
+    saturate(var(--lens-saturate, 1.05));
+  transform: scale(1.08);
   opacity: 0;
   transition: opacity 1.6s ease;
 }
@@ -35,8 +37,8 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(12, 12, 14, 0.78),
-    rgba(12, 12, 14, 0.94)
+    rgba(12, 12, 14, 0.5),
+    rgba(12, 12, 14, 0.82)
   );
 }
 
@@ -124,6 +126,166 @@
   font-weight: 600;
   color: #ffffff;
   margin-bottom: 2rem;
+}
+
+/* ============================================================
+   CATEGORIES
+   ============================================================ */
+
+.membership__promo {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.1rem;
+  max-width: 760px;
+  margin: 0 auto 2.25rem;
+  padding: 1.15rem 1.35rem;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-left: 4px solid var(--color-accent, #FD6500);
+}
+
+.membership__promo-flag {
+  flex-shrink: 0;
+  align-self: center;
+  padding: 0.4rem 0.7rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #0a0a0a;
+  background: var(--color-accent, #FD6500);
+  white-space: nowrap;
+}
+
+.membership__promo-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.membership__promo-title {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.membership__promo-note {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-pearl, #d4d4d4);
+}
+
+.membership__promo-countdown {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent, #FD6500);
+}
+
+@media (max-width: 560px) {
+  .membership__promo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
+/* ---------- A waived fee: old price struck through, new price beside it ----- */
+
+.membership__category-fee--waived {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.55rem;
+}
+
+.membership__category-fee-was {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration-thickness: 1.5px;
+}
+
+.membership__category-fee-now {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-secondary, #0C7923);
+}
+
+/* ============================================================
+   FREE-JOIN OFFER — the time-limited fee waiver.
+   Only rendered while the offer is live (see lib/membershipPromo.js).
+   ============================================================ */
+
+.membership__promo {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.1rem;
+  max-width: 760px;
+  margin: 0 auto 2.25rem;
+  padding: 1.15rem 1.35rem;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-left: 4px solid var(--color-accent, #FD6500);
+}
+
+.membership__promo-flag {
+  flex-shrink: 0;
+  align-self: center;
+  padding: 0.4rem 0.7rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #0a0a0a;
+  background: var(--color-accent, #FD6500);
+  white-space: nowrap;
+}
+
+.membership__promo-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.membership__promo-title {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.membership__promo-note {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-pearl, #d4d4d4);
+}
+
+.membership__promo-countdown {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent, #FD6500);
+}
+
+@media (max-width: 560px) {
+  .membership__promo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
 }
 
 .membership__categories-grid {
@@ -226,6 +388,44 @@
 .membership__category-fee strong {
   color: var(--color-secondary-light, #2a9d43) !important;
   font-weight: 700;
+}
+
+/* ---------- A waived fee: old price struck through, FREE beside it ---------
+   Declared AFTER the base fee block on purpose: that block paints every fee
+   with !important, so these rules must repeat it to take effect. */
+
+.membership__category-fee--waived {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.55rem;
+  margin: var(--space-md) 0 var(--space-sm);
+}
+
+/* The old price — dimmed and struck through. */
+.membership__category-fee-was {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5) !important;
+  text-decoration-thickness: 1.5px;
+}
+
+/* The new price — the same green the site uses for fees everywhere. */
+.membership__category-fee-now {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-secondary-light, #2a9d43) !important;
+}
+
+/* White cards sit on a white background, so the dimmed old price has to be
+   dark to stay legible there. */
+.membership__category--white .membership__category-fee-was {
+  color: rgba(10, 10, 10, 0.45) !important;
+}
+
+.membership__category--white .membership__category-fee-now {
+  color: var(--color-secondary, #0C7923) !important;
 }
 
 .membership__category-description {
@@ -612,6 +812,114 @@
 }
 
 /* ============================================================
+   BENEFITS CAROUSEL lead-in + the loud APPLY action
+   ============================================================ */
+.membership__carousel {
+  margin-bottom: 3rem;
+}
+
+.membership__carousel-title {
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 2rem;
+}
+
+.membership__apply {
+  text-align: center;
+  margin-bottom: 4.5rem;
+}
+
+.membership__apply-note {
+  margin: 1.25rem auto 0;
+  max-width: 540px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-pearl, #d4d4d4);
+}
+
+/* Orange, oversized, permanently glowing — the single loudest button on the
+   page. Hover brightens it; the pulse keeps the eye coming back. */
+.btn--apply {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.3rem 3.25rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #0a0a0a;
+  background: var(--color-accent, #FD6500);
+  border: 2px solid var(--color-accent, #FD6500);
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  animation: applyPulse 2.8s ease-in-out infinite;
+  transition: transform var(--transition-smooth),
+              background var(--transition-smooth),
+              box-shadow var(--transition-smooth);
+}
+
+.btn--apply:hover {
+  background: #ff7a26;
+  border-color: #ff7a26;
+  color: #0a0a0a;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow:
+    0 0 40px rgba(253, 101, 0, 0.9),
+    0 0 96px rgba(253, 101, 0, 0.5);
+}
+
+.btn--apply:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+.btn--apply:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 4px;
+}
+
+@keyframes applyPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 22px rgba(253, 101, 0, 0.45),
+      0 0 56px rgba(253, 101, 0, 0.22);
+  }
+  50% {
+    box-shadow:
+      0 0 34px rgba(253, 101, 0, 0.8),
+      0 0 84px rgba(253, 101, 0, 0.42);
+  }
+}
+
+/* Inside the "Ready to Join?" panel the older .membership__join .btn rules
+   would otherwise win on specificity — restate the apply look here. */
+.membership__join .btn--apply {
+  padding: 1.15rem 2.75rem;
+  font-size: 0.9rem;
+  color: #0a0a0a;
+  background: var(--color-accent, #FD6500);
+  border: 2px solid var(--color-accent, #FD6500);
+  border-radius: 999px;
+}
+
+.membership__join .btn--apply:hover {
+  background: #ff7a26;
+  border-color: #ff7a26;
+  color: #0a0a0a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn--apply {
+    animation: none;
+  }
+}
+
+/* ============================================================
    Responsive
    ============================================================ */
 @media (max-width: 768px) {
@@ -647,6 +955,18 @@
     padding: 0.9rem 2rem;
     font-size: 0.75rem;
     letter-spacing: 0.15em;
+  }
+
+  .btn--apply {
+    width: 100%;
+    padding: 1.05rem 1.5rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+  }
+
+  .membership__join .btn--apply {
+    width: 100%;
+    padding: 1rem 1.25rem;
   }
 }
 
@@ -773,6 +1093,114 @@
   background: var(--color-black, #0a0a0a);
   color: #ffffff;
   padding: 0.5rem;
+}
+
+/* ---------- Preferred category — pick-a-card ---------- */
+.apply-modal__fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.apply-modal__legend,
+.apply-modal__label {
+  display: block;
+  margin-bottom: 0.75rem;
+  padding: 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-silver, #9a9a9a);
+}
+
+.apply-modal__categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.75rem;
+}
+
+.apply-modal__category {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 1.1rem;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.apply-modal__category:hover {
+  border-color: rgba(253, 101, 0, 0.55);
+  transform: translateY(-2px);
+}
+
+.apply-modal__category.is-selected {
+  background: rgba(253, 101, 0, 0.12);
+  border-color: var(--color-accent, #FD6500);
+  box-shadow: 0 0 0 3px rgba(253, 101, 0, 0.15);
+}
+
+.apply-modal__category-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* Price is always the green we use for fees across the site. */
+.apply-modal__category-fee {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-secondary-light, #2a9d43);
+}
+
+.apply-modal__category.is-selected .apply-modal__category-fee {
+  color: var(--color-secondary-light, #2a9d43);
+}
+
+/* The offer, repeated at the point of application so it cannot contradict
+   the Membership section the applicant just read. */
+.apply-modal__promo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--color-pearl, #d4d4d4);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-left: 3px solid var(--color-accent, #FD6500);
+}
+
+.apply-modal__promo-flag {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #0a0a0a;
+  background: var(--color-accent, #FD6500);
+  white-space: nowrap;
+}
+
+.apply-modal__field {
+  display: flex;
+  flex-direction: column;
+}
+
+.apply-modal__note {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  text-align: center;
+  color: var(--color-ash, #6b6b6b);
 }
 
 .apply-modal__form textarea {

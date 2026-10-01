@@ -14,8 +14,10 @@ import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import * as staticContent from '../data/content'
 import { heroSlides } from '../data/images'
+import { DEFAULT_THEME_ID, normalizeThemeId } from '../data/themes'
 
 const DEFAULT_CONTENT = {
+  themeId: DEFAULT_THEME_ID,
   studioInfo: staticContent.studioInfo,
 
   about: {
@@ -63,6 +65,16 @@ const DEFAULT_CONTENT = {
 
     eligibility:
       'Membership is open to individuals and organisations connected with, practising, supporting, or contributing to animation and related digital creative arts in East Africa, including Uganda, Kenya, Tanzania, Rwanda and Burundi.',
+
+    // Time-limited fee waiver. Ships DISABLED so nothing changes on the live
+    // site until the secretariat switches it on in Content Dashboard →
+    // "Membership" and presses Publish. The end date is inclusive.
+    feePromo: {
+      enabled: false,
+      label: 'Founding member offer',
+      note: 'Waived for everyone who joins during our first year as a Guild.',
+      endsOn: '2027-09-30'
+    },
 
     categories: [
       {
@@ -126,7 +138,10 @@ export function useSiteContent() {
 
           // `membership` is pulled out only so it can be deep-merged below;
           // everything else passes straight through from the CMS.
-          const { membership: cmsMembership, ...cmsRest } = data
+          // themeId is normalized so a bad value can never break styling.
+          const { membership: cmsMembership, themeId: cmsThemeId, ...cmsRest } = data
+
+          const themeId = normalizeThemeId(cmsThemeId)
 
           // CMS membership wins where present. Empty category/benefit arrays
           // fall back to the defaults so a half-filled draft can never blank
@@ -142,7 +157,14 @@ export function useSiteContent() {
                 benefits:
                   cmsMembership.benefits?.length > 0
                     ? cmsMembership.benefits
-                    : DEFAULT_CONTENT.membership.benefits
+                    : DEFAULT_CONTENT.membership.benefits,
+                // The promo is merged field by field, so a document published
+                // before the offer existed still resolves to "off" instead of
+                // a half-filled object (e.g. enabled with no end date).
+                feePromo: {
+                  ...DEFAULT_CONTENT.membership.feePromo,
+                  ...(cmsMembership.feePromo || {})
+                }
               }
             : DEFAULT_CONTENT.membership
 
@@ -150,6 +172,9 @@ export function useSiteContent() {
             ...DEFAULT_CONTENT,
             ...prev,
             ...cmsRest,
+
+            // Palette chosen in the dashboard; goes live on publish.
+            themeId,
 
             // Fees, categories and benefits edited in the dashboard go live.
             membership

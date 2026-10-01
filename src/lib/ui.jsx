@@ -1,6 +1,7 @@
 // src/dashboards/ui.jsx
 // Shared building blocks so ContentDashboard, NewsEventsDashboard and
 // LeadershipDashboard don't each reinvent inputs/cards/publish bar.
+import { Link } from 'react-router-dom'
 
 export const inputStyle = {
   width: '100%',
@@ -104,5 +105,53 @@ export function DashboardHeader({ eyebrow, title, children }) {
       </div>
       {children}
     </div>
+  )
+}
+
+// Every dashboard reachable from every other one. The dashboards are bare
+// pages with no nav or footer (AppShell hides both under /admin/), so without
+// this a new dashboard can only be opened by typing its URL.
+export const DASHBOARD_LINKS = [
+  { to: '/admin/content', label: 'Content' },
+  { to: '/admin/news-events', label: 'News & Events' },
+  { to: '/admin/members', label: 'Members' },
+  { to: '/admin/notifications', label: 'Notifications' }
+]
+
+export function DashboardNav({ current }) {
+  return (
+    <nav
+      aria-label="Dashboards"
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 6,
+        padding: '0 28px 16px',
+        borderBottom: '1px solid rgba(255,255,255,0.07)'
+      }}
+    >
+      {DASHBOARD_LINKS.map((link) => {
+        const active = link.to === current
+        return (
+          <Link
+            key={link.to}
+            to={link.to}
+            aria-current={active ? 'page' : undefined}
+            style={{
+              padding: '7px 13px',
+              fontSize: 13,
+              fontWeight: active ? 600 : 400,
+              textDecoration: 'none',
+              color: active ? '#0c0c0e' : '#9a978f',
+              background: active ? '#c9a962' : 'transparent',
+              border: `1px solid ${active ? '#c9a962' : 'rgba(255,255,255,0.12)'}`,
+              borderRadius: 6
+            }}
+          >
+            {link.label}
+          </Link>
+        )
+      })}
+    </nav>
   )
 }

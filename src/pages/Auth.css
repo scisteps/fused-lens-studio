@@ -1,0 +1,391 @@
+/* ============================================================
+   Auth pages — Login + Sign Up
+   Dark canvas matching .section--dark, sharp edges, tokens from
+   styles/index.css. Shared by pages/Login.jsx and pages/SignUp.jsx.
+   ============================================================ */
+
+.auth {
+  position: relative;
+  z-index: 1;                     /* paints above the fixed BlurredBackdrop */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 9rem 1.5rem 6rem;      /* clears the fixed nav */
+  /* No background of its own — <BlurredBackdrop> supplies the blurred photo
+     slideshow (and its own black base) behind this section. */
+  color: var(--color-white, #ffffff);
+}
+
+/* Keep every direct child (the card, the loading line) above the fixed
+   backdrop, but leave the backdrop itself alone. Same guard the News & Events
+   and Executive Committee pages use. */
+.auth > *:not(.blurred-backdrop) {
+  position: relative;
+  z-index: 1;
+}
+
+.auth__card {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  padding: 2.75rem 2.5rem;
+  /* Deliberately translucent so the blurred photos glow through, with a
+     backdrop blur of its own to keep the form text comfortably legible. */
+  background: rgba(14, 14, 14, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.auth__card--wide {
+  max-width: 720px;
+}
+
+/* ---------- Header ---------- */
+
+.auth__eyebrow {
+  display: block;
+  margin-bottom: 0.85rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-accent, #a1a1a1);
+}
+
+.auth__title {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.auth__subtitle {
+  margin: 0 0 2rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--color-silver, #9a9a9a);
+}
+
+/* ---------- Form ---------- */
+
+.auth__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.auth__row {
+  display: grid;
+  gap: 1.1rem;
+}
+
+@media (min-width: 640px) {
+  .auth__row--two {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.auth__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.auth__label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-silver, #9a9a9a);
+}
+
+.auth__field input,
+.auth__field select {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0;
+  color: var(--color-white, #ffffff);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+  appearance: none;
+}
+
+.auth__field input::placeholder {
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.auth__field input:focus,
+.auth__field select:focus {
+  outline: none;
+  border-color: var(--color-accent, #a1a1a1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.auth__field input[aria-invalid='true'],
+.auth__field select[aria-invalid='true'] {
+  border-color: var(--color-error, #FD6500);
+}
+
+.auth__field select option {
+  background: var(--color-charcoal, #141414);
+  color: var(--color-white, #ffffff);
+}
+
+/* ---------- Grouped sections ----------
+   The sign-up form is split into labelled blocks (Personal details, Digital
+   details, then whichever field the category calls for). A <fieldset> is used
+   so the grouping is exposed to assistive tech, not just painted on. */
+
+.auth__group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin: 0;
+  padding: 0.35rem 1.25rem 1.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.022);
+  /* Fieldsets default to min-content, which would let a long legend or a wide
+     tile grid push the block past the card. min-width:0 lets the children
+     actually shrink. */
+  min-width: 0;
+}
+
+.auth__group-title {
+  padding: 0 0.55rem;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-accent, #a1a1a1);
+}
+
+/* The block the category picks for you — accent-tinted so it reads as a
+   direct answer to the select above it. */
+.auth__group--conditional {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* ---------- Phone: dialling code + national number ---------- */
+
+.auth__phone {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: 0.5rem;
+}
+
+.auth__phone-code {
+  /* The flag + code + country name is long; keep it on one line rather than
+     letting it wrap into an unreadable three-line box. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 480px) {
+  .auth__phone {
+    grid-template-columns: 1fr;
+  }
+}
+
+.auth__hint {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--color-ash, #6b6b6b);
+}
+
+.auth__error-text {
+  font-size: 0.75rem;
+  color: var(--color-error, #FD6500);
+}
+
+/* ---------- Student checker ---------- */
+
+.auth__check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+.auth__check input {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+  accent-color: var(--color-orange, #FD6500);
+  cursor: pointer;
+}
+
+.auth__check-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.auth__check-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.auth__check-sub {
+  font-size: 0.75rem;
+  color: var(--color-ash, #6b6b6b);
+}
+
+/* ---------- Alerts ---------- */
+
+.auth__alert {
+  padding: 0.85rem 1rem;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  border-left: 3px solid;
+}
+
+.auth__alert--error {
+  background: rgba(253, 101, 0, 0.08);
+  border-color: var(--color-error, #FD6500);
+  color: #ffb98a;
+}
+
+.auth__alert--success {
+  background: rgba(12, 121, 35, 0.12);
+  border-color: var(--color-success, #0C7923);
+  color: #9fe0b0;
+}
+
+.auth__alert--info {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--color-pearl, #d4d4d4);
+}
+
+/* ---------- Actions ---------- */
+
+.auth__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.auth__submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 1.05rem 1.5rem;
+  background: var(--color-white, #ffffff);
+  color: var(--color-charcoal, #141414);
+  border: 1px solid var(--color-white, #ffffff);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--transition-smooth), color var(--transition-smooth);
+}
+
+.auth__submit:hover:not(:disabled) {
+  background: var(--color-orange, #FD6500);
+  border-color: var(--color-orange, #FD6500);
+  color: var(--color-white, #ffffff);
+}
+
+.auth__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.auth__ghost {
+  align-self: center;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--color-silver, #9a9a9a);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.auth__ghost:hover:not(:disabled) {
+  color: var(--color-white, #ffffff);
+}
+
+/* ---------- Footer link / signed-in panel ---------- */
+
+.auth__switch {
+  margin: 1.75rem 0 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.85rem;
+  color: var(--color-silver, #9a9a9a);
+  text-align: center;
+}
+
+.auth__link {
+  color: var(--color-orange, #FD6500);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth__link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.auth__profile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin: 0 0 1.75rem;
+}
+
+.auth__profile-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 0.85rem;
+}
+
+.auth__profile-row dt {
+  color: var(--color-ash, #6b6b6b);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  font-weight: 600;
+  align-self: center;
+}
+
+.auth__profile-row dd {
+  margin: 0;
+  color: var(--color-white, #ffffff);
+  text-align: right;
+}
+
+@media (max-width: 560px) {
+  .auth {
+    padding: 7rem 1.25rem 4rem;
+  }
+
+  .auth__card {
+    padding: 2rem 1.5rem;
+  }
+}
+

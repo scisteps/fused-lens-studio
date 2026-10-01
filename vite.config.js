@@ -31,7 +31,7 @@ export default defineConfig({
           'vendor-motion': ['framer-motion'],
           'vendor-gsap': ['gsap'],
           'vendor-lottie': ['@lottiefiles/react-lottie-player'],
-          'vendor-firebase': ['firebase/app', 'firebase/firestore', 'firebase/storage']
+          'vendor-firebase': ['firebase/app', 'firebase/firestore', 'firebase/storage', 'firebase/auth']
         }
       }
     }

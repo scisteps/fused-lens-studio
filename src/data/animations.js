@@ -1,7 +1,7 @@
-﻿import animeduc from '../jsons/animeduc2.json';
-import prodevt from '../jsons/prodevt2.json';
-import showcase from '../jsons/showcase.json';
-import collective from '../jsons/collective.json';
+﻿import animeduc from '../jsons/animeduc3.json';
+import prodevt from '../jsons/prodevt3.json';
+import showcase from '../jsons/showcase2.json';
+import collective from '../jsons/collective2.json';
 
 import final from '../jsons/final.json';
 

@@ -15,8 +15,12 @@
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: blur(18px) brightness(0.5);
-  transform: scale(1.15);
+  /* Light camera-lens blur — the photo reads as a scene, faces do not read
+     as people. Strength lives in --lens-* (styles/index.css) so all three
+     blurred backdrops on the site stay in step. */
+  filter: blur(var(--lens-blur, 10px)) brightness(var(--lens-brightness, 0.7))
+    saturate(var(--lens-saturate, 1.05));
+  transform: scale(1.08);
   opacity: 0;
   transition: opacity 1.6s ease;
 }
@@ -25,14 +29,16 @@
   opacity: 1;
 }
 
+/* Light scrim only — just enough to keep white text comfortable over the
+   photos without flattening the picture back to black. */
 .blurred-backdrop__overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(10, 10, 10, 0.8) 0%,
-    rgba(10, 10, 10, 0.9) 55%,
-    rgba(10, 10, 10, 0.95) 100%
+    rgba(10, 10, 10, 0.45) 0%,
+    rgba(10, 10, 10, 0.65) 55%,
+    rgba(10, 10, 10, 0.8) 100%
   );
 }
 
@@ -40,9 +46,9 @@
 .blurred-backdrop--strong .blurred-backdrop__overlay {
   background: linear-gradient(
     180deg,
-    rgba(10, 10, 10, 0.86) 0%,
-    rgba(10, 10, 10, 0.93) 55%,
-    rgba(10, 10, 10, 0.97) 100%
+    rgba(10, 10, 10, 0.6) 0%,
+    rgba(10, 10, 10, 0.78) 55%,
+    rgba(10, 10, 10, 0.9) 100%
   );
 }
 

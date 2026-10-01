@@ -1,16 +1,38 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCollection } from '../lib/useCollection'
 import { heroSlides } from '../data/images'
 import { imageSource, categoryLabel, formatDate, FILTERS } from '../lib/newsFormat'
-import { BlurredBackdrop } from '../components'
+import { BlurredBackdrop, RequireAuth } from '../components'
 import { NewsArticle } from '../components/NewsArticle'
 import './NewsEvents.css'
 
+// The article is addressed by URL — /news-events?article=<id> — so a
+// notification can link straight to a story, and a story can be bookmarked or
+// shared. `openId` is no longer the source of truth; the query string is.
 export function NewsEvents() {
   const { items: newsItems, loading } = useCollection('newsEvents')
   const [filter, setFilter] = useState('all')
-  const [openId, setOpenId] = useState(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  // The article named in the URL, or null for the list view.
+  const requestedId = searchParams.get('article')
+  const openId = requestedId && newsItems.some(item => item.id === requestedId)
+    ? requestedId
+    : null
+
+  const closeArticle = () => {
+    // Drop only ?article, keeping any other query the visitor arrived with.
+    setSearchParams(
+      current => {
+        const next = new URLSearchParams(current)
+        next.delete('article')
+        return next
+      },
+      { replace: true }
+    )
+  }
 
   const filteredItems = useMemo(
     () => (filter === 'all' ? newsItems : newsItems.filter(item => item.category === filter)),
@@ -30,9 +52,16 @@ export function NewsEvents() {
   const nextItem = openIndex >= 0 ? newsItems[openIndex + 1] || null : null
   const prevItem = openIndex > 0 ? newsItems[openIndex - 1] : null
 
-  const goTo = item => {
+  const openStory = (item) => {
     if (!item) return
-    setOpenId(item.id)
+    setSearchParams(
+      current => {
+        const next = new URLSearchParams(current)
+        next.set('article', item.id)
+        return next
+      },
+      { replace: false }
+    )
     window.scrollTo(0, 0)
   }
 
@@ -40,7 +69,7 @@ export function NewsEvents() {
   useEffect(() => {
     if (!openItem) return
     const onKeyDown = event => {
-      if (event.key === 'Escape') setOpenId(null)
+      if (event.key === 'Escape') closeArticle()
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
@@ -63,24 +92,28 @@ export function NewsEvents() {
 
       <AnimatePresence mode="wait">
         {openItem ? (
-          <motion.div
-            key={`article-${openItem.id}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <NewsArticle
-              item={openItem}
-              next={nextItem}
-              prev={prevItem}
-              onNext={() => goTo(nextItem)}
-              onPrev={() => goTo(prevItem)}
-              onBack={() => setOpenId(null)}
-              index={openIndex}
-              total={newsItems.length}
-            />
-          </motion.div>
+          /* The story itself is member content. A signed-out visitor who
+             followed a notification, a shared link or a bookmark lands here and
+             is offered the sign-in screen, then returned to this same URL. */
+          <RequireAuth key={`article-${openItem.id}`}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <NewsArticle
+                item={openItem}
+                next={nextItem}
+                prev={prevItem}
+                onNext={() => openStory(nextItem)}
+                onPrev={() => openStory(prevItem)}
+                onBack={closeArticle}
+                index={openIndex}
+                total={newsItems.length}
+              />
+            </motion.div>
+          </RequireAuth>
         ) : (
           <motion.div
             key="list"
@@ -140,7 +173,7 @@ export function NewsEvents() {
                         <button
                           type="button"
                           className="news-events__card-hit clickable"
-                          onClick={() => goTo(item)}
+                          onClick={() => openStory(item)}
                           aria-label={`Read: ${item.title}`}
                         >
                           <div className="news-events__card-image">

@@ -71,6 +71,16 @@
 }
 
 /* ---------- Nav Links (bold) ---------- */
+/* ---------- Right-hand actions: the bell and the hamburger ---------- */
+/* Kept in one group so justify-content: space-between on the container
+   cannot push the bell and the menu button to opposite edges. */
+.nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
 .nav__links {
   display: none;
   align-items: center;
