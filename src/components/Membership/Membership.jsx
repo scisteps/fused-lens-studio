@@ -189,7 +189,9 @@ export function Membership() {
           </motion.div>
         )}
 
-        {membership.categories?.length > 0 && (
+        {/* Membership categories (tags + fees) are for prospective joiners — a
+            signed-in member already has their category, so skip it. */}
+        {!user && membership.categories?.length > 0 && (
           <motion.div
             className="membership__categories"
             initial={{ opacity: 0, y: 20 }}
