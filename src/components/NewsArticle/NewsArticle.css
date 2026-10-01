@@ -240,7 +240,7 @@
 
 .news-article__next:hover,
 .news-article__next:focus-visible {
-  background: rgba(253, 101, 0, 0.12);
+  background: rgba(var(--color-accent-rgb, 253, 101, 0), 0.12);
   border-left-width: 7px;
 }
 

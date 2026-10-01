@@ -1,10 +1,14 @@
 // components/Membership/CategoryFee.jsx
 //
 // The one place a membership fee is rendered, so a card in the Membership
-// section and a category in the Apply modal can never disagree about whether
-// the fee is waived. While the offer is live a real price is struck through
-// and replaced by FREE; a fee that was never a price ("By invitation") is
-// left exactly as the secretariat wrote it.
+// section, a category in the Apply modal and the new member's welcome screen
+// can never disagree about what is owed.
+//
+// The fee is ALWAYS shown as written. The grace-period offer only changes when
+// it falls due, never the amount, so this component never strikes a price
+// through and never prints the word FREE — see lib/membershipPromo.js. A fee
+// that was never a price ("By invitation") is left exactly as the secretariat
+// wrote it.
 //
 // It lives in its own module because both Membership.jsx and ApplyModal.jsx
 // need it, and those two already import each other.
@@ -22,32 +26,13 @@ export function CategoryFee({ fee, promo, className = '', as: Tag = 'p' }) {
 
   if (display.kind === 'unset') return null
 
-  if (display.kind === 'waived') {
-    return (
-      <Tag
-        className={['membership__category-fee', className]
-          .filter(Boolean)
-          .join(' ')}
-      >
-        <strong>{display.text}</strong>
-      </Tag>
-    )
-  }
-
   return (
     <Tag
-      className={[
-        'membership__category-fee',
-        'membership__category-fee--waived',
-        className
-      ]
+      className={['membership__category-fee', className]
         .filter(Boolean)
         .join(' ')}
     >
-      <del className="membership__category-fee-was">{display.text}</del>
-      <strong className="membership__category-fee-now">
-        {display.freeText}
-      </strong>
+      <strong>{display.text}</strong>
     </Tag>
   )
 }

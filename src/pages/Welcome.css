@@ -1,8 +1,9 @@
 /* ============================================================
-   Welcome — the screen a new member lands on
-   Black page + light lens-blurred photo slideshow, crane Lottie at
-   the top, one loud ask ("Apply for Membership"), then the member
-   benefits carousel underneath it.
+   Welcome — the screen a new member lands on after signing up
+   Black page + light lens-blurred photo slideshow, crane Lottie
+   at the top, the congratulations line naming their category,
+   the fee and when it is due, the member benefits carousel, and
+   two clear buttons out (profile / back to the site).
    ============================================================ */
 
 .welcome {
@@ -77,18 +78,150 @@
   color: var(--color-pearl, #d4d4d4);
 }
 
-/* ---------- The one ask ---------- */
-
-.welcome__apply {
-  margin-bottom: 4.5rem;
+/* The category they picked, called out inside the welcome line. */
+.welcome__category-name {
+  color: var(--color-accent, #FD6500);
+  font-weight: 600;
 }
 
-.welcome__apply-note {
-  margin: 1.25rem auto 0;
-  max-width: 520px;
-  font-size: 0.9rem;
+/* ---------- Fee: what this category costs and when it is due ---------- */
+
+.welcome__fee {
+  margin: 0 auto 4.5rem;
+  max-width: 620px;
+  padding: 2rem 1.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+.welcome__fee-title {
+  margin: 0 0 1rem;
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.welcome__fee-price {
+  margin: 0 0 1rem;
+  font-size: 2.2rem;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.welcome__fee-price strong {
+  color: var(--color-accent, #FD6500);
+}
+
+.welcome__fee-note {
+  margin: 0 0 0.85rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--color-pearl, #d4d4d4);
+}
+
+.welcome__fee-note strong {
+  color: #ffffff;
+}
+
+.welcome__fee-note--muted {
+  color: var(--color-silver, #9a9a9a);
+}
+
+/* ---------- Mobile money details, revealed by "Pay my membership fee" ---------- */
+
+.welcome__payment {
+  margin-top: 1.5rem;
+  padding: 1.5rem 1.25rem;
+  text-align: left;
+  border: 1px solid rgba(var(--color-accent-rgb, 253, 101, 0), 0.35);
+  border-radius: 14px;
+  /* Accent wash follows the active palette rather than staying orange. */
+  background: rgba(var(--color-accent-rgb, 253, 101, 0), 0.08);
+}
+
+.welcome__payment-title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-accent, #FD6500);
+}
+
+.welcome__payment-instruction {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
   line-height: 1.6;
   color: var(--color-pearl, #d4d4d4);
+}
+
+.welcome__payment-instruction strong {
+  color: #ffffff;
+}
+
+.welcome__payment-number-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* The number itself is the point of the panel, so it is the largest thing
+   here and is a tel: link — one tap dials it. */
+.welcome__payment-number {
+  font-family: var(--font-body);
+  font-size: clamp(1.35rem, 4vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.welcome__payment-number:hover {
+  color: var(--color-accent-light, #FD6500);
+}
+
+.welcome__payment-copy {
+  flex-shrink: 0;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-on-accent, #0a0a0a);
+  background: var(--color-accent, #FD6500);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: filter var(--transition-fast, 0.2s ease);
+}
+
+.welcome__payment-copy:hover {
+  filter: brightness(1.08);
+}
+
+.welcome__payment-caption {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-pearl, #d4d4d4);
+}
+
+.welcome__payment-note {
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--color-silver, #9a9a9a);
+}
+
+.welcome__payment-link {
+  color: var(--color-accent, #FD6500);
 }
 
 /* ---------- Benefits carousel ---------- */
@@ -105,22 +238,69 @@
   color: #ffffff;
 }
 
-/* ---------- Footer links ---------- */
+/* ---------- The two ways out of this screen ---------- */
+/* Real cards rather than faint text links: after signing up a new member
+   should not have to hunt for "where do I go next". */
 
-.welcome__links {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--color-silver, #9a9a9a);
+.welcome__actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 0.5rem;
 }
 
-.welcome__link {
-  color: var(--color-silver, #9a9a9a);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.welcome__action {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  text-align: left;
+  text-decoration: none;
+  transition: transform var(--transition-smooth, 0.3s ease),
+              border-color var(--transition-smooth, 0.3s ease),
+              background var(--transition-smooth, 0.3s ease);
 }
 
-.welcome__link:hover {
+.welcome__action:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.welcome__action-label {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 600;
   color: #ffffff;
+}
+
+.welcome__action-hint {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--color-silver, #9a9a9a);
+}
+
+/* The main way forward — the accent fill marks it as the primary action. */
+.welcome__action--primary {
+  border-color: transparent;
+  background: var(--color-accent, #FD6500);
+}
+
+.welcome__action--primary:hover {
+  border-color: transparent;
+  background: var(--color-accent, #FD6500);
+  filter: brightness(1.08);
+}
+
+.welcome__action--primary .welcome__action-label {
+  color: #ffffff;
+}
+
+.welcome__action--primary .welcome__action-hint {
+  color: rgba(255, 255, 255, 0.85);
 }
 
 @media (max-width: 560px) {
@@ -133,7 +313,12 @@
     height: min(220px, 70vw);
   }
 
-  .welcome__apply {
+  .welcome__fee {
     margin-bottom: 3.5rem;
+    padding: 1.5rem 1.25rem;
+  }
+
+  .welcome__fee-price {
+    font-size: 1.8rem;
   }
 }

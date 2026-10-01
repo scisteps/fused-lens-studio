@@ -65,6 +65,18 @@ export function About() {
 
 We provide training, mentorship, collaboration opportunities, and industry connections that help animators turn their passion into sustainable careers. From short films to series, from concept to screen — we support every stage of the animation journey.`
 
+  // The lead is the FIRST paragraph of the story, not a separate block above it.
+  // Collapsed shows exactly this one paragraph; "Read More" reveals the rest of
+  // the story underneath it, so nothing is clipped mid-sentence by a max-height.
+  const leadText =
+    about?.content ||
+    `At ${studioInfo?.name || 'Animation Guild Uganda'}, we believe every animator should tell a story that resonates deeply with those who view it.`
+
+  const paragraphs = [leadText, ...storyText.split('\n\n')]
+    .map((para) => String(para).trim())
+    .filter(Boolean)
+  const hasMoreToRead = paragraphs.length > 1
+
   return (
     <section id="about" className="about section" ref={sectionRef}>
       <div className="container">
@@ -118,38 +130,40 @@ We provide training, mentorship, collaboration opportunities, and industry conne
               {about?.title || 'We are the Animation Guild Uganda'}
             </motion.h2>
 
-            <motion.p className="about__lead" variants={itemVariants}>
-              {about?.content ||
-                `At ${studioInfo?.name || 'Animation Guild Uganda'}, we believe every animator should tell a story that resonates deeply with those who view it.`}
-            </motion.p>
-
-            {/* Capped story text with Read More toggle */}
-            <motion.div variants={itemVariants}>
-              <div
-                className={`about__story ${isExpanded ? 'about__story--expanded' : ''}`}
-              >
-                {storyText.split('\n\n').map((para, i) => (
-                  <p key={i} className="about__text">
-                    {para}
-                  </p>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                className="about__readmore"
-                onClick={() => setIsExpanded((v) => !v)}
-                aria-expanded={isExpanded}
-              >
-                <span>{isExpanded ? 'Read Less' : 'Read More'}</span>
-                <span
-                  className={`about__readmore-icon ${isExpanded ? 'is-open' : ''}`}
-                  aria-hidden="true"
+            {/* The whole story lives in one collapsible block. Collapsed, it
+                renders the lead paragraph only; expanded, it renders every
+                paragraph. The button appears only when there is more to read. */}
+            {hasMoreToRead && (
+              <motion.div variants={itemVariants}>
+                <div
+                  className={`about__story ${isExpanded ? 'about__story--expanded' : ''}`}
                 >
-                  ▾
-                </span>
-              </button>
-            </motion.div>
+                  {(isExpanded ? paragraphs : [paragraphs[0]]).map((para, i) => (
+                    <p
+                      key={i}
+                      className={i === 0 ? 'about__text about__text--lead' : 'about__text'}
+                    >
+                      {para}
+                    </p>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  className="about__readmore"
+                  onClick={() => setIsExpanded((v) => !v)}
+                  aria-expanded={isExpanded}
+                >
+                  <span>{isExpanded ? 'Read Less' : 'Read More'}</span>
+                  <span
+                    className={`about__readmore-icon ${isExpanded ? 'is-open' : ''}`}
+                    aria-hidden="true"
+                  >
+                    ▾
+                  </span>
+                </button>
+              </motion.div>
+            )}
 
             {/* Animated Stats — each one gets its own color */}
             <motion.div className="about__stats" variants={itemVariants}>

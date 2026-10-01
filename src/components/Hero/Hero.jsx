@@ -44,7 +44,6 @@ export function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
-  const heroRef = useRef(null)
   const imageRefs = useRef([])
 
   // GSAP-controlled intro reveal refs
@@ -84,17 +83,17 @@ export function Hero() {
     return () => clearInterval(interval)
   }, [slides.length])
 
-  // Parallax scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      if (heroRef.current) {
-        const scrollY = window.scrollY
-        heroRef.current.style.transform = `translateY(${scrollY * 0.4}px)`
-      }
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  // NOTE: the hero deliberately applies NO scroll transform.
+  //
+  // It used to parallax the whole <section> with
+  // `translateY(scrollY * 0.4)`, which dragged the Login / Sign Up buttons off
+  // screen as soon as the visitor scrolled. Pinning them with
+  // `position: fixed` does NOT fix that on its own: a transformed ancestor
+  // becomes the containing block for fixed-position descendants, so the row
+  // would have stayed glued to the section and kept drifting. Removing the
+  // transform is what actually lets .hero__actions--fixed hold its place.
+  // (The member profile below already relies on this — it lives outside the
+  // section for the same reason.)
 
   // Preload images
   useEffect(() => {
@@ -208,7 +207,7 @@ export function Hero() {
 
   return (
     <>
-      <section id="home" className="hero" ref={heroRef}>
+      <section id="home" className="hero">
       {/* Background Slides */}
       <div className="hero__slides" ref={slidesWrapRef} style={{ opacity: 0 }}>
         <AnimatePresence mode="wait">
@@ -268,91 +267,6 @@ export function Hero() {
               </motion.h2>
             </AnimatePresence>
           </div>
-
-          <div className="hero__actions" ref={actionsRef} style={{ opacity: 0 }}>
-            {/* Signed out — the invitation to join. */}
-            {!authLoading && !user && (
-              <>
-                <motion.a
-                  href="/login"
-                  className="hero__btn hero__btn--primary"
-                  onClick={(event) => {
-                    event.preventDefault()
-                    navigate('/login')
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span>Login</span>
-                </motion.a>
-                <motion.a
-                  href="/signup"
-                  className="hero__btn hero__btn--outline"
-                  onClick={(event) => {
-                    event.preventDefault()
-                    navigate('/signup')
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span>Sign Up</span>
-                </motion.a>
-                <motion.a
-                  href="#contact"
-                  className="hero__btn hero__btn--outline"
-                  onClick={(event) => {
-                    event.preventDefault()
-                    scrollToContact()
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Get in Touch
-                </motion.a>
-              </>
-            )}
-
-            {/* Signed in — their membership category (opens the profile) plus
-                the two doors they actually need: Contact and News. */}
-            {!authLoading && user && (
-              <>
-                <motion.button
-                  type="button"
-                  className="hero__btn hero__btn--category"
-                  onClick={() => setProfileOpen(true)}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span className="hero__category-dot" aria-hidden="true" />
-                  <span>{categoryLabel(profile?.category) || 'Member'}</span>
-                </motion.button>
-                <motion.a
-                  href="#contact"
-                  className="hero__btn hero__btn--outline"
-                  onClick={(event) => {
-                    event.preventDefault()
-                    scrollToContact()
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Contact Us
-                </motion.a>
-                <motion.a
-                  href="/news-events"
-                  className="hero__btn hero__btn--outline"
-                  onClick={(event) => {
-                    event.preventDefault()
-                    navigate('/news-events')
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  News
-                </motion.a>
-              </>
-            )}
-          </div>
         </div>
 
         {/* Slide Indicators */}
@@ -386,6 +300,98 @@ export function Hero() {
         <div className="hero__corner hero__corner--br" ref={cornerBrRef} style={{ opacity: 0, transform: 'scale(0)' }} />
       </div>
       </section>
+
+      {/* Login / Sign Up — pinned to the viewport so they stay put however far
+          the page is scrolled. This lives OUTSIDE the hero <section> for the
+          same reason the member profile below does: `position: fixed` resolves
+          against the nearest TRANSFORMED ancestor, so a row left inside the
+          hero would stay glued to it and keep drifting off screen. */}
+      <div className="hero__actions-fixed">
+        <div className="hero__actions" ref={actionsRef} style={{ opacity: 0 }}>
+          {/* Signed out — the invitation to join. */}
+          {!authLoading && !user && (
+            <>
+              <motion.a
+                href="/login"
+                className="hero__btn hero__btn--primary"
+                onClick={(event) => {
+                  event.preventDefault()
+                  navigate('/login')
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span>Login</span>
+              </motion.a>
+              <motion.a
+                href="/signup"
+                className="hero__btn hero__btn--outline"
+                onClick={(event) => {
+                  event.preventDefault()
+                  navigate('/signup')
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span>Sign Up</span>
+              </motion.a>
+              <motion.a
+                href="#contact"
+                className="hero__btn hero__btn--outline"
+                onClick={(event) => {
+                  event.preventDefault()
+                  scrollToContact()
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Get in Touch
+              </motion.a>
+            </>
+          )}
+
+          {/* Signed in — their membership category (opens the profile) plus
+              the two doors they actually need: Contact and News. */}
+          {!authLoading && user && (
+            <>
+              <motion.button
+                type="button"
+                className="hero__btn hero__btn--category"
+                onClick={() => setProfileOpen(true)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span className="hero__category-dot" aria-hidden="true" />
+                <span>{categoryLabel(profile?.category) || 'Member'}</span>
+              </motion.button>
+              <motion.a
+                href="#contact"
+                className="hero__btn hero__btn--outline"
+                onClick={(event) => {
+                  event.preventDefault()
+                  scrollToContact()
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Contact Us
+              </motion.a>
+              <motion.a
+                href="/news-events"
+                className="hero__btn hero__btn--outline"
+                onClick={(event) => {
+                  event.preventDefault()
+                  navigate('/news-events')
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                News
+              </motion.a>
+            </>
+          )}
+        </div>
+      </div>
 
       {/* Member profile — lives OUTSIDE the parallax <section> so its
           position: fixed is not trapped by the section's scroll transform. */}

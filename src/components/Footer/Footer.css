@@ -212,12 +212,12 @@
 .footer__particle--orange {
   background: var(--color-accent, #FD6500);
   box-shadow: 0 0 10px var(--color-accent, #FD6500),
-              0 0 20px rgba(253, 101, 0, 0.55);
+              0 0 20px rgba(var(--color-accent-rgb, 253, 101, 0), 0.55);
 }
 .footer__particle--green {
   background: var(--color-secondary, #0C7923);
   box-shadow: 0 0 10px var(--color-secondary, #0C7923),
-              0 0 20px rgba(12, 121, 35, 0.55);
+              0 0 20px rgba(var(--color-secondary-rgb, 12, 121, 35), 0.55);
 }
 
 /* ---------- Each particle gets its own orbit position + timing ---------- */

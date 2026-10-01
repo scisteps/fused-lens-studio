@@ -5,7 +5,7 @@ import { studioInfo } from '../../data/content'
 import logoImage from '../../Images/agublack.png';
 
 
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { NotificationsBell } from '../Notifications'
 import './Navigation.css'
 
@@ -74,6 +74,29 @@ export function Navigation() {
     setIsMobileMenuOpen(false)
   }
 
+  // The logo is a real anchor rather than a router <Link> so clicking it always
+  // lands on a freshly loaded home page: a client-side route change keeps the
+  // app mounted, so the hero never replays and the visitor can be dropped
+  // mid-page. Staying on an <a> also keeps native affordances — ctrl/cmd+click
+  // and middle-click still open a new tab.
+  const handleLogoClick = (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+
+    e.preventDefault()
+    setIsMobileMenuOpen(false)
+    window.scrollTo(0, 0)
+
+    // Already home: assigning the identical URL is swallowed by some browsers,
+    // so force the reload. From anywhere else a plain assign loads '/' fresh
+    // and drops any stale hash along the way.
+    if (location.pathname === '/' && !location.hash) {
+      window.location.reload()
+      return
+    }
+
+    window.location.assign('/')
+  }
+
   // Section links must work from /news-events and /members too, where there is
   // no #about/#services element to scroll to — send those visitors home first.
   // News is a real page, so just navigate there.
@@ -117,13 +140,18 @@ export function Navigation() {
         transition={{ duration: 0.8,delay:2.7, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="nav__container">
-          <Link to="/" className="nav__logo clickable">
+          <a
+            href="/"
+            className="nav__logo clickable"
+            onClick={handleLogoClick}
+            aria-label={`${studioInfo.name} — back to home`}
+          >
             <img 
               src={logoImage} // Use the imported logo image
               alt={studioInfo.name}
               className="nav__logo-image"
             />
-          </Link>
+          </a>
 
           <nav className="nav__links">
             {navLinks.map((link, index) => (

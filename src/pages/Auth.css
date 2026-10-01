@@ -313,13 +313,16 @@
 }
 
 .auth__alert--error {
-  background: rgba(253, 101, 0, 0.08);
+  background: rgba(var(--color-error-rgb, 253, 101, 0), 0.08);
   border-color: var(--color-error, #FD6500);
-  color: #ffb98a;
+  /* Lift the error ink toward white so it stays readable whatever hue the
+     active theme gives --color-error (a literal peach went invisible on
+     the blue/grey palettes). */
+  color: color-mix(in srgb, var(--color-error, #FD6500) 30%, #ffffff);
 }
 
 .auth__alert--success {
-  background: rgba(12, 121, 35, 0.12);
+  background: rgba(var(--color-secondary-rgb, 12, 121, 35), 0.12);
   border-color: var(--color-success, #0C7923);
   color: #9fe0b0;
 }

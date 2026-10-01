@@ -8,6 +8,14 @@
   email: 'animationguilduganda@gmail.com',
   phone: '+256 702624936',
   whatsapp: '+256702624936',
+  // Where members send the membership fee by mobile money. `number` is what
+  // the Welcome screen shows and offers to copy, so keep it in a dialable
+  // shape (+ country code, no spaces) and let the UI format it for display.
+  mobileMoney: {
+    number: '+256702624936',
+    provider: 'MTN MoMo',
+    name: 'Animation Guild Uganda'
+  },
   social: {
     instagram: 'https://www.instagram.com/animationguilduganda',
     facebook: 'https://www.facebook.com/share/1FQfwwTgLd/',

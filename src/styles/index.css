@@ -42,17 +42,21 @@ html, body {
   /* Functional colors */
   --color-success: #0C7923;
   --color-error: #FD6500;
+  /* RGB twin of --color-error, for translucent error tints. */
+  --color-error-rgb: 253, 101, 0;
 
   /* Semantic aliases */
   --color-orange: #FD6500;
   --color-green: #0C7923;
 
-  /* Signature gradient — orange → green */
+  /* Signature gradient — orange → green.
+     Built from the -rgb triplets so the soft wash follows the active theme
+     instead of staying pinned to the default orange/green. */
   --gradient-accent: linear-gradient(90deg, #FD6500 0%, #0C7923 100%);
   --gradient-accent-soft: linear-gradient(
     90deg,
-    rgba(253, 101, 0, 0.15) 0%,
-    rgba(12, 121, 35, 0.15) 100%
+    rgba(var(--color-accent-rgb, 253, 101, 0), 0.15) 0%,
+    rgba(var(--color-secondary-rgb, 12, 121, 35), 0.15) 100%
   );
 
   /* ============================================================
@@ -94,8 +98,10 @@ html, body {
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.12);
-  --shadow-glow: 0 0 40px rgba(253, 101, 0, 0.2);
-  --shadow-glow-green: 0 0 40px rgba(12, 121, 35, 0.18);
+  /* Glows are built from the -rgb triplets, so a theme swap recolours every
+     shadow that uses them. Themes may still override these two. */
+  --shadow-glow: 0 0 40px rgba(var(--color-accent-rgb, 253, 101, 0), 0.2);
+  --shadow-glow-green: 0 0 40px rgba(var(--color-secondary-rgb, 12, 121, 35), 0.18);
 }
 
 /* Reset & Base */
@@ -348,13 +354,13 @@ button {
 }
 
 .badge--available {
-  background: rgba(12, 121, 35, 0.08);
+  background: rgba(var(--color-secondary-rgb, 12, 121, 35), 0.08);
   color: var(--color-secondary);
   border: 1px solid var(--color-secondary);
 }
 
 .badge--accent {
-  background: rgba(253, 101, 0, 0.08);
+  background: rgba(var(--color-accent-rgb, 253, 101, 0), 0.08);
   color: var(--color-accent);
   border: 1px solid var(--color-accent);
 }
@@ -425,13 +431,19 @@ button {
    lib/useSiteTheme.js) so the CMS chrome stays dark + gold.
 
    --color-accent-rgb / --color-secondary-rgb exist so translucent glows can
-   use color-mix() and follow the active palette automatically.
+   use color-mix() and follow the active palette automatically. They are the
+   ONLY sanctioned way to write a translucent accent/secondary — a literal
+   rgba(253, 101, 0, …) would stay orange through a theme change.
    ============================================================ */
 
-/* Default (guild) RGB helpers — match the :root values above */
+/* Default (guild) RGB helpers — match the :root values above.
+   The -light triplets drive the "brighter" glows and strokes (the Executive
+   Committee halo, hover brightening) so those follow the palette too. */
 :root {
   --color-accent-rgb: 253, 101, 0;
   --color-secondary-rgb: 12, 121, 35;
+  --color-accent-light-rgb: 255, 129, 51;
+  --color-secondary-light-rgb: 42, 157, 67;
 }
 
 /* Mono — black + white shades only */
@@ -446,18 +458,19 @@ button {
   --color-on-secondary: #ffffff;
   --color-success: #6b6b6b;
   --color-error: #e8e8e8;
+  --color-error-rgb: 232, 232, 232;
   --color-orange: #e8e8e8;
   --color-green: #6b6b6b;
   --gradient-accent: linear-gradient(90deg, #ffffff 0%, #6b6b6b 100%);
   --gradient-accent-soft: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.15) 0%,
-    rgba(107, 107, 107, 0.15) 100%
+    rgba(var(--color-accent-rgb, 232, 232, 232), 0.15) 0%,
+    rgba(var(--color-secondary-rgb, 107, 107, 107), 0.15) 100%
   );
   --color-accent-rgb: 232, 232, 232;
   --color-secondary-rgb: 107, 107, 107;
-  --shadow-glow: 0 0 40px rgba(255, 255, 255, 0.2);
-  --shadow-glow-green: 0 0 40px rgba(107, 107, 107, 0.18);
+  --color-accent-light-rgb: 255, 255, 255;
+  --color-secondary-light-rgb: 154, 154, 154;
 }
 
 /* Royal — black + white + royal blue */
@@ -472,18 +485,19 @@ button {
   --color-on-secondary: #ffffff;
   --color-success: #4169e1;
   --color-error: #4169e1;
+  --color-error-rgb: 65, 105, 225;
   --color-orange: #4169e1;
   --color-green: #0a0a0a;
   --gradient-accent: linear-gradient(90deg, #4169e1 0%, #0a0a0a 100%);
   --gradient-accent-soft: linear-gradient(
     90deg,
-    rgba(65, 105, 225, 0.15) 0%,
-    rgba(10, 10, 10, 0.15) 100%
+    rgba(var(--color-accent-rgb, 65, 105, 225), 0.15) 0%,
+    rgba(var(--color-secondary-rgb, 10, 10, 10), 0.15) 100%
   );
   --color-accent-rgb: 65, 105, 225;
   --color-secondary-rgb: 10, 10, 10;
-  --shadow-glow: 0 0 40px rgba(65, 105, 225, 0.2);
-  --shadow-glow-green: 0 0 40px rgba(10, 10, 10, 0.18);
+  --color-accent-light-rgb: 111, 143, 240;
+  --color-secondary-light-rgb: 46, 46, 46;
 }
 
 /* Gold — black + white + gold (matches the admin/CMS chrome) */
@@ -498,18 +512,19 @@ button {
   --color-on-secondary: #ffffff;
   --color-success: #c9a962;
   --color-error: #c9a962;
+  --color-error-rgb: 201, 169, 98;
   --color-orange: #c9a962;
   --color-green: #0a0a0a;
   --gradient-accent: linear-gradient(90deg, #c9a962 0%, #0a0a0a 100%);
   --gradient-accent-soft: linear-gradient(
     90deg,
-    rgba(201, 169, 98, 0.15) 0%,
-    rgba(10, 10, 10, 0.15) 100%
+    rgba(var(--color-accent-rgb, 201, 169, 98), 0.15) 0%,
+    rgba(var(--color-secondary-rgb, 10, 10, 10), 0.15) 100%
   );
   --color-accent-rgb: 201, 169, 98;
   --color-secondary-rgb: 10, 10, 10;
-  --shadow-glow: 0 0 40px rgba(201, 169, 98, 0.2);
-  --shadow-glow-green: 0 0 40px rgba(10, 10, 10, 0.18);
+  --color-accent-light-rgb: 227, 201, 138;
+  --color-secondary-light-rgb: 46, 46, 46;
 }
 
 /* Mobile adjustments */

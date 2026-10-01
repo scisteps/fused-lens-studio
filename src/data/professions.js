@@ -19,14 +19,14 @@
 export const OTHER_PROFESSION_LABEL = 'Other'
 
 export const PROFESSION_CATEGORIES = [
-  { id: 'animator-2d', label: '2D Animator' },
-  { id: 'animator-3d', label: '3D Animator' },
-  { id: 'motion-designer', label: 'Motion Designer' },
+  { id: 'animator-2d', label: '2D Animation' },
+  { id: 'animator-3d', label: '3D Animation' },
+  { id: 'motion-designer', label: 'Motion Design' },
   { id: 'illustrator', label: 'Illustrator' },
   { id: 'storyboard-artist', label: 'Storyboard Artist' },
-  { id: 'character-designer', label: 'Character Designer' },
-  { id: 'vfx-artist', label: 'VFX Artist' },
-  { id: 'game-artist', label: 'Game Artist' },
+  { id: 'character-designer', label: 'Character Design' },
+  { id: 'vfx-artist', label: 'VFX' },
+  { id: 'game-artist', label: 'Game Development' },
   { id: 'producer', label: 'Producer' },
   { id: 'educator', label: 'Educator' },
   { id: 'student', label: 'Student' },

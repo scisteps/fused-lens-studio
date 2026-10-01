@@ -141,39 +141,22 @@
   margin: -0.5rem 0 var(--space-lg);
 }
 
-.about__lead {
+/* ============================================================
+   Story text — the lead paragraph shows first, Read More reveals
+   the whole story underneath it
+   ============================================================ */
+.about__story {
+  position: relative;
+}
+
+/* Collapsed, only the lead paragraph is rendered, so there is nothing to
+   clip and no fade to fake — no max-height, no mid-sentence truncation. */
+.about__text--lead {
   font-size: 1.2rem;
   color: var(--color-charcoal);
   font-weight: 400;
   line-height: 1.6;
-  margin-bottom: var(--space-lg);
-}
-
-/* ============================================================
-   Story text — collapsed by default, expands on Read More
-   ============================================================ */
-.about__story {
-  position: relative;
-  max-height: 7rem;
-  overflow: hidden;
-  transition: max-height 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.about__story--expanded {
-  max-height: 60rem;
-}
-
-.about__story:not(.about__story--expanded)::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 3.5rem;
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    var(--color-white) 90%
-  );
-  pointer-events: none;
+  margin-bottom: var(--space-md);
 }
 
 .about__text {
@@ -214,8 +197,11 @@
 
 .about__readmore:hover {
   background: var(--color-accent);
-  color: var(--color-white);
-  box-shadow: 0 0 20px rgba(253, 101, 0, 0.4);
+  /* Ink for the accent fill — black on the default orange, white on royal's
+     dark blue. */
+  color: var(--color-on-accent, #0a0a0a);
+  /* Glow follows the active palette instead of staying orange. */
+  box-shadow: 0 0 20px rgba(var(--color-accent-rgb, 253, 101, 0), 0.4);
   transform: translateY(-1px);
 }
 

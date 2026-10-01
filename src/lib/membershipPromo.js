@@ -1,16 +1,22 @@
 // src/lib/membershipPromo.js
 //
-// A time-limited fee waiver for the membership categories — "join free while
-// the offer lasts". The Guild wants the fee itself to carry the message, so
-// every place a fee is rendered (the Membership section on the home page and
-// the category picker in the Apply modal) reads its state from here rather
-// than deciding for itself.
+// A time-limited grace period on the membership fee — "join now, pay within
+// the first year". The Guild wants the fee itself to carry the message, so
+// every place a fee is rendered (the Membership section on the home page,
+// the category picker in the Apply modal, and the new member's welcome
+// screen) reads its state from here rather than deciding for itself.
+//
+// IMPORTANT: the offer NEVER cancels or reduces a fee. It only buys the
+// member TIME to pay. describeFee() therefore always returns the real
+// price; the offer is reported separately as `gracePeriod` so no screen can
+// print a struck-through amount, the word FREE, or "costs nothing" — the
+// money is still owed, just not today.
 //
 // The offer is configuration, not code: the Content Dashboard writes
 // `membership.feePromo` and the secretariat can switch it on, retitle it, or
 // move the end date without a deploy. When the date passes the offer turns
 // itself off — there is nothing to switch off by hand, and no fee can be left
-// advertised as free after the window closes.
+// advertised as payable-later after the window closes.
 //
 // Shape stored on the content document:
 //
@@ -18,7 +24,7 @@
 //     feePromo: {
 //       enabled: false,          // master switch
 //       label:  'Founding member offer',
-//       note:   'Waived for everyone who joins during our first year.',
+//       note:   'Join now and pay your membership fee within your first year.',
 //       endsOn: '2027-09-30'      // ISO date, INCLUSIVE — active through 23:59 that day
 //     }
 //   }
@@ -66,7 +72,7 @@ export function promoEndDate(endsOn) {
 /**
  * Decide whether the offer is live right now, and work out the countdown.
  * Every consumer calls this, so a category card, the banner and the apply
- * modal can never disagree about whether the fee is waived.
+ * modal can never disagree about whether the grace period is running.
  */
 export function resolvePromo(promo, now = new Date()) {
   const endsOn = promoEndDate(promo?.endsOn)
@@ -104,32 +110,31 @@ export function resolvePromo(promo, now = new Date()) {
 /**
  * How a single category's fee should read, given the offer.
  *
- *   { kind: 'waived', text, freeText } — price struck through, shown as free
- *   { kind: 'priced', text }           — an ordinary price
- *   { kind: 'plain',  text }           — wording, not money ("By invitation").
- *                                       Shown verbatim; the offer never
- *                                       claims to waive something that was
- *                                       never a price.
- *   { kind: 'unset',  text }           — nothing written, so render nothing
+ *   { kind: 'priced', text, gracePeriod } — a real amount. `gracePeriod` is
+ *                                        true while the offer is live, and
+ *                                        only ever means "you may pay later".
+ *   { kind: 'plain',  text }              — wording, not money ("By invitation").
+ *                                          Shown verbatim.
+ *   { kind: 'unset',  text }              — nothing written, so render nothing
+ *
+ * There is deliberately no "waived"/"free" kind. The fee is always the fee;
+ * the offer changes the DEADLINE, never the amount. Callers that want to
+ * mention the offer read `gracePeriod` and word it as a grace period.
  */
 export function describeFee(fee, promo) {
   const text = String(fee || '').trim()
 
   // No fee written at all — the card simply has no price line.
   if (!text) {
-    return { kind: 'unset', text: '', isFree: false, freeText: '' }
+    return { kind: 'unset', text: '', gracePeriod: false }
   }
 
   // A fee that was never money must still be shown, exactly as written.
   if (!isPricedFee(text)) {
-    return { kind: 'plain', text, isFree: false, freeText: '' }
+    return { kind: 'plain', text, gracePeriod: false }
   }
 
-  if (!promo?.active) {
-    return { kind: 'priced', text, isFree: false, freeText: '' }
-  }
-
-  return { kind: 'waived', text, isFree: true, freeText: 'FREE' }
+  return { kind: 'priced', text, gracePeriod: Boolean(promo?.active) }
 }
 
 /** "Ends today" / "Ends tomorrow" / "Ends in 42 days". Empty when not active. */
@@ -154,7 +159,7 @@ export function promoEndLabel(promo) {
  * Re-checks the offer on a timer.
  *
  * Without this, a page left open across the closing moment would keep
- * advertising a free join that is no longer free. Once a minute is far more
+ * advertising a grace period that has ended. Once a minute is far more
  * often than anyone can notice and costs nothing.
  */
 export function usePromo(promo) {

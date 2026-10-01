@@ -24,7 +24,10 @@
   padding: 2rem 2rem 2rem 2.25rem;
   border-radius: 0;         /* sharp edges, in step with the benefits grid */
   border: none;
-  color: #0a0a0a;
+  /* Falls back to black ink on the default white fill; each variant below
+     overrides --card-ink for its own surface. */
+  --card-ink: #0a0a0a;
+  color: var(--card-ink);
 }
 
 .benefits-carousel__number {
@@ -34,7 +37,7 @@
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.02em;
-  color: inherit;        /* follows the slide's ink token */
+  color: var(--card-ink);   /* follows the slide's own ink */
   opacity: 0.9;
 }
 
@@ -43,31 +46,32 @@
   font-family: var(--font-body);
   font-size: 1.15rem;
   line-height: 1.6;
-  color: inherit;        /* follows the slide's ink token */
+  color: var(--card-ink);   /* follows the slide's own ink */
 }
 
 .benefits-carousel__text strong {
   font-weight: 700;
-  color: inherit;
+  color: var(--card-ink);
 }
 
 /* ---------- Card fills (cycle white → orange → green) ----------
    Each fill names the ink that reads on it, so a theme whose accent or
    secondary is dark (royal / gold make secondary black) can never end up
-   with black text on a black card. */
+   with black text on a black card. Light fill → black ink, dark fill →
+   white ink. */
 .benefits-carousel__slide--white {
   background: #ffffff;
-  color: #0a0a0a;
+  --card-ink: #0a0a0a;
 }
 
 .benefits-carousel__slide--orange {
   background: var(--color-accent, #FD6500);
-  color: var(--color-on-accent, #0a0a0a);
+  --card-ink: var(--color-on-accent, #0a0a0a);
 }
 
 .benefits-carousel__slide--green {
   background: var(--color-secondary, #0C7923);
-  color: var(--color-on-secondary, #ffffff);
+  --card-ink: var(--color-on-secondary, #ffffff);
 }
 
 /* ---------- Timer ---------- */
@@ -124,7 +128,9 @@
 .benefits-carousel__arrow:hover {
   background: var(--color-accent, #FD6500);
   border-color: var(--color-accent, #FD6500);
-  color: #0a0a0a;
+  /* Ink for the accent fill — black on the default orange, white on royal's
+     dark blue. A literal here would sink into a dark palette. */
+  color: var(--color-on-accent, #0a0a0a);
 }
 
 .benefits-carousel__arrow:focus-visible {

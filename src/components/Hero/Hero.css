@@ -125,6 +125,30 @@
   gap: var(--space-md);
 }
 
+/* ---------- Fixed Login / Sign Up row ----------
+   Pinned to the bottom-left of the viewport so the two doors into the Guild
+   are reachable from anywhere on the page. The offsets mirror where the row
+   used to sit inside the hero (its container padding on the left, 15vh up
+   from the bottom), so the buttons do not visibly jump when this took over
+   from the in-flow layout. */
+.hero__actions-fixed {
+  position: fixed;
+  left: var(--container-padding);
+  bottom: 15vh;
+  /* Above page content, below the fixed header (z-index 1000) and the
+     profile overlay, so the nav and dialogs still win. */
+  z-index: 900;
+  max-width: calc(100vw - var(--container-padding) * 2);
+}
+
+/* Below the header so the row never sits under it, and clear of the safe area
+   on notched phones. */
+@media (max-width: 768px) {
+  .hero__actions-fixed {
+    bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+  }
+}
+
 .hero__btn {
   display: inline-flex;
   align-items: center;
@@ -171,15 +195,21 @@
   z-index: 1;
 }
 
+/* The row is pinned over the whole page now, so it passes over light sections
+   too. A translucent dark plate behind the buttons keeps white text and the
+   white border readable whatever is behind them — without it, "Sign Up" and
+   "Get in Touch" would disappear over the white About/Services sections. */
 .hero__btn--outline {
-  background: transparent;
+  background: rgba(10, 10, 10, 0.55);
   color: var(--color-white);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .hero__btn--outline:hover {
   border-color: var(--color-white);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(10, 10, 10, 0.75);
 }
 
 /* ---------- Signed-in actions ----------

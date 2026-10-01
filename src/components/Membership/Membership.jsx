@@ -75,8 +75,8 @@ export function Membership() {
   const membership = content.membership || {}
   const benefits = membership.benefits || []
 
-  // The free-join offer. Re-checked every minute so a page left open past the
-  // closing date stops advertising a free join on its own.
+  // The grace-period offer. Re-checked every minute so a page left open past
+  // the closing date stops advertising a grace period on its own.
   const promo = usePromo(membership.feePromo)
 
   const mappedIndices = BENEFIT_GROUPS.flatMap(g => g.indices)
@@ -201,16 +201,17 @@ export function Membership() {
           >
             <h3 className="membership__categories-title">Membership Categories</h3>
 
-            {/* ── The free-join offer ─────────────────────────────────────
+            {/* ── The grace-period offer ───────────────────────────────
                 Rendered only while the offer is genuinely live, so the page
-                never shows a stale "FREE" after the window has closed. */}
+                never shows a stale grace period after the window has closed.
+                The fee itself is unchanged and still shown on every card. */}
             {promo.active && (
               <div
                 className="membership__promo"
                 role="status"
                 aria-live="polite"
               >
-                <span className="membership__promo-flag">FREE JOIN</span>
+                <span className="membership__promo-flag">PAY LATER</span>
                 <div className="membership__promo-body">
                   <strong className="membership__promo-title">
                     {promo.label}

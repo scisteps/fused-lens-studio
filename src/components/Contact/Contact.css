@@ -387,7 +387,7 @@
 }
 
 .form-status--success {
-  background: rgba(12, 121, 35, 0.1);     /* green tint */
+  background: rgba(var(--color-secondary-rgb, 12, 121, 35), 0.1);     /* green tint */
   color: var(--color-success);            /* green */
 }
 

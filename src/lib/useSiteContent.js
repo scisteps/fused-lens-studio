@@ -72,7 +72,7 @@ const DEFAULT_CONTENT = {
     feePromo: {
       enabled: false,
       label: 'Founding member offer',
-      note: 'Waived for everyone who joins during our first year as a Guild.',
+      note: 'Join now and pay your membership fee within your first year.',
       endsOn: '2027-09-30'
     },
 

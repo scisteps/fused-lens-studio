@@ -20,7 +20,7 @@
   inset: 0;
   background-size: cover;
   background-position: center;
-  /* Light camera-lens blur — keep in step with --lens-* in styles/index.css */
+  /* Light camera-lens blur â€” keep in step with --lens-* in styles/index.css */
   filter: blur(var(--lens-blur, 10px)) brightness(var(--lens-brightness, 0.7))
     saturate(var(--lens-saturate, 1.05));
   transform: scale(1.08);
@@ -71,13 +71,13 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-accent, #FD6500);
-  border: 1px solid rgba(253, 101, 0, 0.4);
+  border: 1px solid rgba(var(--color-accent-rgb, 253, 101, 0), 0.4);
   border-radius: 50px;
-  background: rgba(253, 101, 0, 0.08);
+  background: rgba(var(--color-accent-rgb, 253, 101, 0), 0.08);
 }
 
 /* ============================================================
-   WHO CAN JOIN — white card
+   WHO CAN JOIN â€” white card
    ============================================================ */
 .membership .membership__join--light {
   background: #ffffff !important;
@@ -153,7 +153,8 @@
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.16em;
-  color: #0a0a0a;
+  /* Ink for the accent fill - black on the default orange, white on royal. */
+  color: var(--color-on-accent, #0a0a0a);
   background: var(--color-accent, #FD6500);
   white-space: nowrap;
 }
@@ -196,32 +197,10 @@
   }
 }
 
-/* ---------- A waived fee: old price struck through, new price beside it ----- */
-
-.membership__category-fee--waived {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.55rem;
-}
-
-.membership__category-fee-was {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.45);
-  text-decoration-thickness: 1.5px;
-}
-
-.membership__category-fee-now {
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--color-secondary, #0C7923);
-}
-
 /* ============================================================
-   FREE-JOIN OFFER — the time-limited fee waiver.
+   GRACE-PERIOD OFFER — join now, pay within the first year.
    Only rendered while the offer is live (see lib/membershipPromo.js).
+   The fee on each category is unchanged; nothing is struck through.
    ============================================================ */
 
 .membership__promo {
@@ -245,7 +224,8 @@
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.16em;
-  color: #0a0a0a;
+  /* Ink for the accent fill - black on the default orange, white on royal. */
+  color: var(--color-on-accent, #0a0a0a);
   background: var(--color-accent, #FD6500);
   white-space: nowrap;
 }
@@ -390,44 +370,6 @@
   font-weight: 700;
 }
 
-/* ---------- A waived fee: old price struck through, FREE beside it ---------
-   Declared AFTER the base fee block on purpose: that block paints every fee
-   with !important, so these rules must repeat it to take effect. */
-
-.membership__category-fee--waived {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.55rem;
-  margin: var(--space-md) 0 var(--space-sm);
-}
-
-/* The old price — dimmed and struck through. */
-.membership__category-fee-was {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.5) !important;
-  text-decoration-thickness: 1.5px;
-}
-
-/* The new price — the same green the site uses for fees everywhere. */
-.membership__category-fee-now {
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--color-secondary-light, #2a9d43) !important;
-}
-
-/* White cards sit on a white background, so the dimmed old price has to be
-   dark to stay legible there. */
-.membership__category--white .membership__category-fee-was {
-  color: rgba(10, 10, 10, 0.45) !important;
-}
-
-.membership__category--white .membership__category-fee-now {
-  color: var(--color-secondary, #0C7923) !important;
-}
-
 .membership__category-description {
   margin: 0;
   font-size: 0.95rem;
@@ -435,7 +377,7 @@
 }
 
 /* ============================================================
-   HOVER — darken the card for readability, brighten the title
+   HOVER â€” darken the card for readability, brighten the title
    ============================================================ */
 .membership__category:hover,
 .membership__category:focus-visible {
@@ -473,7 +415,7 @@
 }
 
 /* ============================================================
-   OPEN — card KEEPS its resting background.
+   OPEN â€” card KEEPS its resting background.
    Only the category TITLE turns orange.
    ============================================================ */
 .membership__category.is-open .membership__category-name {
@@ -482,8 +424,8 @@
 
 .membership__category.is-open .membership__category-toggle {
   color: var(--color-accent, #FD6500) !important;
-  background: rgba(253, 101, 0, 0.12);
-  border-color: rgba(253, 101, 0, 0.6);
+  background: rgba(var(--color-accent-rgb, 253, 101, 0), 0.12);
+  border-color: rgba(var(--color-accent-rgb, 253, 101, 0), 0.6);
 }
 
 .membership__category.is-open .membership__category-fee,
@@ -542,7 +484,7 @@
 }
 
 /* ============================================================
-   BENEFITS — flat solids, sharp edges, black text, no glow
+   BENEFITS â€” flat solids, sharp edges, ink chosen per card fill
    ============================================================ */
 .membership__benefits {
   display: flex;
@@ -581,11 +523,20 @@
   gap: 1.25rem;
 }
 
+/* ---------- Ink contract ----------
+   Every benefit card sets `--card-ink` to the text colour that READS on its
+   own fill: light fill â†’ black ink, dark fill â†’ white ink. The tokens below
+   are per-theme (see styles/index.css), so a palette whose accent or
+   secondary is dark (royal blue, gold's black secondary) can never end up
+   with black text sitting on a dark card. Children inherit --card-ink so
+   the number, the copy and the <strong> lead all follow the fill together. */
 .membership__benefit {
   position: relative;
   padding: 1.5rem 1.75rem 1.5rem 4.25rem;
   border-radius: 0;
   background: #ffffff;
+  --card-ink: #0a0a0a;
+  color: var(--card-ink);
   border: none;
   box-shadow: none;
   overflow: hidden;
@@ -601,14 +552,16 @@
   margin: 0;
   font-size: 1rem;
   line-height: 1.65;
-  color: #0a0a0a;
+  color: var(--card-ink);
   position: relative;
   z-index: 2;
 }
 
+/* The bolded lead clause must follow the card ink too â€” it used to force
+   #0a0a0a, which vanished on the dark green / black cards. */
 .membership__benefit-description strong {
   font-weight: 700;
-  color: #0a0a0a;
+  color: var(--card-ink);
 }
 
 /* ---------- Global numbering ---------- */
@@ -623,33 +576,25 @@
   letter-spacing: 0.02em;
   opacity: 0.9;
   z-index: 2;
+  color: var(--card-ink);
 }
-
-/* The big number follows each card's own ink token. */
-.membership__benefit--white  .membership__benefit-number { color: #0a0a0a; }
-.membership__benefit--orange .membership__benefit-number { color: var(--color-on-accent); }
-.membership__benefit--green  .membership__benefit-number { color: var(--color-on-secondary); }
 
 /* ---------- GREEN group ---------- */
 .membership__benefit-group--green .membership__benefit-group-label {
-  /* secondary-light is a dark neutral in some themes, so lift the secondary
-     colour toward white to keep the label legible on the dark section. */
+  /* secondary-light stays bright on the dark section. */
   color: color-mix(in srgb, var(--color-secondary) 42%, #ffffff);
 }
 .membership__benefit--green {
   background: var(--color-secondary, #0C7923);
+  /* The green fill is dark in the default palette, so white ink. The token
+     is theme-aware, so mono's mid-grey and any future fill stay readable. */
+  --card-ink: var(--color-on-secondary, #ffffff);
   border: none;
   box-shadow: none;
-  /* White ink — the green fill is dark, so black text would sink into it. */
-  color: var(--color-on-secondary, #ffffff);
 }
 .membership__benefit--green:hover {
   border: none;
   box-shadow: none;
-}
-.membership__benefit--green .membership__benefit-description,
-.membership__benefit--green .membership__benefit-description strong {
-  color: var(--color-on-secondary, #ffffff);
 }
 
 /* ---------- WHITE group ---------- */
@@ -658,9 +603,9 @@
 }
 .membership__benefit--white {
   background: #ffffff;
+  --card-ink: #0a0a0a;
   border: none;
   box-shadow: none;
-  color: #0a0a0a;
 }
 .membership__benefit--white:hover {
   border: none;
@@ -674,21 +619,19 @@
 }
 .membership__benefit--orange {
   background: var(--color-accent, #FD6500);
+  /* Orange is a LIGHT surface â†’ black ink; royal's dark blue accent flips
+     this token to white automatically. */
+  --card-ink: var(--color-on-accent, #0a0a0a);
   border: none;
   box-shadow: none;
-  color: var(--color-on-accent, #0a0a0a);
 }
 .membership__benefit--orange:hover {
   border: none;
   box-shadow: none;
 }
-.membership__benefit--orange .membership__benefit-description,
-.membership__benefit--orange .membership__benefit-description strong {
-  color: var(--color-on-accent, #0a0a0a);
-}
 
 /* ============================================================
-   EXECUTIVE COMMITTEE — green button with permanent glow
+   EXECUTIVE COMMITTEE â€” green button with permanent glow
    ============================================================ */
 .membership__cta {
   text-align: center;
@@ -705,9 +648,9 @@
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #ffffff;
+  color: var(--color-on-secondary, #ffffff);
   background: var(--color-secondary, #0C7923);
-  border: 2px solid rgba(42, 157, 67, 0.9);
+  border: 2px solid rgba(var(--color-secondary-light-rgb, 42, 157, 67), 0.9);
   border-radius: 999px;
   cursor: pointer;
   text-decoration: none;
@@ -718,9 +661,9 @@
      gets a stronger, breathing halo that keeps drawing the eye. */
   animation: committeePulse 3s ease-in-out infinite;
   box-shadow:
-    0 0 30px rgba(12, 121, 35, 0.7),
-    0 0 70px rgba(12, 121, 35, 0.4),
-    inset 0 0 18px rgba(42, 157, 67, 0.25);
+    0 0 30px rgba(var(--color-secondary-rgb, 12, 121, 35), 0.7),
+    0 0 70px rgba(var(--color-secondary-rgb, 12, 121, 35), 0.4),
+    inset 0 0 18px rgba(var(--color-secondary-light-rgb, 42, 157, 67), 0.25);
   transition: transform var(--transition-smooth),
               box-shadow var(--transition-smooth),
               border-color var(--transition-smooth),
@@ -730,14 +673,14 @@
 @keyframes committeePulse {
   0%, 100% {
     box-shadow:
-      0 0 26px rgba(12, 121, 35, 0.6),
-      0 0 60px rgba(12, 121, 35, 0.32),
-      inset 0 0 18px rgba(42, 157, 67, 0.22);
+      0 0 26px rgba(var(--color-secondary-rgb, 12, 121, 35), 0.6),
+      0 0 60px rgba(var(--color-secondary-rgb, 12, 121, 35), 0.32),
+      inset 0 0 18px rgba(var(--color-secondary-light-rgb, 42, 157, 67), 0.22);
   }
   50% {
     box-shadow:
-      0 0 44px rgba(42, 157, 67, 0.95),
-      0 0 100px rgba(12, 121, 35, 0.6),
+      0 0 44px rgba(var(--color-secondary-light-rgb, 42, 157, 67), 0.95),
+      0 0 100px rgba(var(--color-secondary-rgb, 12, 121, 35), 0.6),
       inset 0 0 24px rgba(255, 255, 255, 0.16);
   }
 }
@@ -767,10 +710,11 @@
 .btn--committee:hover {
   background: var(--color-secondary-light, #2a9d43);
   border-color: rgba(255, 255, 255, 0.75);
+  color: var(--color-on-secondary, #ffffff);
   transform: translateY(-3px);
   box-shadow:
-    0 0 36px rgba(42, 157, 67, 0.85),
-    0 0 80px rgba(12, 121, 35, 0.55),
+    0 0 36px rgba(var(--color-secondary-light-rgb, 42, 157, 67), 0.85),
+    0 0 80px rgba(var(--color-secondary-rgb, 12, 121, 35), 0.55),
     inset 0 0 22px rgba(255, 255, 255, 0.15);
 }
 
@@ -795,7 +739,7 @@
     rgba(255, 255, 255, 0.03)
   );
   border-radius: 20px;
-  border: 1px solid rgba(253, 101, 0, 0.2);
+  border: 1px solid rgba(var(--color-accent-rgb, 253, 101, 0), 0.2);
 }
 
 .membership__join h3 {
@@ -829,9 +773,9 @@
 
 .membership__join .btn:hover {
   background: var(--color-accent, #FD6500);
-  color: #0a0a0a;
+  color: var(--color-on-accent, #0a0a0a);
   transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(253, 101, 0, 0.25);
+  box-shadow: 0 10px 30px rgba(var(--color-accent-rgb, 253, 101, 0), 0.25);
 }
 
 /* ============================================================
@@ -863,7 +807,7 @@
   color: var(--color-pearl, #d4d4d4);
 }
 
-/* Orange, oversized, permanently glowing — the single loudest button on the
+/* Orange, oversized, permanently glowing â€” the single loudest button on the
    page. Hover brightens it; the pulse keeps the eye coming back. */
 .btn--apply {
   display: inline-flex;
@@ -875,7 +819,7 @@
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #0a0a0a;
+  color: var(--color-on-accent, #0a0a0a);
   background: var(--color-accent, #FD6500);
   border: 2px solid var(--color-accent, #FD6500);
   border-radius: 999px;
@@ -888,13 +832,15 @@
 }
 
 .btn--apply:hover {
-  background: #ff7a26;
-  border-color: #ff7a26;
-  color: #0a0a0a;
+  /* Brighten via the token, not a literal orange, and keep the glow in step
+     with the active palette. */
+  background: var(--color-accent-light, #ff7a26);
+  border-color: var(--color-accent-light, #ff7a26);
+  color: var(--color-on-accent, #0a0a0a);
   transform: translateY(-3px) scale(1.02);
   box-shadow:
-    0 0 40px rgba(253, 101, 0, 0.9),
-    0 0 96px rgba(253, 101, 0, 0.5);
+    0 0 40px rgba(var(--color-accent-rgb, 253, 101, 0), 0.9),
+    0 0 96px rgba(var(--color-accent-rgb, 253, 101, 0), 0.5);
 }
 
 .btn--apply:active {
@@ -909,31 +855,31 @@
 @keyframes applyPulse {
   0%, 100% {
     box-shadow:
-      0 0 22px rgba(253, 101, 0, 0.45),
-      0 0 56px rgba(253, 101, 0, 0.22);
+      0 0 22px rgba(var(--color-accent-rgb, 253, 101, 0), 0.45),
+      0 0 56px rgba(var(--color-accent-rgb, 253, 101, 0), 0.22);
   }
   50% {
     box-shadow:
-      0 0 34px rgba(253, 101, 0, 0.8),
-      0 0 84px rgba(253, 101, 0, 0.42);
+      0 0 34px rgba(var(--color-accent-rgb, 253, 101, 0), 0.8),
+      0 0 84px rgba(var(--color-accent-rgb, 253, 101, 0), 0.42);
   }
 }
 
 /* Inside the "Ready to Join?" panel the older .membership__join .btn rules
-   would otherwise win on specificity — restate the apply look here. */
+   would otherwise win on specificity â€” restate the apply look here. */
 .membership__join .btn--apply {
   padding: 1.15rem 2.75rem;
   font-size: 0.9rem;
-  color: #0a0a0a;
+  color: var(--color-on-accent, #0a0a0a);
   background: var(--color-accent, #FD6500);
   border: 2px solid var(--color-accent, #FD6500);
   border-radius: 999px;
 }
 
 .membership__join .btn--apply:hover {
-  background: #ff7a26;
-  border-color: #ff7a26;
-  color: #0a0a0a;
+  background: var(--color-accent-light, #ff7a26);
+  border-color: var(--color-accent-light, #ff7a26);
+  color: var(--color-on-accent, #0a0a0a);
 }
 
 /* ---------- Recommend (signed-in) ----------
@@ -973,7 +919,7 @@
 }
 
 /* Inside the "Ready to Join?" panel the older .membership__join .btn rules
-   would otherwise win on specificity — restate the recommend look here. */
+   would otherwise win on specificity â€” restate the recommend look here. */
 .membership__join .btn--recommend {
   color: #ffffff;
   background: transparent;
@@ -1032,6 +978,7 @@
 .recommend-modal__copy:hover {
   background: var(--color-accent-light, #ff8133);
   border-color: var(--color-accent-light, #ff8133);
+  color: var(--color-on-accent, #0a0a0a);
 }
 
 .recommend-modal__share {
@@ -1139,7 +1086,7 @@
 }
 
 /* ============================================================
-   APPLY MODAL — Fixed popup for membership application
+   APPLY MODAL â€” Fixed popup for membership application
    ============================================================ */
 .apply-modal__backdrop {
   position: fixed;
@@ -1159,11 +1106,11 @@
   width: 100%;
   max-width: 520px;
   background: var(--color-black, #0a0a0a);
-  border: 1px solid rgba(253, 101, 0, 0.3);
+  border: 1px solid rgba(var(--color-accent-rgb, 253, 101, 0), 0.3);
   border-radius: 16px;
   padding: 2.5rem 2rem;
   box-shadow:
-    0 0 60px rgba(253, 101, 0, 0.15),
+    0 0 60px rgba(var(--color-accent-rgb, 253, 101, 0), 0.15),
     0 25px 60px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   animation: slideUp 0.3s ease-out;
@@ -1246,7 +1193,7 @@
   outline: none;
   border-color: var(--color-accent, #FD6500);
   background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 3px rgba(253, 101, 0, 0.15);
+  box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb, 253, 101, 0), 0.15);
 }
 
 .apply-modal__form select {
@@ -1263,7 +1210,7 @@
   padding: 0.5rem;
 }
 
-/* ---------- Preferred category — pick-a-card ---------- */
+/* ---------- Preferred category â€” pick-a-card ---------- */
 .apply-modal__fieldset {
   margin: 0;
   padding: 0;
@@ -1304,14 +1251,14 @@
 }
 
 .apply-modal__category:hover {
-  border-color: rgba(253, 101, 0, 0.55);
+  border-color: rgba(var(--color-accent-rgb, 253, 101, 0), 0.55);
   transform: translateY(-2px);
 }
 
 .apply-modal__category.is-selected {
-  background: rgba(253, 101, 0, 0.12);
+  background: rgba(var(--color-accent-rgb, 253, 101, 0), 0.12);
   border-color: var(--color-accent, #FD6500);
-  box-shadow: 0 0 0 3px rgba(253, 101, 0, 0.15);
+  box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb, 253, 101, 0), 0.15);
 }
 
 .apply-modal__category-name {
@@ -1353,7 +1300,8 @@
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: #0a0a0a;
+  /* Ink for the accent fill â€” black on the default orange, white on royal. */
+  color: var(--color-on-accent, #0a0a0a);
   background: var(--color-accent, #FD6500);
   white-space: nowrap;
 }
@@ -1392,8 +1340,8 @@
 
 .apply-modal__submit:hover:not(:disabled) {
   background: var(--color-accent, #FD6500);
-  color: #0a0a0a;
-  box-shadow: 0 0 30px rgba(253, 101, 0, 0.3);
+  color: var(--color-on-accent, #0a0a0a);
+  box-shadow: 0 0 30px rgba(var(--color-accent-rgb, 253, 101, 0), 0.3);
 }
 
 .apply-modal__submit:disabled {

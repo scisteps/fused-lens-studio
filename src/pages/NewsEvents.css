@@ -152,7 +152,7 @@
 
 .news-events__card:hover {
   transform: translateY(-6px);
-  border-color: rgba(253, 101, 0, 0.55);
+  border-color: rgba(var(--color-accent-rgb, 253, 101, 0), 0.55);
   background: rgba(255, 255, 255, 0.06);
 }
 
@@ -195,7 +195,7 @@
   justify-content: center;
   height: 100%;
   font-size: 3rem;
-  background: linear-gradient(135deg, rgba(253, 101, 0, 0.14), rgba(12, 121, 35, 0.12));
+  background: linear-gradient(135deg, rgba(var(--color-accent-rgb, 253, 101, 0), 0.14), rgba(var(--color-secondary-rgb, 12, 121, 35), 0.12));
 }
 
 .news-events__card-category {

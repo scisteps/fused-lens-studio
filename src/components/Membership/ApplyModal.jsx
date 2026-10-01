@@ -160,14 +160,15 @@ export function ApplyModal({
                     Preferred category
                   </legend>
 
-                  {/* While the free-join offer is live, say so here too —
+                  {/* While the grace period is live, say so here too —
                       this is the last screen before someone applies, so it
-                      must not contradict the Membership section. */}
+                      must not contradict the Membership section. The fee is
+                      unchanged; only the deadline moves. */}
                   {promo.active && (
                     <p className="apply-modal__promo">
-                      <span className="apply-modal__promo-flag">FREE JOIN</span>
+                      <span className="apply-modal__promo-flag">PAY LATER</span>
                       <span>
-                        {promo.note || 'Your membership fee is waived.'}{' '}
+                        {promo.note || 'Join now and pay your membership fee within your first year.'}{' '}
                         {promoCountdownLabel(promo).toLowerCase()}.
                       </span>
                     </p>

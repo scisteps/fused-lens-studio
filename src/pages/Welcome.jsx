@@ -1,9 +1,9 @@
 // src/pages/Welcome.jsx
 //
-// Where a new member lands the moment their account exists, and where
-// anyone who tapped "Apply for Membership" while signed out returns to after
-// signing in. The page has one job: welcome them, then put the apply button in
-// front of them, with the member benefits carousel right underneath it.
+// Where a new member lands the moment their sign-up finishes. The page has one
+// job: tell them they are in, name the category they chose, state plainly what
+// that category costs and when it is due, then show the member benefits and two
+// clear ways on — their profile, or back to the site.
 //
 // Requires a session — a signed-out visitor is sent to /login with the
 // membership intent set, so the login page knows to bounce them back here.
@@ -13,7 +13,6 @@ import { Link, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Player } from '@lottiefiles/react-lottie-player'
 import { BlurredBackdrop, BenefitsCarousel } from '../components'
-import { ApplyModal } from '../components/Membership'
 import { useAuth, useUserProfile } from '../lib/useAuth'
 import { useSiteContent } from '../lib/useSiteContent'
 import {
@@ -21,7 +20,9 @@ import {
   clearMembershipIntent
 } from '../lib/membershipIntent'
 import { heroSlides } from '../data/images'
-import welcomeAnimation from '../jsons/final.json'
+import welcomeAnimation from '../jsons/invertedcrane.json'
+import { categoryLabel } from '../data/signup'
+import { usePromo, describeFee } from '../lib/membershipPromo'
 import './Welcome.css'
 
 const CARD_MOTION = {
@@ -39,15 +40,95 @@ const BACKDROP_IMAGES = [
 
 const BENEFIT_INTERVAL = 5000
 
+// The sign-up form stores a category ID (data/signup.js) while the CMS stores
+// category NAMES with their fees (lib/useSiteContent.js). The two lists are
+// written to say the same thing, but the secretariat can rename a category in
+// the dashboard, so the lookup matches on keywords rather than one exact string.
+const CATEGORY_FEE_KEYWORDS = {
+  student: ['student'],
+  professional: ['professional'],
+  studio: ['studio', 'corporate', 'organisation', 'organization'],
+  associate: ['associate', 'international'],
+  patron: ['patron', 'honorary']
+}
+
+/** The CMS category record whose name best matches the member's chosen id. */
+function findCategoryRecord(categoryId, categories) {
+  const keywords = CATEGORY_FEE_KEYWORDS[categoryId]
+  if (!keywords || !Array.isArray(categories)) return null
+
+  return (
+    categories.find((entry) => {
+      const name = String(entry?.name || '').toLowerCase()
+      return Boolean(name) && keywords.some((keyword) => name.includes(keyword))
+    }) || null
+  )
+}
+
+/**
+ * "12 September 2027" — the day a year after they joined falls due. Empty when
+ * the profile has not been read yet, so the copy simply omits the date rather
+ * than printing "Invalid Date".
+ */
+function firstPaymentDueLabel(profile) {
+  const created = profile?.createdAt
+  const startedAt = typeof created?.toDate === 'function' ? created.toDate() : created
+  const date = startedAt instanceof Date ? startedAt : new Date(startedAt)
+  if (Number.isNaN(date.getTime())) return ''
+
+  return new Date(date.getFullYear() + 1, date.getMonth(), date.getDate()).toLocaleDateString(
+    'en-GB',
+    { day: 'numeric', month: 'long', year: 'numeric' }
+  )
+}
+
+/**
+ * "0702 624 936" — grouped for reading. Falls back to the raw number if it
+ * is not a long East-African style number, so an odd entry still shows.
+ */
+function formatMobileMoney(raw) {
+  const digits = String(raw || '').replace(/[^\d+]/g, '')
+  const match = digits.match(/^(\+?\d{1,4})(\d{3})(\d{3})(\d{3,4})$/)
+  if (!match) return String(raw || '').trim()
+  return `${match[1]} ${match[2]} ${match[3]} ${match[4]}`
+}
+
+/**
+ * "MTN MoMo · Animation Guild Uganda" — the account name shown alongside the
+ * number, so the member knows whose wallet they are paying. Parts the CMS may
+ * not have filled in are simply dropped.
+ */
+function mobileMoneyCaption(mobileMoney) {
+  if (!mobileMoney) return ''
+  return [mobileMoney.provider, mobileMoney.name].filter(Boolean).join(' · ')
+}
+
 export function Welcome() {
   const { user, loading: authLoading } = useAuth()
   const { profile } = useUserProfile(user?.uid)
   const { content } = useSiteContent()
-  const [applyOpen, setApplyOpen] = useState(false)
-
   const membership = content.membership || {}
   const benefits = membership.benefits || []
   const categories = membership.categories || []
+
+  // "Pay my membership fee" reveals where to send the money. The number is not
+  // on screen until they ask for it, so the button stays a single clear step.
+  const [showPayment, setShowPayment] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  // The secretariat can publish a new number; drop a stale "Copied" tick and
+  // collapse the panel if the entry is taken away underneath them.
+  const mobileMoney = content.studioInfo?.mobileMoney || null
+  const mobileMoneyNumber = String(mobileMoney?.number || '').trim()
+
+  useEffect(() => {
+    if (!mobileMoneyNumber) setShowPayment(false)
+    setCopied(false)
+  }, [mobileMoneyNumber])
+
+  // Resolved up here with the other hooks: a hook below the early returns would
+  // change the hook order when the auth state settles and React would throw.
+  const promo = usePromo(membership.feePromo)
 
   // Landing here signed out means they want to apply — remember that so the
   // login/signup pages return them to this screen.
@@ -76,6 +157,18 @@ export function Welcome() {
   const fullName = (profile?.name || user.displayName || '').trim()
   const firstName = fullName.split(' ')[0]
 
+  // The category the member picked on the sign-up form, plus the matching CMS
+  // entry — that entry is what carries the price they are being asked for.
+  const memberCategory = categoryLabel(profile?.category) || 'Member'
+  const categoryRecord = findCategoryRecord(profile?.category, categories)
+  const fee = describeFee(categoryRecord?.fee, promo)
+  const dueLabel = firstPaymentDueLabel(profile)
+
+  // A fee that was never a price ("By invitation", "To be determined") must not
+  // be quoted back as an amount to pay within a year. A real price is ALWAYS
+  // shown, grace period or not — the offer changes the deadline, not the fee.
+  const hasRealPrice = fee.kind === 'priced'
+
   return (
     <main className="welcome">
       <BlurredBackdrop images={BACKDROP_IMAGES} />
@@ -93,33 +186,136 @@ export function Welcome() {
               />
             </div>
 
-            <span className="welcome__eyebrow">Members Area</span>
+            <span className="welcome__eyebrow">Welcome to the Animation Guild</span>
             <h1 className="welcome__title">
-              {firstName ? `Welcome to the Guild, ${firstName}` : 'Welcome to the Guild'}
+              Congratulations{firstName ? `, ${firstName}` : ''} — you are in!
             </h1>
             <p className="welcome__text">
-              Your Animation Guild Uganda account is ready. One step left —
-              apply for membership and the secretariat will activate your card
-              and member benefits.
+              Welcome to the Animation Guild Uganda. You are now a member of the{' '}
+              <strong className="welcome__category-name">{memberCategory}</strong>{' '}
+              category, and every benefit below is yours to enjoy from today.
             </p>
           </motion.div>
 
+          {/* What the category costs, and when it has to be paid. */}
           <motion.div
-            className="welcome__apply"
+            className="welcome__fee"
             {...CARD_MOTION}
             transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <button
-              type="button"
-              className="btn btn--apply"
-              onClick={() => setApplyOpen(true)}
-            >
-              Apply for Membership
-            </button>
-            <p className="welcome__apply-note">
-              Choose your category and country of residence — applying is free
-              and takes under a minute.
-            </p>
+            <h2 className="welcome__fee-title">Your membership fee</h2>
+
+            {hasRealPrice ? (
+              <>
+                {/* The real price, always. The grace period changes when this
+                    falls due, never the amount — so there is no struck-through
+                    figure and no "FREE" here. */}
+                <p className="welcome__fee-price">
+                  <strong>{fee.text}</strong>
+                </p>
+
+                <p className="welcome__fee-note">
+                  Your {memberCategory} membership costs{' '}
+                  <strong>{fee.text}</strong> per year. That amount is what it
+                  costs to keep you maintained at the Guild.
+                </p>
+
+                <p className="welcome__fee-note">
+                  {fee.gracePeriod
+                    ? 'Nothing is due today, but you can pay it now, or any time within your first year, whichever suits you.'
+                    : dueLabel
+                      ? `Pay it now, or any time within your first year — your first payment is due by ${dueLabel}.`
+                      : 'Pay it now, or any time within your first year — whichever suits you.'}{' '}
+                  Your membership stays valid while the payment is
+                  outstanding.
+                </p>
+              </>
+            ) : (
+              <p className="welcome__fee-note">
+                Your {memberCategory} category is{fee.text ? ` ${fee.text.toLowerCase()}` : ' free of charge'}{' '}
+                — there is no fee for you to pay. The secretariat will confirm the
+                details with you directly.
+              </p>
+            )}
+
+            {/* Payment: the button reveals the mobile-money number to send the
+                fee to. Without a number on file the button is not shown at all
+                rather than opening an empty mail client. */}
+            {mobileMoneyNumber ? (
+              <>
+                <button
+                  type="button"
+                  className="btn btn--apply"
+                  onClick={() => setShowPayment((open) => !open)}
+                  aria-expanded={showPayment}
+                  aria-controls="welcome-payment-details"
+                >
+                  {showPayment ? 'Hide payment details' : 'Pay my membership fee'}
+                </button>
+
+                {showPayment && (
+                  <div
+                    id="welcome-payment-details"
+                    className="welcome__payment"
+                    role="region"
+                    aria-label="Mobile money payment details"
+                  >
+                    <p className="welcome__payment-title">Send via mobile money</p>
+
+                    <p className="welcome__payment-instruction">
+                      Send{' '}
+                      {hasRealPrice ? <strong>{fee.text}</strong> : 'your fee'}{' '}
+                      to the number below using your mobile money app.
+                    </p>
+
+                    <div className="welcome__payment-number-row">
+                      <a
+                        className="welcome__payment-number"
+                        href={`tel:${mobileMoneyNumber}`}
+                        aria-label={`Call ${formatMobileMoney(mobileMoneyNumber)}`}
+                      >
+                        {formatMobileMoney(mobileMoneyNumber)}
+                      </a>
+
+                      <button
+                        type="button"
+                        className="welcome__payment-copy"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(mobileMoneyNumber)
+                            setCopied(true)
+                          } catch {
+                            // Clipboard can be blocked (insecure origin, older
+                            // browser). The number is on screen and tappable,
+                            // so failing quietly is better than a dead button.
+                            setCopied(false)
+                          }
+                        }}
+                      >
+                        {copied ? 'Copied' : 'Copy'}
+                      </button>
+                    </div>
+
+                    {mobileMoneyCaption(mobileMoney) && (
+                      <p className="welcome__payment-caption">
+                        {mobileMoneyCaption(mobileMoney)}
+                      </p>
+                    )}
+
+                    <p className="welcome__payment-note">
+                      Use your full name as the reference, then send the
+                      secretariat your receipt so your membership can be
+                      marked as paid.
+                    </p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <p className="welcome__fee-note welcome__fee-note--muted">
+                Payment are to be made to the airtel money number +256 702624936. 
+            
+              </p>
+            )}
           </motion.div>
 
           {benefits.length > 0 && (
@@ -133,26 +329,29 @@ export function Welcome() {
             </motion.section>
           )}
 
-          <p className="welcome__links">
-            <Link to="/login" className="welcome__link">
-              View my account
+          {/* Two clear ways out of this screen, as real buttons rather than
+              faint text links buried at the bottom. */}
+          <motion.nav
+            className="welcome__actions"
+            aria-label="Next steps"
+            {...CARD_MOTION}
+            transition={{ duration: 0.5, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <Link to="/login" className="welcome__action">
+              <span className="welcome__action-label">My profile</span>
+              <span className="welcome__action-hint">
+                View and check the details we hold for you
+              </span>
             </Link>
-            <span aria-hidden="true"> · </span>
-            <Link to="/" className="welcome__link">
-              Back to the site
+            <Link to="/" className="welcome__action welcome__action--primary">
+              <span className="welcome__action-label">Back to the site</span>
+              <span className="welcome__action-hint">
+                Explore the Guild and everything we do
+              </span>
             </Link>
-          </p>
+          </motion.nav>
         </div>
       </div>
-
-      <ApplyModal
-        isOpen={applyOpen}
-        onClose={() => setApplyOpen(false)}
-        categories={categories}
-        feePromo={membership.feePromo}
-        user={user}
-        profile={profile}
-      />
     </main>
   )
 }

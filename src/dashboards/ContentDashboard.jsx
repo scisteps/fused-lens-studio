@@ -73,7 +73,7 @@ const DEFAULT_CONTENT = {
     feePromo: {
       enabled: false,
       label: 'Founding member offer',
-      note: 'Waived for everyone who joins during our first year as a Guild.',
+      note: 'Join now and pay your membership fee within your first year.',
       endsOn: '2027-09-30'
     },
 
@@ -533,6 +533,48 @@ export default function ContentDashboard() {
                     updateStudio(
                       'whatsapp',
                       event.target.value
+                    )
+                  }
+                />
+              </Field>
+
+              {/* Mobile money — where members send the membership fee. Each
+                  sub-field edits one key of studio.mobileMoney, so the
+                  dashboard needs no knowledge of the shape. */}
+              <Field label="Mobile money number">
+                <TextInput
+                  value={studio.mobileMoney?.number || ''}
+                  placeholder="+256700000000"
+                  onChange={event =>
+                    updateStudio(
+                      'mobileMoney',
+                      { ...(studio.mobileMoney || {}), number: event.target.value }
+                    )
+                  }
+                />
+              </Field>
+
+              <Field label="Mobile money provider">
+                <TextInput
+                  value={studio.mobileMoney?.provider || ''}
+                  placeholder="MTN MoMo"
+                  onChange={event =>
+                    updateStudio(
+                      'mobileMoney',
+                      { ...(studio.mobileMoney || {}), provider: event.target.value }
+                    )
+                  }
+                />
+              </Field>
+
+              <Field label="Mobile money account name">
+                <TextInput
+                  value={studio.mobileMoney?.name || ''}
+                  placeholder="Animation Guild Uganda"
+                  onChange={event =>
+                    updateStudio(
+                      'mobileMoney',
+                      { ...(studio.mobileMoney || {}), name: event.target.value }
                     )
                   }
                 />
@@ -1208,9 +1250,9 @@ export default function ContentDashboard() {
               Membership categories
             </h3>
 
-            {/* ── Free-join offer ─────────────────────────────────────────
-                A time-limited waiver. The panel states plainly whether the
-                offer is live, waiting to start, already finished or broken,
+            {/* ── Grace-period offer ─────────────────────────────────────
+                A time-limited payment window. The panel states plainly whether
+                the offer is live, waiting to start, already finished or broken,
                 so nobody has to publish to find out. */}
             <div
               style={{
@@ -1243,10 +1285,11 @@ export default function ContentDashboard() {
                 />
                 <span>
                   <strong style={{ display: 'block', fontSize: 15 }}>
-                    Free-join offer
+                    Pay-later offer
                   </strong>
                   <span style={{ color: '#9a978f', fontSize: 13 }}>
-                    Waive the fee for anyone who joins before the closing date.
+                    Let anyone who joins before the closing date pay their fee
+                    within their first year. The fee itself never changes.
                     Publish to put it live.
                   </span>
                 </span>
@@ -1279,7 +1322,7 @@ export default function ContentDashboard() {
                   onChange={event =>
                     updateFeePromo('note', event.target.value)
                   }
-                  placeholder="Waived for everyone who joins during our first year."
+                  placeholder="Join now and pay your membership fee within your first year."
                 />
               </Field>
 
@@ -1299,16 +1342,16 @@ export default function ContentDashboard() {
               >
                 <strong style={{ color: '#c9a962' }}>Now: </strong>
                 {!membership.feePromo?.enabled
-                  ? 'OFF — the ordinary fees are shown. Nothing is waived.'
+                  ? 'OFF — the ordinary fees and deadlines are shown.'
                   : !feePromoNow.valid
-                  ? 'BROKEN — the closing date is missing or unreadable, so no fee is being waived. Enter a date such as 2027-09-30.'
+                  ? 'BROKEN — the closing date is missing or unreadable, so the pay-later offer is not running. Enter a date such as 2027-09-30.'
                   : feePromoNow.active
-                  ? `LIVE — every priced category reads FREE. ${promoCountdownLabel(
+                  ? `LIVE — every priced category is shown at full price, with payment allowed within the first year. ${promoCountdownLabel(
                       feePromoNow
                     )} (${promoEndLabel(feePromoNow)}).`
                   : `FINISHED — the offer closed on ${promoEndLabel(
                       feePromoNow
-                    )}, so the ordinary fees are shown again.`}
+                    )}, so the ordinary fees and deadlines are shown again.`}
               </div>
             </div>
 

@@ -112,14 +112,14 @@
 .prof-picker__tile:hover,
 .prof-picker__tile:focus-visible {
   outline: none;
-  border-color: rgba(253, 101, 0, 0.75);
-  background: rgba(253, 101, 0, 0.08);
+  border-color: rgba(var(--color-accent-rgb, 253, 101, 0), 0.75);
+  background: rgba(var(--color-accent-rgb, 253, 101, 0), 0.08);
   transform: translateY(-2px);
 }
 
 .prof-picker__tile.is-selected {
   border-color: var(--color-orange, #FD6500);
-  background: rgba(253, 101, 0, 0.12);
+  background: rgba(var(--color-accent-rgb, 253, 101, 0), 0.12);
 }
 
 /* ---------- The tile label ----------
