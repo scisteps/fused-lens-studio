@@ -33,7 +33,7 @@ export function Footer() {
           {/* Logo + floating particles wrapper */}
           <div className="footer__logo-wrap">
             <img
-              src="/crane.png"
+              src="/agumainlogo.png"
               alt={studio.name || 'Animation Guild Uganda'}
               className="footer__logo"
             />

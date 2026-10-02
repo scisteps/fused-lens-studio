@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useScrollProgress } from '../../hooks'
 import { studioInfo } from '../../data/content'
-import logoImage from '../../Images/agublack.png';
+import logoImage from '../../Images/agumainlogo.png';
 
 
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -200,19 +200,21 @@ export function Navigation() {
             {/* Signed in — the member's category chip opens their profile. The
                 SAME panel the hero chip opens (MemberProfilePanel), so the two
                 can never show different details or offer a different share
-                link. Signed out, nothing renders here: Login / Sign Up live in
-                the hero and on the account page. */}
+                link. The label reads "<Category> Profile" — "Studio Profile",
+                "Professional Profile", "Student Profile" — matching the accent
+                fill the hero chip uses. Signed out, nothing renders here:
+                Login / Sign Up live in the hero and on the account page. */}
             {!authLoading && user && (
               <button
                 type="button"
                 className="nav__member clickable"
                 onClick={() => setProfileOpen(true)}
-                aria-label={`Your member profile — ${categoryLabel(profile?.category) || 'Member'}`}
+                aria-label={`Your ${categoryLabel(profile?.category) || 'Member'} profile`}
                 title="Your member profile"
               >
                 <span className="nav__member-dot" aria-hidden="true" />
                 <span className="nav__member-label">
-                  {categoryLabel(profile?.category) || 'Member'}
+                  {categoryLabel(profile?.category) || 'Member'} Profile
                 </span>
               </button>
             )}

@@ -1357,8 +1357,8 @@ function Dashboard({ token, onLogout }) {
       {/* Sidebar */}
       <aside className="admin-sidebar">
         <div className="admin-sidebar__header">
-          <img src="/crane.png" alt="Fused Lens Studio" className="admin-sidebar__icon" />
-          <span>Fused Lens</span>
+          <img src="/agumainlogo.png" alt="Fused Lens Studio" className="admin-sidebar__icon" />
+          <span>AGU</span>
         </div>
 
         <nav className="admin-nav">

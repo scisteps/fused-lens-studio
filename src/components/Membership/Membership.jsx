@@ -96,7 +96,7 @@ export function Membership() {
           <span className="membership__registered-badge">
             {membership.title || 'Membership'}
           </span>
-          <h2 className="section-title">Join Our Community</h2>
+          <h2 className="section-title">Guild Membership</h2>
         </motion.div>
 
         {/* Lead with what members actually get — one benefit at a time, 5s each */}

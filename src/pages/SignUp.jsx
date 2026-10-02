@@ -338,14 +338,10 @@ export function SignUp() {
     )
   }
 
-  // Already signed in — no reason to show a registration form, and no reason to
-  // make them press a button to get where they were already going. This used to
-  // render a "Go to my account" card, which was a dead end: a signed-in member
-  // who followed it landed on the account panel instead of their welcome screen.
-  // Send them straight through instead.
-  if (user && !done) {
-    return <Navigate to="/welcome" replace />
-  }
+  // NOTE: the phone-verification card below is checked BEFORE the
+  // already-signed-in redirect. Immediately after signUpWithEmail() resolves the
+  // member IS signed in, so testing `user` first would navigate them to
+  // /welcome and skip proving the number — which is the whole point of the step.
 
   // ---------- Registered — proving the phone number ----------
   // Shown between "account created" and the welcome screen. The account is
@@ -421,6 +417,14 @@ export function SignUp() {
         </motion.div>
       </section>
     )
+  }
+
+  // Already signed in, and not part-way through proving a number — send them
+  // straight to the welcome screen. This used to render a "Go to my account"
+  // card with a button, which was both an extra tap and a dead end: it led to
+  // the account panel rather than the screen a new member should see.
+  if (user && !done) {
+    return <Navigate to="/welcome" replace />
   }
 
   // ---------- Registered — handing off to the welcome screen ----------

@@ -93,16 +93,19 @@
 }
 
 /* ---------- Member chip (signed in) ----------
-   Opens the member's profile panel — the same panel the hero chip opens. The
-   dot plus the one-word category reads at a glance, and the whole chip is a
-   real <button> so it is keyboard reachable and announced by its aria-label. */
+   Styled to match the hero's category button (Hero.css → .hero__btn--category):
+   filled with the palette accent and inked with the matching --color-on-accent
+   token, so "Studio Profile" / "Professional Profile" reads in every theme.
+   Opens the SAME profile panel the hero chip opens. The whole chip is a real
+   <button> so it is keyboard reachable and announced by its aria-label. */
 .nav__member {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.45rem 0.7rem;
-  background: transparent;
-  border: 1px solid currentColor;
+  gap: 0.55rem;
+  padding: 0.55rem 0.9rem;
+  background: var(--color-accent, #FD6500);
+  color: var(--color-on-accent, #0a0a0a);
+  border: none;
   font-family: var(--font-body);
   font-size: 0.66rem;
   font-weight: 700;
@@ -112,20 +115,12 @@
   transition: background var(--transition-fast), color var(--transition-fast);
 }
 
+/* Same hover the hero chip uses — the lighter tint of the accent, keeping the
+   on-accent ink so the label never washes out. */
 .nav__member:hover,
 .nav__member:focus-visible {
-  background: currentColor;
-  /* The dot and label flip to the dark ink so they stay legible once the chip
-     fills with the header's current colour. */
-  color: var(--color-black, #0a0a0a) !important;
-}
-
-.nav__member:hover .nav__member-dot,
-.nav__member:hover .nav__member-label,
-.nav__member:focus-visible .nav__member-dot,
-.nav__member:focus-visible .nav__member-label {
-  color: var(--color-black, #0a0a0a);
-  mix-blend-mode: normal;
+  background: var(--color-accent-light, #ff8133);
+  color: var(--color-on-accent, #0a0a0a);
 }
 
 .nav__member-dot {
@@ -133,6 +128,7 @@
   height: 7px;
   border-radius: 50%;
   background: currentColor;
+  opacity: 0.85;
   flex-shrink: 0;
 }
 
