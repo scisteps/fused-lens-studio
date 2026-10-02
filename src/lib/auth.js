@@ -189,6 +189,10 @@ export async function signUpWithEmail(form) {
     portfolio: portfolioLinks,
     role: 'member', // never self-assigned as anything else
     status: 'pending',
+    // Which version of their membership they are on. Every new member starts
+    // on the 6-month free trial; the secretariat flips this to 'paid' in the
+    // Firebase console once a receipt is confirmed. See lib/membershipPlan.js.
+    plan: 'free',
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp()
   }

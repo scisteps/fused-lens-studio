@@ -64,13 +64,13 @@ service cloud.firestore {
           // isStudent true and skip the institution requirement entirely.
           //
           // The ids must match ALL_CATEGORY_IDS in src/data/signup.js. That is
-          // the three current one-word categories —
-          //   student | studio | international
-          // — PLUS the retired ids (professional, associate, patron). The
-          // retired ones are kept ONLY so a profile created before the list
-          // was shortened still passes isValidProfile(); otherwise that member
-          // would be locked out of updating their own document (including
-          // their portfolio links). Remove them once no live profile uses one.
+          // the four current one-word categories —
+          //   professional | student | studio | international
+          // — PLUS the retired ids (associate, patron). The retired ones are
+          // kept ONLY so a profile created before the list was shortened still
+          // passes isValidProfile(); otherwise that member would be locked out
+          // of updating their own document (including their portfolio links).
+          // Remove them once no live profile uses one.
           && d.category in ['student', 'studio', 'international',
                             'professional', 'associate', 'patron']
           && d.isStudent == (d.category == 'student')

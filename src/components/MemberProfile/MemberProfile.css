@@ -102,6 +102,14 @@
   text-transform: capitalize;
 }
 
+/* ---------- Plan: free trial vs paid premium ----------
+   The premium version is inked with the accent so "Premium (paid)" stands
+   out from the plain free-trial wording at a glance. */
+.member-profile__plan--premium {
+  color: var(--color-accent-light, #ff8133);
+  font-weight: 600;
+}
+
 /* ---------- Portfolio links ---------- */
 
 .member-profile__links {

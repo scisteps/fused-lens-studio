@@ -48,6 +48,11 @@ export const DEFAULT_COUNTRY_CODE = '+256'
 // Honorary/Patron) so the two screens agree with each other.
 export const MEMBER_CATEGORIES = [
   {
+    id: 'professional',
+    label: 'Professional',
+    blurb: 'Working in animation or a related creative field.'
+  },
+  {
     id: 'student',
     label: 'Student',
     blurb: 'Studying animation or a related field right now.'
@@ -70,9 +75,12 @@ export const STUDENT_CATEGORY_ID = 'student'
 export const CATEGORY_IDS = MEMBER_CATEGORIES.map((category) => category.id)
 
 /**
- * Categories that existed before the list was cut down to three one-word
- * options. They are no longer offered on the form, but members who signed up
- * earlier still have one stored on their profile.
+ * Categories that existed before the list was cut down to one-word options.
+ * They are no longer offered on the form, but members who signed up earlier
+ * still have one stored on their profile.
+ *
+ * (`professional` used to live here too — it is BACK on the sign-up form as a
+ * current category, so it sits in MEMBER_CATEGORIES instead.)
  *
  * These ids stay in:
  *   • firestore.rules  → otherwise those profiles FAIL validation and the owner
@@ -84,14 +92,13 @@ export const CATEGORY_IDS = MEMBER_CATEGORIES.map((category) => category.id)
  * Once no live profile uses one, drop it from here and from the rules.
  */
 export const LEGACY_CATEGORY_LABELS = {
-  professional: 'Professional',
   associate: 'International',
   patron: 'Patron'
 }
 
 export const LEGACY_CATEGORY_IDS = Object.keys(LEGACY_CATEGORY_LABELS)
 
-/** Every id the rules must accept: the three current ones plus the legacy ones. */
+/** Every id the rules must accept: the four current ones plus the legacy ones. */
 export const ALL_CATEGORY_IDS = [...CATEGORY_IDS, ...LEGACY_CATEGORY_IDS]
 
 /** The single source of truth for "does this member name an institution?". */

@@ -78,8 +78,9 @@ const DEFAULT_CONTENT = {
     },
 
   categories: [
-  // One word each, matching the three ids in MEMBER_CATEGORIES
+  // One word each, matching the four ids in MEMBER_CATEGORIES
   // (src/data/signup.js). These names must stay in sync with that list.
+  { name: 'Professional', fee: 'To be determined', description: 'Individuals practising in animation or a related creative field.' },
   { name: 'Student', fee: 'UGX 50,000', description: 'Full-time students in animation or related fields, with proof of status.' },
   { name: 'Studio', fee: 'To be determined', description: 'Studios, broadcasters, NGOs, schools and companies supporting animation.' },
   { name: 'International', fee: 'To be determined', description: 'For members based outside Uganda who support the Guild\'s mission.' }

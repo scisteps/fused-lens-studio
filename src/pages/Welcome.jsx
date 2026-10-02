@@ -22,6 +22,7 @@ import {
 import { heroSlides } from '../data/images'
 import welcomeAnimation from '../jsons/invertedcrane.json'
 import { categoryLabel } from '../data/signup'
+import { isPremium, trialEndLabel } from '../lib/membershipPlan'
 import { usePromo, describeFee } from '../lib/membershipPromo'
 import './Welcome.css'
 
@@ -46,12 +47,12 @@ const BENEFIT_INTERVAL = 5000
 // the dashboard, so the lookup matches on keywords rather than one exact string.
 const CATEGORY_FEE_KEYWORDS = {
   student: ['student'],
+  professional: ['professional', 'ordinary'],
   studio: ['studio', 'corporate', 'organisation', 'organization'],
   international: ['international', 'associate'],
   // Retired ids, kept only so an older profile still finds its fee row. They
   // are no longer offered on the sign-up form — see LEGACY_CATEGORY_LABELS in
   // src/data/signup.js.
-  professional: ['professional', 'ordinary'],
   associate: ['associate', 'international'],
   patron: ['patron', 'honorary']
 }
@@ -197,8 +198,40 @@ export function Welcome() {
             <p className="welcome__text">
               Welcome to the Animation Guild Uganda. You are now a member of the{' '}
               <strong className="welcome__category-name">{memberCategory}</strong>{' '}
-              category, and every benefit below is yours to enjoy from today.
+              category on a 6-month free trial — during the trial you can
+              upgrade to the premium version of your category whenever you are
+              ready. Every benefit below is yours to enjoy from today.
             </p>
+          </motion.div>
+
+          {/* The trial they start on, and how to move to the paid version.
+              Shown even when the profile is still loading — the date simply
+              drops out until createdAt is readable. */}
+          <motion.div
+            className="welcome__trial"
+            {...CARD_MOTION}
+            transition={{ duration: 0.5, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="welcome__trial-badge">
+              {isPremium(profile) ? 'Premium version' : '6-Month Free Trial'}
+            </span>
+
+            {isPremium(profile) ? (
+              <p className="welcome__trial-text">
+                Your <strong>{memberCategory}</strong> membership is on the
+                premium version of your category — thank you for supporting the
+                Guild.
+              </p>
+            ) : (
+              <p className="welcome__trial-text">
+                You are on a 6-month free trial of the{' '}
+                <strong>{memberCategory}</strong> category
+                {trialEndLabel(profile) ? `, free for 6 months until ${trialEndLabel(profile)}` : ''}.
+                During the trial you can upgrade to the{' '}
+                <strong>premium version</strong> of your {memberCategory}{' '}
+                category at any time.
+              </p>
+            )}
           </motion.div>
 
           {/* What the category costs, and when it has to be paid. */}
@@ -219,17 +252,17 @@ export function Welcome() {
                 </p>
 
                 <p className="welcome__fee-note">
-                  Your {memberCategory} membership costs{' '}
-                  <strong>{fee.text}</strong> per year. That amount is what it
-                  costs to keep you maintained at the Guild.
+                  The premium version of your {memberCategory} membership costs{' '}
+                  <strong>{fee.text}</strong> per year. Your 6-month free
+                  trial covers you until you upgrade.
                 </p>
 
                 <p className="welcome__fee-note">
                   {fee.gracePeriod
-                    ? 'Nothing is due today, but you can pay it now, or any time within your first year, whichever suits you.'
+                    ? 'Nothing is due today, but you can upgrade now, or any time within your free trial, whichever suits you.'
                     : dueLabel
-                      ? `Pay it now, or any time within your first year — your first payment is due by ${dueLabel}.`
-                      : 'Pay it now, or any time within your first year — whichever suits you.'}{' '}
+                      ? `You can upgrade now, or any time within your first year — if you upgrade, your first payment is due by ${dueLabel}.`
+                      : 'You can upgrade now, or any time within your first year — whichever suits you.'}{' '}
                   Your membership stays valid while the payment is
                   outstanding.
                 </p>
@@ -237,7 +270,7 @@ export function Welcome() {
             ) : (
               <p className="welcome__fee-note">
                 Your {memberCategory} category is{fee.text ? ` ${fee.text.toLowerCase()}` : ' free of charge'}{' '}
-                — there is no fee for you to pay. The secretariat will confirm the
+                — there is no fee for you to pay. The committee will confirm the
                 details with you directly.
               </p>
             )}
@@ -254,7 +287,7 @@ export function Welcome() {
                   aria-expanded={showPayment}
                   aria-controls="welcome-payment-details"
                 >
-                  {showPayment ? 'Hide payment details' : 'Pay my membership fee'}
+                  {showPayment ? 'Hide payment details' : 'Upgrade to premium'}
                 </button>
 
                 {showPayment && (
@@ -309,7 +342,7 @@ export function Welcome() {
                     <p className="welcome__payment-note">
                       Use your full name as the reference, then send the
                       secretariat your receipt so your membership can be
-                      marked as paid.
+                      upgraded to the premium version of your category.
                     </p>
                   </div>
                 )}

@@ -12,6 +12,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { categoryLabel } from '../../data/signup'
+import { isPremium, planSummary } from '../../lib/membershipPlan'
 import { portfolioEntries } from '../../data/portfolio'
 import { logOut } from '../../lib/auth'
 import {
@@ -116,6 +117,17 @@ export function MemberProfilePanel({ isOpen, onClose, user, profile = null }) {
             <dt>Status</dt>
             <dd className="member-profile__status">
               {profile?.status || 'pending'}
+            </dd>
+          </div>
+          {/* Free trial vs paid premium — the version of their category they
+              are on. planSummary() spells it out, including the day the trial
+              ends, so nobody has to guess whether they have paid. */}
+          <div className="member-profile__row">
+            <dt>Plan</dt>
+            <dd
+              className={`member-profile__plan${isPremium(profile) ? ' member-profile__plan--premium' : ''}`}
+            >
+              {planSummary(profile)}
             </dd>
           </div>
           {/* Hidden entirely when there is nothing to show, so the panel never

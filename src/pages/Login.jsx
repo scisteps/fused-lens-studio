@@ -27,6 +27,7 @@ import {
   DEFAULT_COUNTRY_CODE
 } from '../data/signup'
 import { portfolioEntries } from '../data/portfolio'
+import { planSummary } from '../lib/membershipPlan'
 import { BlurredBackdrop } from '../components'
 import { heroSlides } from '../data/images'
 import './Auth.css'
@@ -273,6 +274,13 @@ export function Login() {
             <div className="auth__profile-row">
               <dt>Status</dt>
               <dd>{profile?.status || 'pending'}</dd>
+            </div>
+            {/* Free trial vs paid premium — which version of their category
+                they are on, spelled out by planSummary() (see
+                src/lib/membershipPlan.js). */}
+            <div className="auth__profile-row">
+              <dt>Plan</dt>
+              <dd>{planSummary(profile)}</dd>
             </div>
             {/* The portfolio links the member shared at sign-up. Rendered only
                 when there is at least one, so a pre-portfolio account does not
