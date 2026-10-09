@@ -71,8 +71,8 @@ const DEFAULT_CONTENT = {
     // "Membership" and presses Publish. The end date is inclusive.
     feePromo: {
       enabled: false,
-      label: 'Founding member offer',
-      note: 'Join now and pay your membership fee within your first year.',
+      label: 'Free Trial',
+      note: 'Join now for free and pay to upgrade your membership to feature on our portfolio page.',
       endsOn: '2027-09-30'
     },
 

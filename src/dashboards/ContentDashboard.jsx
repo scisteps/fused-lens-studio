@@ -72,8 +72,8 @@ const DEFAULT_CONTENT = {
     // The end date is INCLUSIVE — '2027-09-30' runs through that whole day.
     feePromo: {
       enabled: false,
-      label: 'Founding member offer',
-      note: 'Join now and pay your membership fee within your first year.',
+      label: 'Free Trial',
+      note: 'Join now for free and pay to upgrade your membership to feature on our portfolio page.',
       endsOn: '2027-09-30'
     },
 
@@ -1327,7 +1327,7 @@ export default function ContentDashboard() {
                 />
               </Field>
 
-              <div
+              {/* <div
                 style={{
                   fontSize: 13,
                   lineHeight: 1.5,
@@ -1353,7 +1353,7 @@ export default function ContentDashboard() {
                   : `FINISHED — the offer closed on ${promoEndLabel(
                       feePromoNow
                     )}, so the ordinary fees and deadlines are shown again.`}
-              </div>
+              </div> */}
             </div>
 
             {(membership.categories || []).map(

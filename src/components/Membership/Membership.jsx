@@ -238,9 +238,9 @@ export function Membership() {
                               role="status"
                               aria-live="polite"
                             >
-                              <span className="membership__category-promo-flag">
+                              {/* <span className="membership__category-promo-flag">
                                 PAY LATER
-                              </span>
+                              </span> */}
                               <span className="membership__category-promo-body">
                                 <strong>{promo.label}</strong>
                                 {promo.note && <span>{promo.note}</span>}
