@@ -15,7 +15,6 @@ import native3 from '../Images/native3.jpg';
 import native4 from '../Images/native4.jpg';
 import logotxt from '../Images/logot.png';
 import sam from '../Images/sam nungi.png';
-import Ray from '../images/Ray.png'
 import jay from '../images/Jay.png'
 import juliet from '../images/Juliet.png'
 import Alex from '../images/Alex.png'
@@ -189,7 +188,6 @@ export const imageOptions = [
   { id: 'native4', label: 'Animation artwork scene', src: native4 },
   { id: 'jagwe', label: 'Jagwe', src: jagwe },
     { id: 'sam', label: 'sam', src: sam },
-    { id: 'Ray',    label: 'Ray',    src: Ray },
 { id: 'jay',    label: 'jay',    src: jay },
 { id: 'juliet', label: 'juliet', src: juliet },
 { id: 'Alex', label: 'Alex', src: Alex },
