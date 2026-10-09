@@ -9,6 +9,7 @@ import { Preloader } from './components/Preloader'
 import { Home } from './pages/Home'
 import { NewsEvents } from './pages/NewsEvents'
 import { Members } from './pages/Members'
+import { Portfolio } from './pages/Portfolio'
 import { FloatingParticles, CursorGlow } from './components'
 import ContentDashboard from './dashboards/ContentDashboard'
 import NewsEventsDashboard from './dashboards/NewsEventsDashboard'
@@ -120,6 +121,9 @@ function AppShell() {
           <Route path="/" element={<Home />} />
           <Route path="/news-events" element={<NewsEvents />} />
           <Route path="/members" element={<Members />} />
+          {/* The public directory of every signed-up member and their shareable
+              portfolio links. Reads memberPortfolios only — never `users`. */}
+          <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/welcome" element={<Welcome />} />

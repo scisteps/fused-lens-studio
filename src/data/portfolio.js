@@ -22,6 +22,26 @@
 // Longest URL we store. Mirrored by `k.size() <= 500` in firestore.rules.
 export const MAX_PORTFOLIO_URL_LENGTH = 500
 
+// The optional "about you" field on sign-up, shown on the member's public
+// portfolio card. Capped in WORDS (not characters) because that is how the
+// sign-up form describes it: "Tell us about yourself — up to 50 words."
+export const MAX_ABOUT_WORDS = 50
+
+/**
+ * Trim + collapse whitespace so a pasted paragraph or soft-wrapped line renders
+ * as normal prose and is easy to display on a card. Blank becomes ''.
+ */
+export function normaliseAbout(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim()
+}
+
+/** How many words a string holds (blank → 0). Used by the live counter + validation. */
+export function aboutWordCount(value) {
+  const text = String(value || '').trim()
+  if (!text) return 0
+  return text.split(/\s+/).length
+}
+
 // Label of the free-text tile — kept here so the picker never
 // hard-codes it, the same way professions.js holds OTHER_PROFESSION_LABEL.
 export const OTHER_PORTFOLIO_LABEL = 'Other'
@@ -119,6 +139,10 @@ export function buildPublicEntry(profile) {
     school: student ? String(profile.school || '').trim() : null,
     profession: student ? null : String(profile.profession || '').trim(),
     portfolio: links,
+    // The optional "Tell us about yourself" note (up to 50 words) from sign-up.
+    // Normalised here so the card, the Firestore document and the public listing
+    // all carry byte-identical text. Blank stays blank so the page can omit it.
+    about: normaliseAbout(profile.about),
     // Opt-out switch. The secretariat can set `visible: false` on a single
     // document from the Firebase console to pull one member out of the public
     // listing without deleting their account. Absent means visible, so a

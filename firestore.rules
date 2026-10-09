@@ -166,6 +166,12 @@ service cloud.firestore {
       // The listing must be renderable by the public site with no signed-in
       // user, so reads are open. Everything written must still look like a
       // member card: a name, and links that are real http(s) URLs.
+      //
+      // The optional `about` field (the sign-up "tell us about yourself" note,
+      // up to 50 words) needs no extra clause here: this rule checks the fields
+      // it cares about but does not use hasOnly on the whole document, so an
+      // extra short string is already permitted. It is public by design — it is
+      // shown on the /portfolio page.
       allow read: if true;
 
       allow create, update: if (request.auth != null && request.auth.uid == userId || isAdmin())

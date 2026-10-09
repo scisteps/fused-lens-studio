@@ -474,3 +474,165 @@
   }
 }
 
+/* ============================================================
+   SIGN-UP ONLY — white card, crane walkway on top,
+   fieldsets keep their own tint but retuned for a light card.
+   Scoped so Login.jsx is unaffected.
+   ============================================================ */
+
+/* The signup card goes WHITE. Everything around the fieldsets —
+   the card padding — is white. The blurred backdrop shows only
+   outside the card. */
+.auth__card--signup {
+  /* Horizontal padding lives in a variable so the crane track can reach the
+     card's edges (negative margin) without hard-coding the same number twice. */
+  --card-pad-x: 2.5rem;
+
+  max-width: 720px;
+  padding: 0 var(--card-pad-x) 2.75rem;  /* top spacing comes from the walkway */
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--color-charcoal, #141414);
+  backdrop-filter: none;         /* solid card, no blur behind it */
+  -webkit-backdrop-filter: none;
+  overflow: hidden;              /* keep the crane inside the card bounds */
+}
+
+/* ---------- Crane walkway: the crane walks along "Members Area" ----------
+   GSAP (SignUp.jsx) is the ONLY thing that animates the crane. There is
+   deliberately no CSS animation here: a CSS keyframe and a GSAP tween on the
+   same transform fight each other. The crane enters from off-screen left,
+   crosses the walkway, exits off-screen right, and loops — see CRANE_TWEEN
+   at the top of SignUp.jsx to retime it. */
+
+.auth__walkway {
+  position: relative;
+  --crane-size: 300px;
+  /* How far the crane's feet overlap the "Members Area" label.
+     Raise it if the crane floats above the text, lower it if it sinks in. */
+  --crane-feet-gap: 2.25rem;
+}
+
+.auth__crane-track {
+  position: relative;
+  z-index: 1;                    /* the crane walks in front of the label */
+  /* Full card width: cancel the card's side padding so the crane walks from
+     the card's left edge to its right edge. The label below stays aligned
+     with the rest of the content. */
+  width: calc(100% + 2 * var(--card-pad-x));
+  height: var(--crane-size);
+  /* CHANGED: vertical overflow stays visible so the crane's feet can overlap
+     the "Members Area" label without being clipped at the track's bottom.
+     Horizontal clipping is handled by clip-path (the crane still disappears
+     at the card's left and right edges). The card's own overflow:hidden is
+     the final guard. */
+  overflow: visible;
+  clip-path: inset(-50px 0 -50px 0);
+  pointer-events: none;
+}
+
+.auth__crane-player {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: var(--crane-size);
+  height: var(--crane-size);
+  will-change: transform;        /* GSAP owns the x transform */
+}
+
+.auth__walkway .auth__eyebrow {
+  position: relative;
+  z-index: 0;
+}
+
+/* ---------- Heading on the white card: dark ink ---------- */
+
+.auth__card--signup .auth__eyebrow {
+  color: var(--color-orange, #FD6500);
+}
+
+.auth__card--signup .auth__title {
+  color: var(--color-charcoal, #141414);
+}
+
+.auth__card--signup .auth__subtitle {
+  color: var(--color-ash, #6b6b6b);
+}
+
+/* ---------- Fieldsets: keep their own tint, retuned for white ---------- */
+
+.auth__card--signup .auth__group {
+  background: rgba(20, 20, 20, 0.03);
+  border: 1px solid rgba(20, 20, 20, 0.12);
+}
+
+.auth__card--signup .auth__group--conditional {
+  background: rgba(20, 20, 20, 0.055);
+  border-color: rgba(20, 20, 20, 0.2);
+}
+
+.auth__card--signup .auth__group-title {
+  color: var(--color-charcoal, #141414);
+}
+
+/* ---------- Labels, hints, errors on a white card ---------- */
+
+.auth__card--signup .auth__label {
+  color: #4b4b4b;
+}
+
+.auth__card--signup .auth__hint {
+  color: #6b6b6b;
+}
+
+.auth__card--signup .auth__error-text {
+  color: var(--color-error, #FD6500);
+}
+
+/* ---------- Inputs on a white card ---------- */
+
+.auth__card--signup .auth__field input,
+.auth__card--signup .auth__field select,
+.auth__card--signup .auth__field textarea {
+  background: #ffffff;
+  color: var(--color-charcoal, #141414);
+  border: 1px solid rgba(20, 20, 20, 0.18);
+}
+
+.auth__card--signup .auth__field input::placeholder,
+.auth__card--signup .auth__field textarea::placeholder {
+  color: rgba(20, 20, 20, 0.35);
+}
+
+.auth__card--signup .auth__field input:focus,
+.auth__card--signup .auth__field select:focus,
+.auth__card--signup .auth__field textarea:focus {
+  border-color: var(--color-orange, #FD6500);
+  background: #ffffff;
+}
+
+.auth__card--signup .auth__field select option {
+  background: #ffffff;
+  color: var(--color-charcoal, #141414);
+}
+
+/* ---------- Alerts + footer link on white ---------- */
+
+.auth__card--signup .auth__switch {
+  color: var(--color-ash, #6b6b6b);
+  border-top-color: rgba(20, 20, 20, 0.1);
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 560px) {
+  .auth__card--signup {
+    --card-pad-x: 1.5rem;
+    padding-bottom: 2rem;
+  }
+
+  .auth__walkway {
+    --crane-size: 200px;
+    --crane-feet-gap: 1.5rem;
+  }
+}

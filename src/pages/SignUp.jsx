@@ -11,6 +11,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Player } from '@lottiefiles/react-lottie-player'
+import gsap from 'gsap'
 import { useAuth } from '../lib/useAuth'
 import {
   signUpWithEmail,
@@ -18,6 +20,7 @@ import {
   linkPhoneToCurrentUser,
   confirmOtp
 } from '../lib/auth'
+import cranewalk from '../jsons/cranewalk.json'
 import { requestMembershipIntent } from '../lib/membershipIntent'
 import { BlurredBackdrop, ProfessionPicker, PortfolioLinks } from '../components'
 import { heroSlides } from '../data/images'
@@ -31,14 +34,27 @@ import {
   emptyPortfolio,
   isValidPortfolioUrl,
   portfolioCount,
+  aboutWordCount,
+  MAX_ABOUT_WORDS,
   PORTFOLIO_LINKS
 } from '../data/portfolio'
 import './Auth.css'
 
+// Shared entrance motion for the auth cards.
 const CARD_MOTION = {
   initial: { opacity: 0, y: 24 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
+  transition: { duration: 0.5,   }
+}
+
+// ── Crane walk tuning ────────────────────────────────────────────────────────
+// All three values live here so you can retime the walk without hunting
+// through the useEffect below.
+const CRANE_TWEEN = {
+  duration: 20,        // seconds for the full left → right crossing
+  repeatDelay: 3,   // seconds the crane stays off-screen before re-entering
+  overshoot: 0.15,    // fraction of the crane's own width past each edge
+  loop: true          // set false for a single pass
 }
 
 // Blurred photo slideshow behind the card. Uses the static hero imagery rather
@@ -47,15 +63,6 @@ const CARD_MOTION = {
 const AUTH_BACKDROP_IMAGES = [
   ...new Set(heroSlides.map((slide) => slide.image).filter(Boolean))
 ]
-
-// The profession choices live in one editable place:
-// src/data/professions.js — open that file to add or rename a category. The
-// tiles are text-only (their Lottie artwork has been removed). The dialling
-// codes and membership categories live in src/data/signup.js.
-//
-// `isStudent` is NOT stored in the form any more — it is derived from
-// `category` (see isStudentCategory). The derived value is what gets written to
-// the profile, because that is the field the Firestore rules pair with school.
 
 // A factory, not a shared constant: `portfolio` is a nested object, and every
 // fresh form needs its own copy of it.
@@ -75,7 +82,10 @@ function emptyForm() {
     school: '',      // students only
     profession: '',  // everyone else
     // Portfolio — a { linkedin: '…', behance: '…' } map
-    portfolio: emptyPortfolio()
+    portfolio: emptyPortfolio(),
+    // Optional "tell us about yourself" note (up to 50 words), shown on the
+    // member's public portfolio card.
+    about: ''
   }
 }
 
@@ -106,7 +116,9 @@ function validate(form) {
       errors.dateOfBirth = 'That date is not valid.'
     } else if (dob >= now) {
       errors.dateOfBirth = 'Your date of birth must be in the past.'
-    } else if (dob < new Date(now.getFullYear() - 120, now.getMonth(), now.getDate())) {
+    } else if (
+      dob < new Date(now.getFullYear() - 120, now.getMonth(), now.getDate())
+    ) {
       errors.dateOfBirth = 'Please check the year you entered.'
     }
   }
@@ -132,10 +144,6 @@ function validate(form) {
   }
 
   // ── Portfolio ────────────────────────────────────────────────────────────
-  // At least one link is required — the Guild's whole value is seeing member
-  // work — and each one they DID paste has to look like a link. Only the tiles
-  // they actually opened are judged, so someone who filled in two of six
-  // platforms is never told about the four they left alone.
   if (portfolioCount(form.portfolio) === 0) {
     errors.portfolio = 'Please share at least one link to your work.'
   } else {
@@ -146,6 +154,12 @@ function validate(form) {
           'That does not look like a link — check the address.'
       }
     })
+  }
+
+  // ── About you (optional) ────────────────────────────────────────────────
+  const aboutWords = aboutWordCount(form.about)
+  if (aboutWords > MAX_ABOUT_WORDS) {
+    errors.about = `That is ${aboutWords} words — please keep it to ${MAX_ABOUT_WORDS} or fewer.`
   }
 
   return errors
@@ -160,6 +174,19 @@ export function SignUp() {
   const [formError, setFormError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
+
+  // GSAP drives the crane wrapper's transform. The element is measured at
+  // mount so it starts fully off the left edge and exits fully off the right.
+  // GSAP is the ONLY thing that touches the crane's transform — there is no
+  // CSS animation on it (a CSS keyframe and a GSAP tween on the same property
+  // fight each other).
+  const craneRef = useRef(null)
+  const trackRef = useRef(null)
+
+  // Open the members area from the top so the walking crane is never cut off.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   // ---------- Phone verification ----------
   // Firebase only records a phone number on the account once it has been proven
@@ -191,6 +218,69 @@ export function SignUp() {
   // form never fails with "reCAPTCHA has already been rendered in this element".
   useEffect(() => () => clearRecaptcha(), [])
 
+  // ---------- Crane: off-screen left → across → off-screen right → loop ----------
+  // The walkway only exists while the registration form is on screen. The
+  // effect depends on `showForm` so it re-measures when the form (re)appears,
+  // e.g. after a failed SMS step drops the member back to the form.
+  const showForm = !authLoading && verifyStep === 'idle' && !user && !done
+
+  useEffect(() => {
+    const crane = craneRef.current
+    const track = trackRef.current
+    if (!showForm || !crane || !track) return undefined
+
+    let tween
+    let cancelled = false
+
+    const start = () => {
+      if (cancelled) return
+      tween?.kill()
+
+      const trackWidth = track.clientWidth
+      const craneWidth = crane.offsetWidth
+      if (!trackWidth || !craneWidth) return
+
+      // Start fully off the LEFT edge (own width + a little overshoot),
+      // end fully off the RIGHT edge (track width + the same overshoot).
+      // The card's overflow:hidden does the actual clipping.
+      const overshoot = craneWidth * CRANE_TWEEN.overshoot
+      const startX = -craneWidth - overshoot
+      const endX = trackWidth + overshoot
+
+      // Reduced motion: park the crane centred, no walk.
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        gsap.set(crane, { x: (trackWidth - craneWidth) / 2 })
+        return
+      }
+
+      gsap.set(crane, { x: startX })
+
+      tween = gsap.to(crane, {
+        x: endX,
+        duration: CRANE_TWEEN.duration,
+        ease: 'none',
+        repeat: CRANE_TWEEN.loop ? -1 : 0,
+        repeatDelay: CRANE_TWEEN.repeatDelay
+      })
+    }
+
+    // Wait for the Lottie player + card layout to settle before measuring,
+    // otherwise the track reports 0 width and the crane never moves.
+    const raf = requestAnimationFrame(() => {
+      requestAnimationFrame(start)
+    })
+
+    // Re-measure on resize so a rotated phone still gets the full track.
+    window.addEventListener('resize', start)
+
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(raf)
+      window.removeEventListener('resize', start)
+      tween?.kill()
+    }
+  }, [showForm])
+
   const isStudent = isStudentCategory(form.category)
 
   // validate() keys the per-tile messages as `portfolio.<id>` so they sit
@@ -205,7 +295,9 @@ export function SignUp() {
 
   const update = (field) => (event) => {
     const value =
-      event.target.type === 'checkbox' ? event.target.checked : event.target.value
+      event.target.type === 'checkbox'
+        ? event.target.checked
+        : event.target.value
 
     setForm((prev) => {
       const next = { ...prev, [field]: value }
@@ -441,15 +533,38 @@ export function SignUp() {
   return (
     <section className="auth">
       <BlurredBackdrop images={AUTH_BACKDROP_IMAGES} />
-      <motion.div className="auth__card auth__card--wide" {...CARD_MOTION}>
-        <span className="auth__eyebrow">Members Area</span>
+
+      {/* One column: walkway (crane + Members Area) → heading → fieldsets. */}
+      <div className="auth__card auth__card--wide auth__card--signup">
+
+        {/*
+          Walkway: the crane's feet land on the "Members Area" line and GSAP
+          slides .auth__crane-player from fully off the left edge of the track
+          to fully off the right edge, on a loop (see the crane useEffect above
+          and CRANE_TWEEN at the top of this file). The card's overflow:hidden
+          is what hides the crane outside the walkway.
+        */}
+        <div className="auth__walkway">
+          <div className="auth__crane-track" ref={trackRef} aria-hidden="true">
+            <div className="auth__crane-player" ref={craneRef}>
+              <Player
+                autoplay
+                loop
+                speed={1}
+                src={cranewalk}
+                style={{ width: '100%', height: '100%' }}
+              />
+            </div>
+          </div>
+          <span className="auth__eyebrow">Members Area</span>
+        </div>
+
         <h1 className="auth__title">
           Are you an animator, or in a related field?
         </h1>
         <p className="auth__subtitle">
           Sign up to the Animation Guild Uganda — the professional association
-          for animators, studios, students and everyone who supports
-          Uganda&apos;s animation and digital creative arts industry.
+          for animators, studios, and students.
         </p>
 
         <form className="auth__form" onSubmit={handleSubmit} noValidate>
@@ -717,10 +832,55 @@ export function SignUp() {
             </div>
           </fieldset>
 
+          {/* ══ ABOUT YOU (OPTIONAL) ══════════════════════════════════════
+              A short, self-written line about themselves. Optional — a blank
+              box means the portfolio card simply has no bio. When present it
+              is shown on the public portfolio page, so keep it to 50 words. */}
+          <fieldset className="auth__group">
+            <legend className="auth__group-title">
+              Tell us about yourself
+            </legend>
+            <div className="auth__field">
+              <label className="auth__label" htmlFor="su-about">
+                Your short bio{' '}
+                <span className="auth__optional">(optional)</span>
+              </label>
+              <textarea
+                id="su-about"
+                name="about"
+                rows={4}
+                value={form.about}
+                onChange={update('about')}
+                placeholder="e.g. A 2D animator based in Kampala who loves storytelling and character design."
+                aria-invalid={Boolean(errors.about)}
+                maxLength={600}
+              />
+              {errors.about ? (
+                <span className="auth__error-text">{errors.about}</span>
+              ) : (
+                <span className="auth__hint">
+                  Up to {MAX_ABOUT_WORDS} words. It appears on your public
+                  portfolio page — leave it blank if you prefer.
+                </span>
+              )}
+              {/* Live counter so a member can see how close they are without
+                  submitting first. */}
+              <span
+                className={`auth__counter ${
+                  aboutWordCount(form.about) > MAX_ABOUT_WORDS ? 'is-over' : ''
+                }`}
+                aria-live="polite"
+              >
+                {aboutWordCount(form.about)} / {MAX_ABOUT_WORDS} words
+              </span>
+            </div>
+          </fieldset>
+
           {formError && (
             <p className="auth__alert auth__alert--error">{formError}</p>
           )}
 
+          {/* Submit + switch link live INSIDE the form so Enter submits. */}
           <div className="auth__actions">
             <button
               type="submit"
@@ -730,20 +890,17 @@ export function SignUp() {
               {submitting ? 'Creating account…' : 'Create Account'}
             </button>
           </div>
-        </form>
 
-        <p className="auth__switch">
-          Already a member?{' '}
-          <Link to="/login" className="auth__link">
-            Sign in
-          </Link>
-        </p>
-      </motion.div>
+          <p className="auth__switch">
+            Already a member?{' '}
+            <Link to="/login" className="auth__link">
+              Sign in
+            </Link>
+          </p>
+        </form>
+      </div>
     </section>
   )
 }
 
 export default SignUp
-
-
-

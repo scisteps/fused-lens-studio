@@ -35,6 +35,7 @@ export function Navigation() {
   const navLinks = [
     { id: 'about', label: 'About', path: '/#about' },
     { id: 'services', label: 'Services', path: '/#services' },
+    // { id: 'portfolio', label: 'Portfolio', path: '/portfolio' },
     { id: 'contact', label: 'Contact', path: '/#contact' },
     { id: 'news', label: 'News', path: '/news-events' },
   ]

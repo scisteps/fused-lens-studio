@@ -142,6 +142,15 @@
   color: var(--color-silver, #9a9a9a);
 }
 
+/* The optional 50-word "tell us about yourself" note from sign-up. */
+.member-page__about {
+  margin: 0;
+  color: var(--color-pearl, #d4d4d4);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  font-style: italic;
+}
+
 .member-page__links {
   list-style: none;
   margin: 0;

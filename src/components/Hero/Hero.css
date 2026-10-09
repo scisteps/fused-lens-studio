@@ -1,30 +1,23 @@
+/* ============================================================
+   HERO
+   Layout: 100svh bottom-anchored flex column
+   Stack:  crane → tagline → buttons → indicators
+   Crane + tagline + buttons all share the same left edge.
+   ============================================================ */
+
 .hero {
   position: relative;
-  /* Two height declarations on purpose: `svh` is the "small viewport height", so
-     the hero keeps a stable size on mobile even while the browser's address bar
-     is showing. Without it, `100vh` includes that chrome and the bottom-anchored
-     copy/buttons get pushed under it. The `100vh` line is the fallback for
-     browsers without `svh`. */
   height: 100vh;
   height: 100svh;
-  /* Deliberately modest — the old 700px floor forced a scrollbar on short
-     (landscape) windows. Layout below is compacted by a @media (max-height) rule. */
   min-height: 520px;
   width: 100%;
   overflow: hidden;
-  background: #ffffff;   /* white stage behind the intro */
+  background: #ffffff;
 }
 
-/* Slides Container */
-.hero__slides {
-  position: absolute;
-  inset: 0;
-}
-
-.hero__slide {
-  position: absolute;
-  inset: 0;
-}
+/* ---- Slides ---- */
+.hero__slides { position: absolute; inset: 0; }
+.hero__slide  { position: absolute; inset: 0; }
 
 .hero__image {
   width: 100%;
@@ -33,7 +26,7 @@
   will-change: transform;
 }
 
-/* Overlays */
+/* ---- Overlays ---- */
 .hero__overlay {
   position: absolute;
   inset: 0;
@@ -60,21 +53,13 @@
 
 /* ─────────────────────────────────────────────────────────────
    Content column
-   One bottom-anchored flex stack: lottie → wording → buttons.
-   Everything below this block used to be positioned separately and
-   collided; keeping the three pieces in ONE flow column with a single
-   `gap` is what makes overlap structurally impossible at any width.
    ───────────────────────────────────────────────────────────── */
 .hero__content {
   position: relative;
-  /* Above the photo slides + overlays. Below the fixed header (z-index 1000)
-     and the profile overlay (1200). */
   z-index: 2;
   height: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
-  /* Top padding clears the fixed header. Bottom padding is the breathing room
-     under the buttons, and also clears the home indicator on notched phones. */
   padding-top: calc(var(--header-height) + var(--space-lg));
   padding-right: var(--container-padding);
   padding-bottom: max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 1rem));
@@ -82,140 +67,104 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: clamp(1.25rem, 3vh, 2.5rem);
+  gap: clamp(1.5rem, 2.5vh, 2.5rem);
 }
 
+/* Shared column: crane + tagline + buttons all start at the same x */
 .hero__text {
   width: 100%;
   max-width: 800px;
   display: flex;
   flex-direction: column;
-  gap: clamp(1rem, 2.5vh, 2rem);
-  min-width: 0;   /* let the headline shrink instead of forcing overflow */
+  align-items: flex-start;
+  gap: 0;
+  min-width: 0;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Lottie — the crane, sitting directly above the tagline.
+/* ============================================================
+   LOTTIE CRANE — MAIN DESKTOP VALUES
+   ============================================================
+   ⚙️  To move the crane: tweak the 3 values in the block below.
+       • --crane-size    → how big it is (square)
+       • --crane-x       → horizontal nudge (negative = left)
+       • --crane-gap     → space between crane and the tagline
+   ============================================================ */
 
-   It used to be `position: absolute` with a hard-coded 650px box, and the
-   space it occupied was then faked by `margin-top: 420px` on the title
-   wrapper. Those two magic numbers only lined up at one exact viewport size,
-   so any other screen put the crane through the wording. It is now a normal
-   flow item that scales with the viewport, and the tuck underneath it is a
-   single fluid `margin-bottom`.
-
-   Sizing is deliberately bounded on BOTH axes: `vmin` keeps it from
-   sprawling on a wide monitor, and `svh` keeps it from eating the vertical
-   budget the headline and buttons need. The hero is a bottom-anchored
-   `100svh` column, so a crane sized on width alone grows until it pushes the
-   wording off the top of the screen. min() of the two is what lets it be
-   genuinely large on a big display while still shrinking on a short window.
-   ───────────────────────────────────────────────────────────── */
-.hero__lottie {
+   .hero__lottie {
+  width: 600px;
   position: relative;
-  width: clamp(200px, min(42vmin, 40svh), 460px);
-  aspect-ratio: 1 / 1;
-  /* Pulls the crane down onto the title so they read as one composition
-     without the two boxes ever landing on top of each other. Scales with the
-     crane, but stops short of true proportional — the crane artwork carries
-     transparent padding at its foot, and a full-ratio tuck would ride the
-     headline itself. */
-  margin-bottom: clamp(-3.5rem, -6vmin, -0.75rem);
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  line-height: 0;
-  pointer-events: none;
-  flex-shrink: 0;
-}
+  height: 600px;
+  margin-bottom: -450px;  
+    margin-left: -90px;   /* ← gap between Lottie and tagline */
+   }
+   @media (max-width: 768px) {
+   .hero__lottie {
+  width: 500px;
+  position: relative;
+  height: 500px;
+  margin-bottom: -350px;  
+    margin-left: -90px;   /* ← gap between Lottie and tagline */
+   }}
 
+/* ---- Title / tagline ---- */
 .hero__title-wrapper {
   position: relative;
+  width: 100%;
   min-width: 0;
+  align-self: flex-start;
 }
 
 .hero__title {
   margin: 0;
   font-family: var(--font-body);
-  /* The old `clamp(2rem, 5vw, 2rem)` was a no-op — min equalled max, so the
-     headline never actually scaled. This one grows on large screens and eases
-     down on phones. */
   font-size: clamp(1.5rem, 1.05rem + 2.4vw, 3rem);
   font-weight: 400;
   color: var(--color-white);
   line-height: 1.15;
-  /* Contrast — soft dark shadow so the wording stays readable over the
-     brightest areas of the photo. */
+  text-align: left;
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.5),
     0 2px 8px rgba(0, 0, 0, 0.35),
     0 4px 24px rgba(0, 0, 0, 0.25);
   text-wrap: balance;
-  /* Long single-word titles from the admin must not blow out the column. */
   overflow-wrap: break-word;
 }
 
 .hero__title-line {
   display: block;
   overflow: hidden;
-  /* The reveal mask would clip both the descenders and the shadow set on
-     .hero__title; the padding + negative margin give both room to breathe. */
   padding-bottom: 0.14em;
   margin-bottom: -0.14em;
+  text-align: left;
   text-shadow: inherit;
 }
 
 .hero__title-line--accent {
   font-weight: 300;
-  /* The tagline is always white, on every slide and in every palette. It
-     already inherits that from .hero__title; stating it here means the line
-     stays white even if a palette class is ever re-applied to it. */
   color: var(--color-white);
-  /* Slightly stronger shadow so white text stays readable over bright image areas */
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.6),
     0 2px 10px rgba(0, 0, 0, 0.4),
     0 4px 28px rgba(0, 0, 0, 0.3);
 }
 
-/* The tagline used to cycle through a palette colour per slide via
-   --orange / --green / --white classes. Those are gone: the tagline is white
-   in every palette (see .hero__title-line--accent above). Keeping the classes
-   here would invite someone to re-apply them. */
-
-/* Actions */
-.hero__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-}
-
-/* ---------- Login / Sign Up row ----------
-   Sits at the bottom-left OF THE HERO. `position: absolute` resolves against
-   .hero (which is `position: relative; height: 100vh`), so the row holds the
-   same spot on screen but scrolls away with the hero. It used to be
-   `position: fixed` outside the <section>, which pinned it to the viewport and
-   left Login / Sign Up / Get in Touch floating over every section below.
-   `absolute` — not `fixed` — is the whole fix: a fixed row inside a
-   transformed ancestor is what forced the original markup outside the hero. */
-/* ---------- Login / Sign Up row ----------
-   This is the LAST item of the .hero__content stack (see Hero.jsx), so it sits
-   under the wording with the column's `gap` between them and can never overlap
-   it.
-
-   It used to be `position: absolute; bottom: 15vh` as a SIBLING of
-   .hero__content, which already ended 15vh from the bottom via its own
-   `padding-bottom: 15vh`. Both therefore resolved to the same horizontal band
-   and the buttons landed on the title; a 60px `margin-bottom` was all that kept
-   them apart, which is why a slightly longer headline pushed them into each
-   other. (Even earlier it was `position: fixed` outside the <section>, pinning
-   it over About, Services and every section below.) In normal flow the row
-   scrolls away with the hero AND holds its own space. */
+/* ─────────────────────────────────────────────────────────────
+   Actions
+   ───────────────────────────────────────────────────────────── */
 .hero__actions-hero {
   width: 100%;
-  max-width: 800px;   /* keeps the buttons on the same measure as the wording */
+  max-width: 800px;
   align-self: flex-start;
   flex-shrink: 0;
+}
+
+.hero__actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-md);
 }
 
 .hero__btn {
@@ -223,13 +172,15 @@
   align-items: center;
   justify-content: center;
   padding: 1.125rem 2.5rem;
-  font-family: inherit;      /* so the <button> variants match the <a> ones */
+  font-family: inherit;
   font-size: 0.8125rem;
   font-weight: 500;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   transition: all var(--transition-smooth);
   cursor: pointer;
+  white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 .hero__btn--primary {
@@ -255,19 +206,9 @@
   transform-origin: left;
 }
 
-.hero__btn--primary:hover {
-  color: var(--color-white);
-}
+.hero__btn--primary:hover { color: var(--color-white); }
+.hero__btn--primary span  { position: relative; z-index: 1; }
 
-.hero__btn--primary span {
-  position: relative;
-  z-index: 1;
-}
-
-/* The row is pinned over the whole page now, so it passes over light sections
-   too. A translucent dark plate behind the buttons keeps white text and the
-   white border readable whatever is behind them — without it, "Sign Up" and
-   "Get in Touch" would disappear over the white About/Services sections. */
 .hero__btn--outline {
   background: rgba(10, 10, 10, 0.55);
   color: var(--color-white);
@@ -281,10 +222,6 @@
   background: rgba(10, 10, 10, 0.75);
 }
 
-/* ---------- Signed-in actions ----------
-   The membership-category chip is filled with the palette accent and inked
-   with the matching --color-on-accent token, so its label reads in every
-   theme (the same system the benefits cards use). */
 .hero__btn--category {
   gap: 0.65rem;
   border: none;
@@ -307,178 +244,7 @@
   flex-shrink: 0;
 }
 
-/* ---------- Member profile panel ----------
-   Opened by tapping the category chip. Rendered outside the parallax section
-   (see Hero.jsx) so position: fixed is not trapped by its scroll transform. */
-.hero__profile-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-  background: rgba(10, 10, 10, 0.62);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.hero__profile {
-  position: relative;
-  width: min(460px, 100%);
-  max-height: 88vh;
-  overflow-y: auto;
-  padding: 2.25rem 2rem;
-  background: var(--color-charcoal, #141414);
-  color: var(--color-white);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-}
-
-.hero__profile-eyebrow {
-  display: block;
-  margin-bottom: 0.6rem;
-  font-family: var(--font-body);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--color-accent, #FD6500);
-}
-
-.hero__profile-name {
-  margin: 0 0 0.85rem;
-  font-family: var(--font-body);
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.2;
-  color: var(--color-white);
-}
-
-.hero__profile-category {
-  display: inline-flex;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding: 0.45rem 1rem;
-  font-family: var(--font-body);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  background: var(--color-accent, #FD6500);
-  color: var(--color-on-accent, #0a0a0a);
-}
-
-.hero__profile-list {
-  margin: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.hero__profile-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.7rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.hero__profile-row dt {
-  font-family: var(--font-body);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-silver, #9a9a9a);
-}
-
-.hero__profile-row dd {
-  margin: 0;
-  text-align: right;
-  font-size: 0.95rem;
-  color: var(--color-white);
-  word-break: break-word;
-}
-
-.hero__profile-status {
-  text-transform: capitalize;
-}
-
-/* The member's portfolio links, stacked so several fit without crowding the
-   label. */
-.hero__profile-links {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.3rem;
-}
-
-.hero__profile-links a {
-  color: var(--color-white, #ffffff);
-  font-size: 0.85rem;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  text-decoration-color: rgba(var(--color-accent-rgb, 253, 101, 0), 0.6);
-  transition: color var(--transition-fast),
-    text-decoration-color var(--transition-fast);
-}
-
-.hero__profile-links a:hover,
-.hero__profile-links a:focus-visible {
-  color: var(--color-orange, #FD6500);
-  text-decoration-color: var(--color-orange, #FD6500);
-}
-
-.hero__profile-actions {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 1.75rem;
-}
-
-.hero__profile-exit {
-  flex: 1 1 auto;
-  padding: 0.9rem 1.25rem;
-  font-family: var(--font-body);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  cursor: pointer;
-  border: none;
-  background: var(--color-accent, #FD6500);
-  color: var(--color-on-accent, #0a0a0a);
-  transition: background var(--transition-fast);
-}
-
-.hero__profile-exit:hover {
-  background: var(--color-accent-light, #ff8133);
-}
-
-.hero__profile-close {
-  flex: 1 1 auto;
-  padding: 0.9rem 1.25rem;
-  font-family: var(--font-body);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  cursor: pointer;
-  background: transparent;
-  color: var(--color-white);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  transition: background var(--transition-fast), border-color var(--transition-fast);
-}
-
-.hero__profile-close:hover {
-  border-color: var(--color-white);
-  background: rgba(255, 255, 255, 0.1);
-}
-
-@media (max-width: 480px) {
-  .hero__profile-actions { flex-direction: column; }
-}
-
-/* Indicators */
+/* ---- Indicators ---- */
 .hero__indicators {
   position: absolute;
   right: var(--container-padding);
@@ -501,9 +267,7 @@
   transition: background var(--transition-fast);
 }
 
-.hero__indicator:hover {
-  background: rgba(255, 255, 255, 0.4);
-}
+.hero__indicator:hover { background: rgba(255, 255, 255, 0.4); }
 
 .hero__indicator-fill {
   position: absolute;
@@ -523,7 +287,7 @@
   to   { transform: scaleY(1); }
 }
 
-/* Scroll Indicator */
+/* ---- Scroll indicator ---- */
 .hero__scroll {
   position: absolute;
   bottom: var(--space-xl);
@@ -555,12 +319,8 @@
   transform-origin: top;
 }
 
-/* Decorative Corners */
-.hero__decorative {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
+/* ---- Decorative corners ---- */
+.hero__decorative { position: absolute; inset: 0; pointer-events: none; }
 
 .hero__corner {
   position: absolute;
@@ -584,151 +344,53 @@
 }
 
 /* ============================================================
-   RESPONSIVE
-   Ordered widest breakpoint first so narrower rules win by source
-   order. Only real structural changes live here; the type and the
-   crane already scale fluidly via clamp()/vmin above.
+   RESPONSIVE — only 3 modes for the crane
    ============================================================ */
 
-/* ---------- Large desktop ----------
-   The crane gets the most generous size here: this is the one case with both
-   a wide screen and a tall one, so `vmin` is no longer the binding axis. */
-@media (min-width: 1440px) {
-  .hero__lottie { width: clamp(480px, 38vmin, 520px); }
-}
-
-/* ---------- Laptop / small desktop ---------- */
-@media (max-width: 1200px) {
-  .hero__lottie { width: clamp(460px, 34vmin, 380px); }
-}
-
-/* ---------- Tablet ---------- */
+/* ---------- MODE 2 · TABLET (max 900px) ---------- */
 @media (max-width: 900px) {
-  .hero__lottie {
-    width: clamp(410px, 32vmin, 400px);
-    margin-bottom: clamp(-2.5rem, -5vmin, -0.5rem);
+  .hero__text,
+  .hero__actions-hero {
+    max-width: 100%;
   }
 
-  .hero__text,
-  .hero__actions-hero { max-width: 100%; }
+  
 }
 
-/* ---------- Phone ---------- */
-@media (max-width: 640px) {
-  .hero {
-    /* svh already keeps the address bar from covering the bottom, so the
-       safe-area floor is all that is left to honour here. */
-    min-height: 480px;
-  }
+/* ---------- MODE 3 · MOBILE (max 768px) ---------- */
+@media (max-width: 768px) {
+  .hero { min-height: 480px; }
 
   .hero__content {
     padding-top: calc(var(--header-height) + var(--space-md));
     gap: clamp(1rem, 2.5vh, 1.75rem);
   }
 
-  .hero__lottie {
-    width: clamp(160px, 46vw, 230px);
-    margin-bottom: clamp(-1.5rem, -4vmin, -0.25rem);
-  }
-
-  /* Stack the buttons: three side-by-side CTAs do not fit a phone width. */
+  
   .hero__actions {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
     gap: 0.625rem;
   }
 
   .hero__btn {
-    width: 100%;
-    /* Roomier vertical padding than the desktop chip so the tap target clears
-       the 44px minimum without making the row feel bulky. */
-    padding: 1rem 1.25rem;
+    width: auto;
+    flex: 0 1 auto;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
     text-align: center;
   }
 
   .hero__indicators { right: var(--space-md); }
-  .hero__indicator { height: 30px; }
-  .hero__corner { width: 50px; height: 50px; }
-
-  /* The bottom-right corner bracket sits where the stacked buttons now live. */
+  .hero__indicator  { height: 30px; }
+  .hero__corner     { width: 50px; height: 50px; }
   .hero__corner--br { bottom: var(--space-lg); }
 }
 
-/* ---------- Small phone ---------- */
-@media (max-width: 380px) {
-  .hero__lottie {
-    width: clamp(140px, 44vw, 180px);
-    margin-bottom: -1rem;
-  }
-
-  /* Tighter type and padding so a three-line headline plus three buttons
-     still clear the header on a 360px-wide device. */
-  .hero__title {
-    font-size: 1.4rem;
-    line-height: 1.2;
-  }
-
-  .hero__btn {
-    padding: 0.9rem 1rem;
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-  }
-
-  .hero__corner { display: none; }
-}
-
-/* ---------- Short / landscape viewports ----------
-   Height, not width, is the constraint here (a phone on its side, or a short
-   laptop window). Everything vertical is compressed so the stack still fits
-   inside the viewport without the hero clipping its own buttons. */
-@media (max-height: 620px) and (min-width: 641px) {
-  .hero {
-    min-height: 400px;
-  }
-
-  .hero__content {
-    padding-top: calc(var(--header-height) + var(--space-sm));
-    gap: 0.75rem;
-  }
-
-  .hero__lottie {
-    width: clamp(90px, 18vh, 160px);
-    margin-bottom: -1.25rem;
-  }
-
-  .hero__title { font-size: clamp(1.25rem, 3.4vh, 1.75rem); }
-  .hero__btn { padding: 0.75rem 1.75rem; }
-  .hero__corner { display: none; }
-}
-
-/* ---------- Very short landscape (phones on their side) ---------- */
-@media (max-height: 480px) {
-  .hero__lottie {
-    width: 90px;
-    margin-bottom: -0.75rem;
-  }
-
-  .hero__title { font-size: 1.2rem; }
-
-  /* Back to a single row so the buttons do not eat the remaining height. */
-  .hero__actions {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .hero__btn {
-    width: auto;
-    flex: 1 1 auto;
-    padding: 0.6rem 0.9rem;
-    font-size: 0.7rem;
-  }
-}
-
-/* ---------- Reduced motion ----------
-   The Ken Burns pan on each slide and the indicator fill are the only
-   continuous animations here; both are decorative, so visitors who ask for
-   reduced motion get a static hero instead. */
+/* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   .hero__image { will-change: auto; }
 

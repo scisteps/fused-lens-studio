@@ -15,11 +15,11 @@ import { Player } from '@lottiefiles/react-lottie-player'
 // --- Intro timing (seconds) -------------------------------------------
 const TIMING = {
   introHold: 3.8,       // how long the lottie plays alone on white bg
-  slidesFade: 1.2,    // background slideshow fade-in duration
-  titleGap: 0.3,      // pause after slides before the title starts fading in
-  titleFade: 0.6,     // title fade-in duration
-  staggerGap: 0.5,    // pause between each element after the title
-  elementFade: 0.6,   // fade-in duration for description/actions/indicators/etc.
+  slidesFade: 1.2,      // background slideshow fade-in duration
+  titleGap: 0.3,        // pause after slides before the title starts fading in
+  titleFade: 0.6,       // title fade-in duration
+  staggerGap: 0.5,      // pause between each element after the title
+  elementFade: 0.6,     // fade-in duration for description/actions/indicators/etc.
 }
 
 export function Hero() {
@@ -47,7 +47,6 @@ export function Hero() {
   // GSAP-controlled intro reveal refs
   const slidesWrapRef = useRef(null)
   const titleWrapRef = useRef(null)
-  const descriptionRef = useRef(null)
   const actionsRef = useRef(null)
   const indicatorsRef = useRef(null)
   const scrollRef = useRef(null)
@@ -79,17 +78,9 @@ export function Hero() {
   }, [slides.length])
 
   // NOTE: the hero deliberately applies NO scroll transform.
-  //
-  // It used to parallax the whole <section> with `translateY(scrollY * 0.4)`.
-  // A transformed ancestor also becomes the containing block for
-  // fixed-position descendants, which is why the Login / Sign Up row used to
-  // be rendered OUTSIDE the section with `position: fixed` — and that in turn
-  // pinned those buttons to the viewport for the entire page, so they floated
-  // over About, Services and everything below.
-  //
-  // Both halves of that workaround are now gone: the row lives back inside the
-  // hero as .hero__actions-hero (`position: absolute`), so it scrolls away with
-  // the hero instead of hanging over the whole site.
+  // A transformed ancestor becomes the containing block for fixed-position
+  // descendants, which is why the old Login / Sign Up row had to live outside
+  // the section. Everything now lives in one flow column inside the hero.
 
   // Preload images
   useEffect(() => {
@@ -112,37 +103,30 @@ export function Hero() {
   useEffect(() => {
     if (!isLoaded) return
 
-    // Grab refs defensively — a null ref never kills the whole timeline.
-    const slides = slidesWrapRef.current
+    const slidesEl = slidesWrapRef.current
     const title = titleWrapRef.current
-    const desc = descriptionRef.current
     const actions = actionsRef.current
     const indicators = indicatorsRef.current
     const scroll = scrollRef.current
     const cornerTl = cornerTlRef.current
     const cornerBr = cornerBrRef.current
 
-    const all = [slides, title, desc, actions, indicators, scroll, cornerTl, cornerBr]
+    const all = [slidesEl, title, actions, indicators, scroll, cornerTl, cornerBr]
       .filter(Boolean)
 
     if (!all.length) return
 
     gsap.set(all, { opacity: 0 })
-    if (desc) gsap.set(desc, { y: 20 })
     if (actions) gsap.set(actions, { y: 20 })
 
     const tl = gsap.timeline({ delay: TIMING.introHold })
 
-    if (slides) {
-      tl.to(slides, { opacity: 1, duration: TIMING.slidesFade, ease: 'power2.out' })
+    if (slidesEl) {
+      tl.to(slidesEl, { opacity: 1, duration: TIMING.slidesFade, ease: 'power2.out' })
     }
     if (title) {
       tl.to(title, { opacity: 1, duration: TIMING.titleFade, ease: 'power3.out' },
         `+=${TIMING.titleGap}`)
-    }
-    if (desc) {
-      tl.to(desc, { opacity: 1, y: 0, duration: TIMING.elementFade, ease: 'power3.out' },
-        `+=${TIMING.staggerGap}`)
     }
     if (actions) {
       tl.to(actions, { opacity: 1, y: 0, duration: TIMING.elementFade, ease: 'power3.out' },
@@ -190,8 +174,6 @@ export function Hero() {
     if (about) about.scrollIntoView({ behavior: 'smooth' })
   }
 
-  // Signed-in actions reuse the same doors signed-out visitors get, minus the
-  // sign-in ones: Contact and News instead of Login / Sign Up.
   const scrollToContact = () => {
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
   }
@@ -199,76 +181,145 @@ export function Hero() {
   return (
     <>
       <section id="home" className="hero">
-      {/* Background Slides */}
-      <div className="hero__slides" ref={slidesWrapRef} style={{ opacity: 0 }}>
-        <AnimatePresence mode="wait">
-          {slides.map((slide, index) => (
-            index === currentSlide && (
-              <motion.div
-                key={slide.id}
-                className="hero__slide"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <img
-                  ref={(el) => (imageRefs.current[index] = el)}
-                  src={slide.image}
-                  alt={`${slide.title} ${slide.subtitle}`}
-                  className="hero__image"
+        {/* Background Slides */}
+        <div className="hero__slides" ref={slidesWrapRef} style={{ opacity: 0 }}>
+          <AnimatePresence mode="wait">
+            {slides.map((slide, index) => (
+              index === currentSlide && (
+                <motion.div
+                  key={slide.id}
+                  className="hero__slide"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <img
+                    ref={(el) => (imageRefs.current[index] = el)}
+                    src={slide.image}
+                    alt={`${slide.title} ${slide.subtitle}`}
+                    className="hero__image"
+                  />
+                </motion.div>
+              )
+            ))}
+          </AnimatePresence>
+
+          <div className="hero__overlay hero__overlay--gradient" />
+          <div className="hero__overlay hero__overlay--vignette" />
+        </div>
+
+        {/* Content — one bottom-anchored flex column:
+            crane → tagline → buttons → indicators */}
+        <div className="hero__content">
+          <div className="hero__text">
+            {/* The crane. Which FILE it is depends on the admin's palette
+                (orange / grey / gold) — see themeIntro() in data/themes.js.
+                It sits directly above the tagline; the 100px air between
+                them comes from .hero__lottie's margin-bottom. */}
+            <div className="hero__lottie">
+              {themeLoaded && (
+                <Player
+                  key={themeId}
+                  autoplay
+                  keepLastFrame
+                  loop={false}
+                  src={themeIntro(themeId)}
+                  className="hero__lottie-player"
                 />
-              </motion.div>
-            )
-          ))}
-        </AnimatePresence>
+              )}
+            </div>
 
-        <div className="hero__overlay hero__overlay--gradient" />
-        <div className="hero__overlay hero__overlay--vignette" />
-      </div>
-
-      {/* Content */}
-      <div className="hero__content">
-        <div className="hero__text">
-          {/* The crane. Which FILE it is depends on the admin's palette
-              (orange / grey / gold) — see themeIntro() in data/themes.js.
-              It replaces the old single animation outright; there is no
-              second one. Nothing renders until the palette has resolved, so
-              the wrong colour is never shown and then swapped. */}
-          <div className="hero__lottie">
-            {themeLoaded && (
-              <Player
-                // Keyed on the animation so switching the palette remounts the
-                // Player with the new file rather than reusing the old instance.
-                key={themeId}
-                autoplay
-                keepLastFrame
-                loop={false}
-                src={themeIntro(themeId)}
-                style={{ width: '100%', height: '100%' }}
-              />
-            )}
+            <div className="hero__title-wrapper" ref={titleWrapRef} style={{ opacity: 0 }}>
+              <AnimatePresence mode="wait">
+                <motion.h2
+                  key={currentSlide}
+                  className="hero__title"
+                  initial={{ opacity: 0, y: 60 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -40 }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <span className="hero__title-line">{slides[currentSlide].title}</span>
+                  <span className="hero__title-line hero__title-line--accent">
+                    {slides[currentSlide].subtitle}
+                  </span>
+                </motion.h2>
+              </AnimatePresence>
+            </div>
           </div>
 
-          <div className="hero__title-wrapper" ref={titleWrapRef} style={{ opacity: 0 }}>
-            <AnimatePresence mode="wait">
-              <motion.h2
-                key={currentSlide}
-                className="hero__title"
-                initial={{ opacity: 0, y: 60 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -40 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              >
-                {/* Both lines are white. The second used to pick up a palette colour per
-                    slide (orange / green / white), which made the tagline fight
-                    the background photo and changed colour mid-rotation. */}
-                <span className="hero__title-line">{slides[currentSlide].title}</span>
-                <span className="hero__title-line hero__title-line--accent">
-                  {slides[currentSlide].subtitle}
-                </span>
-              </motion.h2>
-            </AnimatePresence>
+          {/* Login / Sign Up / Contact — LAST item of the content stack so
+              the column's gap holds it below the wording. Forced to a single
+              horizontal row on every device; wraps only if the viewport is
+              genuinely too narrow. */}
+          <div className="hero__actions-hero">
+            <div className="hero__actions" ref={actionsRef} style={{ opacity: 0 }}>
+              {!authLoading && !user && (
+                <>
+                  <motion.a
+                    href="/login"
+                    className="hero__btn hero__btn--primary"
+                    onClick={(event) => { event.preventDefault(); navigate('/login') }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <span>Login</span>
+                  </motion.a>
+                  <motion.a
+                    href="/signup"
+                    className="hero__btn hero__btn--outline"
+                    onClick={(event) => { event.preventDefault(); navigate('/signup') }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <span>Sign Up</span>
+                  </motion.a>
+                  <motion.a
+                    href="#contact"
+                    className="hero__btn hero__btn--outline"
+                    onClick={(event) => { event.preventDefault(); scrollToContact() }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Get in Touch
+                  </motion.a>
+                </>
+              )}
+
+              {!authLoading && user && (
+                <>
+                  <motion.button
+                    type="button"
+                    className="hero__btn hero__btn--category"
+                    onClick={() => setProfileOpen(true)}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <span className="hero__category-dot" aria-hidden="true" />
+                    <span>{categoryLabel(profile?.category) || 'Member'}</span>
+                  </motion.button>
+                  <motion.a
+                    href="#contact"
+                    className="hero__btn hero__btn--outline"
+                    onClick={(event) => { event.preventDefault(); scrollToContact() }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Contact Us
+                  </motion.a>
+                  <motion.a
+                    href="/news-events"
+                    className="hero__btn hero__btn--outline"
+                    onClick={(event) => { event.preventDefault(); navigate('/news-events') }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    News
+                  </motion.a>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
@@ -286,123 +337,17 @@ export function Hero() {
           ))}
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="hero__scroll" ref={scrollRef} style={{ opacity: 0 }} onClick={scrollToAbout}>
-          {/* <span className="hero__scroll-text">Scroll</span>
-          <motion.div
-            className="hero__scroll-line"
-            animate={{ scaleY: [1, 0.5, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-          /> */}
-        </div>
+        {/* Scroll Indicator (currently invisible — kept for future use) */}
+        <div className="hero__scroll" ref={scrollRef} style={{ opacity: 0 }} onClick={scrollToAbout} />
 
-        {/* Login / Sign Up — the LAST item of the .hero__content stack, so the
-            column's `gap` holds it below the wording and the two can never
-            overlap. It used to be `position: absolute; bottom: 15vh` as a
-            SIBLING of .hero__content, which itself ended 15vh from the bottom
-            via its own padding — both resolved to the same band and the buttons
-            landed on the headline. (And before that it was `position: fixed`
-            outside the <section>, pinning it over About, Services and every
-            section below for the whole page.) In flow it scrolls away with the
-            hero AND holds its own space. */}
-        <div className="hero__actions-hero">
-          <div className="hero__actions" ref={actionsRef} style={{ opacity: 0 }}>
-            {/* Signed out — the invitation to join. */}
-            {!authLoading && !user && (
-              <>
-                <motion.a
-                  href="/login"
-                  className="hero__btn hero__btn--primary"
-                  onClick={(event) => {
-                    event.preventDefault()
-                    navigate('/login')
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span>Login</span>
-                </motion.a>
-                <motion.a
-                  href="/signup"
-                  className="hero__btn hero__btn--outline"
-                  onClick={(event) => {
-                    event.preventDefault()
-                    navigate('/signup')
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span>Sign Up</span>
-                </motion.a>
-                <motion.a
-                  href="#contact"
-                  className="hero__btn hero__btn--outline"
-                  onClick={(event) => {
-                    event.preventDefault()
-                    scrollToContact()
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Get in Touch
-                </motion.a>
-              </>
-            )}
-
-            {/* Signed in — their membership category (opens the profile) plus
-                the two doors they actually need: Contact and News. */}
-            {!authLoading && user && (
-              <>
-                <motion.button
-                  type="button"
-                  className="hero__btn hero__btn--category"
-                  onClick={() => setProfileOpen(true)}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span className="hero__category-dot" aria-hidden="true" />
-                  <span>{categoryLabel(profile?.category) || 'Member'}</span>
-                </motion.button>
-                <motion.a
-                  href="#contact"
-                  className="hero__btn hero__btn--outline"
-                  onClick={(event) => {
-                    event.preventDefault()
-                    scrollToContact()
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Contact Us
-                </motion.a>
-                <motion.a
-                  href="/news-events"
-                  className="hero__btn hero__btn--outline"
-                  onClick={(event) => {
-                    event.preventDefault()
-                    navigate('/news-events')
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  News
-                </motion.a>
-              </>
-            )}
-            </div>
+        {/* Decorative Corners */}
+        <div className="hero__decorative">
+          <div className="hero__corner hero__corner--tl" ref={cornerTlRef} style={{ opacity: 0, transform: 'scale(0)' }} />
+          <div className="hero__corner hero__corner--br" ref={cornerBrRef} style={{ opacity: 0, transform: 'scale(0)' }} />
         </div>
-        </div>
-
-      {/* Decorative Elements */}
-      <div className="hero__decorative">
-        <div className="hero__corner hero__corner--tl" ref={cornerTlRef} style={{ opacity: 0, transform: 'scale(0)' }} />
-        <div className="hero__corner hero__corner--br" ref={cornerBrRef} style={{ opacity: 0, transform: 'scale(0)' }} />
-      </div>
       </section>
 
-      {/* Member profile — shared with the header button, so both show the same
-          details and offer the same share link. Rendered OUTSIDE the parallax
-          <section> because it is position: fixed. */}
+      {/* Member profile — fixed overlay, so rendered OUTSIDE the hero section. */}
       <AnimatePresence>
         {profileOpen && user && (
           <MemberProfilePanel

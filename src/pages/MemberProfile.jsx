@@ -152,6 +152,15 @@ return (
           </dl>
 
           <div className="member-page__portfolio">
+            <h2 className="member-page__portfolio-title">About</h2>
+            {entry.about ? (
+              <p className="member-page__about">{entry.about}</p>
+            ) : (
+              <p className="member-page__empty">No bio shared yet.</p>
+            )}
+          </div>
+
+          <div className="member-page__portfolio">
             <h2 className="member-page__portfolio-title">Portfolio</h2>
 
             {links.length > 0 ? (
